@@ -3,6 +3,7 @@
 // design language (Newsreader serif, 한지-paper palette, the moon motif) so the
 // placeholder already feels like Sean's site rather than a generic splash.
 const year = new Date().getFullYear();
+const home = `https://spark33.github.io${import.meta.env.BASE_URL}`;
 ---
 <!doctype html>
 <html lang="en">
@@ -11,11 +12,11 @@ const year = new Date().getFullYear();
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Sean Park — soon</title>
     <meta name="description" content="Sean Park — frontend engineer in Seoul. A new site is on the way." />
-    <link rel="canonical" href="https://spark33.github.io/" />
+    <link rel="canonical" href={home} />
     <meta property="og:title" content="Sean Park" />
     <meta property="og:description" content="A new site is on the way." />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://spark33.github.io/" />
+    <meta property="og:url" content={home} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

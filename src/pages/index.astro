@@ -1,12 +1,16 @@
 ---
-// Root path. For now it redirects to /under-construction (Sean's ask, Oct 2026)
-// until the real site is ready. GitHub Pages is static, so the redirect is a
-// meta-refresh + canonical, with a visible link as a no-JS / crawler fallback.
+// Root path. For now it redirects to the under-construction page (Sean's ask,
+// Oct 2026) until the real site is ready. GitHub Pages is static, so the
+// redirect is a meta-refresh + canonical, with a visible link as a no-JS /
+// crawler fallback. BASE_URL keeps it correct whether this is a project site
+// (/website/) or later a root site (/).
 //
 // TO GO LIVE LATER: delete this redirect and render the real homepage here
-// (the shipped v6 design is preserved at /v6-preview/ as the starting point),
-// then remove src/pages/under-construction.astro.
-const target = '/under-construction';
+// (the shipped v6 design is preserved at `${BASE_URL}v6-preview/` as the
+// starting point), then remove src/pages/under-construction.astro.
+const base = import.meta.env.BASE_URL; // '/website/'
+const target = `${base}under-construction`;
+const canonical = `https://spark33.github.io${target}`;
 ---
 <!doctype html>
 <html lang="en">
@@ -14,7 +18,7 @@ const target = '/under-construction';
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="refresh" content={`0; url=${target}`} />
-    <link rel="canonical" href={`https://spark33.github.io${target}`} />
+    <link rel="canonical" href={canonical} />
     <meta name="robots" content="noindex" />
     <title>Sean Park</title>
     <style>

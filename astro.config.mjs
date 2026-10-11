@@ -1,13 +1,18 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 
-// User site → served at the root domain, so `site` is the bare origin and
-// there is NO `base`. Static output (the default) is all GitHub Pages serves.
+// This deploys from the repo `spark33/website`, so it's a PROJECT site served
+// under a sub-path: https://spark33.github.io/website/ . Hence `base: '/website'`.
+// All internal links use import.meta.env.BASE_URL so they stay correct.
 //
-// Routing note: `/` currently redirects to `/under-construction` (see
-// src/pages/index.astro). To "turn it off later" and go live with the real
-// site, replace index.astro's body with the homepage and delete the
+// TO MOVE TO THE ROOT DOMAIN (https://spark33.github.io): rename the repo to
+// exactly `spark33.github.io`, then change `base` below to '/' (or remove it).
+// That's the only change needed — a user site must live in a repo of that name.
+//
+// Routing note: `/` redirects to `/under-construction` (see src/pages/index.astro).
+// To go live later, replace index.astro's body with the homepage and delete the
 // under-construction page.
 export default defineConfig({
   site: 'https://spark33.github.io',
+  base: '/website',
 });
