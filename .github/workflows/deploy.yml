@@ -27,8 +27,11 @@ jobs:
         uses: actions/checkout@v4
       - name: Build with Astro
         uses: withastro/action@v3
-        # withastro/action runs the install (npm) + `astro build` and uploads
-        # the artifact. No package-lock is committed, so it runs `npm install`.
+        with:
+          # No lockfile is committed, so the action can't auto-detect the
+          # package manager — tell it explicitly. It then runs npm install +
+          # `astro build` and uploads the Pages artifact.
+          package-manager: npm@latest
 
   deploy:
     needs: build
