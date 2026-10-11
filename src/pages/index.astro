@@ -1,0 +1,29 @@
+---
+// Root path. For now it redirects to /under-construction (Sean's ask, Oct 2026)
+// until the real site is ready. GitHub Pages is static, so the redirect is a
+// meta-refresh + canonical, with a visible link as a no-JS / crawler fallback.
+//
+// TO GO LIVE LATER: delete this redirect and render the real homepage here
+// (the shipped v6 design is preserved at /v6-preview/ as the starting point),
+// then remove src/pages/under-construction.astro.
+const target = '/under-construction';
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <link rel="canonical" href={`https://spark33.github.io${target}`} />
+    <meta name="robots" content="noindex" />
+    <title>Sean Park</title>
+    <style>
+      body { font-family: Georgia, 'Times New Roman', serif; background: #eeeadf; color: #1b1a17; display: grid; place-items: center; min-height: 100svh; margin: 0; }
+      @media (prefers-color-scheme: dark) { body { background: #12110f; color: #e9e3d4; } }
+      a { color: inherit; }
+    </style>
+  </head>
+  <body>
+    <p>Redirecting to <a href={target}>the site</a>…</p>
+  </body>
+</html>

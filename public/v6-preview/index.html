@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sean Park</title>
+<meta name="description" content="Sean Park — frontend engineer in Seoul. Selected work and writing.">
+<link rel="canonical" href="https://spark33.github.io/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Sean Park">
+<meta property="og:description" content="Frontend engineer in Seoul. Selected work and writing.">
+<meta property="og:url" content="https://spark33.github.io/">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#eeeadf" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#12110f" media="(prefers-color-scheme: dark)">
+<script>(function(){const s=localStorage.getItem('theme');document.documentElement.dataset.theme=s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')})()</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+:root{--ease-out:cubic-bezier(.23,1,.32,1);--font:'Newsreader',Georgia,'Apple SD Gothic Neo','Noto Serif KR',serif;--rail:232px}
+[data-theme=light]{--bg:#eeeadf;--fg:#1b1a17;--soft:#57534a;--faint:#6b665c;--rule:rgba(27,26,23,.14);--frame:#e4dfd2;--hatch:rgba(27,26,23,.07);--moon-dark:#d4cebf;--shade:27,26,23;--blend:multiply;--grain-filter:invert(1);--tint:rgba(27,26,23,.04)}
+[data-theme=dark]{--bg:#12110f;--fg:#e9e3d4;--soft:#a8a295;--faint:#888376;--rule:rgba(233,227,212,.13);--frame:#1b1a17;--hatch:rgba(233,227,212,.05);--moon-dark:#2b2925;--shade:0,0,0;--blend:screen;--grain-filter:none;--tint:rgba(233,227,212,.04)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg);color:var(--fg);font:400 18px/1.55 var(--font);font-optical-sizing:auto;-webkit-font-smoothing:antialiased;scrollbar-color:var(--faint) var(--bg);caret-color:var(--fg)}
+::selection{background:var(--fg);color:var(--bg)}
+a{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.22em;text-decoration-color:var(--rule);transition:text-decoration-color 150ms var(--ease-out)}
+@media (hover:hover) and (pointer:fine){a:hover{text-decoration-color:currentColor}}
+:focus-visible{outline:1px solid var(--fg);outline-offset:4px;border-radius:2px}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.num{font-variant-numeric:tabular-nums lining-nums}
+.soft{color:var(--soft)}.faint{color:var(--faint)}
+.grain{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:90;opacity:.03;mix-blend-mode:var(--blend);filter:var(--grain-filter)}
+
+/* ── left rail ── */
+.rail{position:fixed;left:0;top:0;bottom:0;width:var(--rail);padding:36px 0 32px 36px;display:flex;flex-direction:column;z-index:50;font-size:16px}
+.rail .me{font-weight:500;font-size:18px;text-decoration:none}
+.rail .avail{color:var(--soft);margin-top:4px;line-height:1.4}
+.rail .avail i{display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor;margin-right:7px;vertical-align:2px;opacity:.7}
+.rail nav{margin-top:44px;display:flex;flex-direction:column;gap:2px}
+.rail nav a{text-decoration:none;color:var(--faint);width:max-content}
+.rail nav a[aria-current]{color:var(--fg)}
+@media (hover:hover) and (pointer:fine){.rail nav a:hover{color:var(--fg)}}
+.rail .bottom{margin-top:auto;display:flex;flex-direction:column;gap:18px;align-items:flex-start}
+.moonrow{display:flex;align-items:center;gap:10px;color:var(--faint);font-size:15px}
+.moon{width:30px;height:30px;margin-left:-6px;display:grid;place-items:center;border-radius:50%;transition:transform 160ms var(--ease-out)}
+.moon:active{transform:scale(.94)}
+.moon circle{fill:var(--moon-dark)}.moon path{fill:var(--fg)}
+.copy{color:var(--soft);text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:.22em;text-align:left}
+.copy[data-done]{color:var(--fg)}
+
+main{margin-left:var(--rail);padding-right:48px}
+.view{display:none}.view.on{display:block}
+
+/* placeholder screenshots — real shapes */
+.shot{position:relative;background:var(--frame);border-radius:3px;overflow:hidden;cursor:zoom-in;display:block;width:100%;
+  background-image:repeating-linear-gradient(135deg,var(--hatch) 0 1px,transparent 1px 11px)}
+.shot span{position:absolute;left:12px;bottom:9px;font-size:13px;color:var(--faint)}
+.shot.d{aspect-ratio:16/10}.shot.p{aspect-ratio:390/844;border-radius:14px}.shot.w{aspect-ratio:21/9}
+.comp{display:grid;gap:16px;align-items:end}
+.comp.dp{grid-template-columns:1fr 23%}
+.comp.pp{grid-template-columns:repeat(3,minmax(0,220px));justify-content:start}
+.comp.d1{grid-template-columns:1fr}
+
+/* ── HOME ── */
+.lede{max-width:34em;padding:120px 0 56px;font-size:24px;line-height:1.38}
+.index{width:100%;border-collapse:collapse;font-size:16px;margin-bottom:120px}
+.index th{text-align:left;font-weight:400;color:var(--faint);padding:0 16px 8px 0;border-bottom:1px solid var(--rule)}
+.index td{padding:9px 16px 9px 0;border-bottom:1px solid var(--rule);color:var(--soft);vertical-align:baseline;overflow-wrap:anywhere}
+.index td:first-child{color:var(--fg)}
+.index a{text-decoration:none}
+.index tr{transition:background-color 150ms var(--ease-out)}
+@media (hover:hover) and (pointer:fine){.index tbody tr:hover{background:var(--tint)}}
+.index td:last-child{text-align:right;padding-right:0}
+
+.work{position:relative}
+.proj{position:sticky;background:var(--bg);padding:20px 0 48px;border-top:1px solid var(--rule)}
+.proj .shade{position:absolute;inset:0;background:rgb(var(--shade));opacity:0;pointer-events:none;z-index:2}
+.proj .head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:18px;gap:24px}
+.proj .head b{font-weight:500;font-size:20px;min-width:0;overflow-wrap:anywhere}
+.proj .head p{color:var(--soft);flex:1;min-width:0;max-width:28em;overflow-wrap:anywhere}
+.proj .head a{flex-shrink:0;white-space:nowrap}
+.proj .comp{max-height:62vh}
+.proj .comp .shot.d{max-height:62vh}
+.proj .comp.pp .shot{max-height:56vh}
+
+.writing,.about{display:grid;grid-template-columns:200px minmax(0,640px);gap:0 48px;padding:120px 0 0}
+.writing h2,.about h2{font-size:18px;font-weight:500}
+.wl{list-style:none}
+.wl li{display:grid;grid-template-columns:110px minmax(0,1fr);gap:16px;padding:7px 0}
+.wl a{overflow-wrap:anywhere}
+.wl a{text-decoration:none}
+@media (hover:hover) and (pointer:fine){.wl a:hover{text-decoration:underline;text-decoration-color:var(--rule)}}
+.about p+p{margin-top:.9em}
+
+.colophon{margin:160px 0 0;padding:20px 0 48px;border-top:1px solid var(--rule);display:grid;grid-template-columns:200px minmax(0,640px) 1fr;gap:0 48px;font-size:15px;color:var(--faint)}
+.colophon p{max-width:40em}
+.colophon .dm{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+
+/* ── CASE STUDY ── */
+.cs{padding:120px 0 0}
+.cs h1,.post h1{font-size:clamp(32px,3.4vw,44px);line-height:1.12;font-weight:500;letter-spacing:-.012em;text-wrap:balance;max-width:20em}
+.cs .dek{color:var(--soft);font-size:21px;line-height:1.4;margin:14px 0 40px;max-width:30em}
+.summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) minmax(0,2fr) minmax(0,1fr);border-top:1px solid var(--fg);border-bottom:1px solid var(--rule);margin-bottom:56px;font-size:15px}
+.summary div{padding:12px 16px 14px 0}
+.summary dt{color:var(--faint)}
+.summary dd{margin-top:2px;overflow-wrap:anywhere}
+.summary .wide{grid-column:auto}
+.cs .body{display:grid;grid-template-columns:200px minmax(0,640px);gap:0 48px}
+.cs .body>*{grid-column:2}
+.cs .body p{font-size:19px;line-height:1.62;margin-bottom:1.1em}
+.cs .body h2{font-size:22px;font-weight:500;margin:2em 0 .5em}
+.cs .body .fig{grid-column:1 / -1;margin:40px 0}
+.cs .body .fig.narrow{grid-column:2}
+.cs .body figcaption{font-size:15px;color:var(--faint);margin-top:8px}
+.nextp{display:block;margin:120px 0 0;padding:28px 0 0;border-top:1px solid var(--rule);text-decoration:none}
+.nextp small{display:block;color:var(--faint);font-size:15px}
+.nextp b{font-weight:500;font-size:clamp(28px,3vw,40px);line-height:1.15}
+.nextp svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.25;vertical-align:-2px;margin-left:8px;transition:transform 200ms var(--ease-out)}
+@media (hover:hover) and (pointer:fine){.nextp:hover svg{transform:translateX(4px)}}
+
+/* ── POST ── */
+.post{display:grid;grid-template-columns:200px minmax(0,640px) minmax(0,240px);gap:0 48px;padding:120px 0 0;align-items:start}
+.post>*{grid-column:2}
+.post .meta{color:var(--faint);font-size:16px;margin-bottom:14px}
+.post .dek{color:var(--soft);font-size:21px;line-height:1.4;margin:14px 0 28px}
+.tldr{border-top:1px solid var(--fg);border-bottom:1px solid var(--rule);padding:12px 0 14px;margin-bottom:48px;font-size:17px}
+.tldr b{font-weight:500;margin-right:8px}
+.post p{font-size:19px;line-height:1.65;margin-bottom:1.1em;text-wrap:pretty}
+.post h2{font-size:22px;font-weight:500;margin:2em 0 .5em;position:relative;scroll-margin-top:32px}
+.post h2 .anc{position:absolute;left:-28px;top:0;color:var(--faint);opacity:0;transition:opacity 150ms var(--ease-out);font-weight:400}
+@media (hover:hover) and (pointer:fine){.post h2:hover .anc{opacity:1}}
+.post h2 .anc[data-done]::after{content:"Copied";position:absolute;left:28px;top:-22px;font-size:13px;white-space:nowrap}
+.post .fig{grid-column:2 / 4;margin:32px 0}
+.post .sn{grid-column:3;font-size:14.5px;line-height:1.45;color:var(--soft);margin-top:.3em;overflow-wrap:anywhere}
+.post .sn sup,.post sup{font-size:.7em;color:var(--faint)}
+.toc{grid-column:1;grid-row:1 / span 60;position:sticky;top:120px;font-size:15px;list-style:none;padding-top:150px}
+.toc li a{text-decoration:none;color:var(--faint);display:block;padding:3px 0;transition:color 150ms var(--ease-out);overflow-wrap:anywhere}
+.toc li a[aria-current]{color:var(--fg)}
+pre{position:relative;background:var(--tint);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:16px 0 16px 16px;margin:28px 0;font:14px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-x:auto}
+pre .cp{position:absolute;right:10px;top:10px;font:14px var(--font);color:var(--faint)}
+pre .cp[data-done]{color:var(--fg)}
+
+/* end of post: next + asymmetric strip */
+.after{margin:120px 0 0;border-top:1px solid var(--rule);padding-top:28px;display:grid;grid-template-columns:200px minmax(0,1fr);gap:0 48px}
+.after h2{font-size:18px;font-weight:500}
+.strip{display:flex;gap:40px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;padding-bottom:8px;align-items:start}
+.strip::-webkit-scrollbar{display:none}
+.strip .big{flex:0 0 min(520px,60vw);text-decoration:none;scroll-snap-align:start}
+.strip .big .shot{aspect-ratio:16/9;margin-bottom:12px}
+.strip .big small{color:var(--faint);font-size:15px;display:block}
+.strip .big b{font-weight:500;font-size:26px;line-height:1.2;display:block;margin-top:2px}
+.strip ol{list-style:none;flex:0 0 auto;display:grid;grid-auto-flow:column;grid-template-rows:repeat(4,auto);gap:4px 40px;font-size:16px}
+.strip ol li{width:240px;scroll-snap-align:start}
+.strip ol a{text-decoration:none;display:block;padding:6px 0;border-top:1px solid var(--rule)}
+.strip ol small{display:block;color:var(--faint);font-size:14px}
+
+/* lightbox */
+dialog{margin:auto;border:0;padding:0;background:transparent;max-width:92vw;max-height:92vh;color:var(--fg)}
+dialog::backdrop{background:rgba(var(--shade),.6)}
+dialog .shot{width:min(88vw,1400px);cursor:zoom-out}
+dialog .shot.p{width:auto;height:86vh}
+dialog{overflow:visible}
+dialog::backdrop{transition:background-color 200ms var(--ease-out)}
+@starting-style{dialog[open]::backdrop{background:transparent}}
+dialog.closing::backdrop{background:transparent}
+
+/* rail: where you are */
+.rail .where{margin-top:16px;font-size:14px;color:var(--faint);min-height:1.4em}
+
+/* index row ↔ stacked project */
+.proj.hl::after{content:"";position:absolute;inset:0;background:var(--tint);pointer-events:none;z-index:1}
+
+/* footnote ↔ sidenote */
+.post sup[data-n]{cursor:default;transition:color 150ms var(--ease-out)}
+.post .sn{transition:color 150ms var(--ease-out)}
+.post sup.hl{color:var(--fg)}
+.post .sn.hl{color:var(--fg);text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:.22em}
+
+/* theme switch: circle from the moon (View Transitions) */
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+
+/* 404 */
+.nf{min-height:78vh;display:grid;align-content:center;justify-items:start;gap:16px}
+.nf p{font-size:24px}
+
+/* print: a case study or post becomes a clean paper document */
+@media print{
+  @page{margin:18mm}
+  .rail,.grain,.after,.toc,.anc,.cp,dialog,.nextp{display:none!important}
+  html{background:#fff;color:#000;font-size:10.5pt}
+  main{margin:0;padding:0}
+  .view:not(.on){display:none!important}
+  .post,.cs .body,.writing,.about{display:block}
+  .post .sn{font-size:9pt;color:#444;border-left:1px solid #999;padding-left:8px;margin:0 0 1em}
+  .proj{position:static;break-inside:avoid}.proj .shade{display:none}
+  .shot{border:1px solid #bbb;background:none;break-inside:avoid}
+  .colophon{display:block;margin-top:2em;color:#555}
+  a{text-decoration:none}
+}
+
+@media (max-width:900px){
+  .rail{position:sticky;top:0;width:auto;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px 20px;padding:14px 20px;background:var(--bg);border-bottom:1px solid var(--rule)}
+  .rail nav{margin:0;flex-direction:row;gap:16px}.rail .avail{display:none}.rail .bottom{margin:0 0 0 auto;flex-direction:row}.copy{display:none}
+  main{margin:0;padding:0 20px}
+  .writing,.about,.cs .body,.post,.after,.colophon{grid-template-columns:1fr}
+  .cs .body>*,.post>*,.post .fig,.post .sn,.cs .body .fig{grid-column:1}.toc{display:none}
+  .post .sn{border-left:1px solid var(--rule);padding-left:12px;margin-bottom:1em}
+  .summary{grid-template-columns:repeat(2,1fr)}.summary .wide{grid-column:auto}
+  .index th:nth-child(3),.index td:nth-child(3){display:none}
+  .comp.dp,.comp.pp{grid-template-columns:1fr 1fr}.comp.dp .shot.d{grid-column:1 / -1}
+}
+@media (prefers-reduced-motion:reduce){*{transition-duration:0ms!important;animation:none!important}}
+</style>
+</head>
+<body>
+<svg class="grain" aria-hidden="true"><filter id="hanji"><feTurbulence type="fractalNoise" baseFrequency="0.005 0.14" numOctaves="3" seed="7"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 -1.2 1"/></filter><filter id="fine"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 -1.5 1"/></filter><rect width="100%" height="100%" filter="url(#hanji)"/><rect width="100%" height="100%" filter="url(#fine)" opacity=".5"/></svg>
+
+<aside class="rail">
+  <a class="me" href="#/">Sean Park</a>
+  <div class="avail"><i></i>Placeholder availability</div>
+  <nav><a href="#/" data-v="home">Work</a><a href="#/post/post-one" data-v="post">Writing</a><a href="#/" data-jump="about">About</a></nav>
+  <div class="where" id="where" aria-live="off"></div>
+  <div class="bottom">
+    <div class="moonrow" id="moonrow"><button class="moon" id="moon" aria-label="Switch theme"><svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.5"/><path id="mp"/></svg></button><span id="pct" class="num"></span></div>
+    <button class="copy" data-copy="hello@example.com">hello@example.com</button>
+  </div>
+</aside>
+
+<main>
+  <!-- HOME -->
+  <section class="view" id="home">
+    <p class="lede">Sean Park is a frontend engineer in Seoul. <span class="soft">Placeholder: one or two sentences in your own words about what you build.</span> See the <a href="#work">work</a>, read the <a href="#/post/post-one">writing</a>, or <button class="copy" data-copy="hello@example.com">copy my email</button>.</p>
+    <table class="index num" id="index"><thead><tr><th>Project</th><th>Role</th><th>Stack</th><th>Year</th></tr></thead><tbody></tbody></table>
+    <div class="work" id="work"></div>
+    <section class="writing" id="writing-s"><h2>Writing</h2><ul class="wl num" id="wl"></ul></section>
+    <section class="about" id="about"><h2>About</h2><div><p>Placeholder paragraph about how you work, in your own words.</p><p>Second placeholder: where you've worked and what you're doing now.</p></div></section>
+  </section>
+
+  <!-- 404 -->
+  <section class="view nf" id="nf"><svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="26" fill="var(--moon-dark)" stroke="var(--rule)"/></svg><p>Nothing here tonight.</p><a href="#/">Back to the work</a></section>
+
+  <!-- CASE STUDY -->
+  <article class="view cs" id="case"></article>
+
+  <!-- POST -->
+  <section class="view" id="postv"><article class="post" id="post"></article><section class="after"><h2>Next</h2><div class="strip" id="strip"></div></section></section>
+
+  <footer class="colophon">
+    <span>Colophon</span>
+    <p>Placeholder colophon: set in Newsreader, built by hand with plain HTML and CSS, last updated <span class="num" id="upd"></span>. The grain is modelled on 한지 paper.</p>
+    <span class="dm num" id="dmoon"></span>
+  </footer>
+</main>
+
+<dialog id="lb"></dialog>
+
+<script>
+const shot=(t,l)=>`<button class="shot ${t}" aria-label="Open ${l} full size"><span class="num">${l}</span></button>`;
+const D=()=>shot('d','Desktop · 1600 × 1000'),P=()=>shot('p','Phone · 390 × 844');
+// TODO(Sean): replace placeholder projects & posts with real content.
+const PROJ=[
+ {s:'project-one',t:'Project one',role:'Frontend lead',stack:'Next.js · SSE',y:'2026',x:'Placeholder: what it is, in one line.',comp:'dp',shots:()=>D()+P()},
+ {s:'project-two',t:'Project two',role:'Design + frontend',stack:'React · tokens',y:'2026',x:'Placeholder: what it is, in one line.',comp:'d1',shots:()=>D()},
+ {s:'project-three',t:'Project three',role:'Frontend',stack:'React Native',y:'2025',x:'Placeholder: what it is, in one line.',comp:'pp',shots:()=>P()+P()+P()},
+ {s:'project-four',t:'Project four',role:'Frontend',stack:'TypeScript · charts',y:'2025',x:'Placeholder: what it is, in one line.',comp:'d1',shots:()=>D()}];
+const POSTS=[{s:'post-one',d:'2026.09.18',t:'Placeholder post title one',x:'Placeholder one-line summary of the post.',r:'8 min'},{s:'post-two',d:'2026.07.02',t:'Placeholder post title two',x:'Placeholder summary.',r:'5 min'},{s:'post-three',d:'2026.05.21',t:'Placeholder post title three',x:'Placeholder summary.',r:'6 min'},{s:'post-four',d:'2026.03.14',t:'Placeholder post title four',x:'Placeholder summary.',r:'4 min'},{s:'post-five',d:'2025.12.09',t:'Placeholder post title five',x:'Placeholder summary.',r:'5 min'},{s:'post-six',d:'2025.10.02',t:'Placeholder post title six',x:'Placeholder summary.',r:'7 min'}];
+const arrow='<svg viewBox="0 0 22 22"><path d="M4 11h13M12 6l5 5-5 5"/></svg>';
+
+// home
+document.querySelector('#index tbody').innerHTML=PROJ.map(p=>`<tr><td><a href="#/work/${p.s}">${p.t}</a></td><td>${p.role}</td><td>${p.stack}</td><td>${p.y}</td></tr>`).join('');
+document.getElementById('work').innerHTML=PROJ.map((p,i)=>`<article class="proj" style="top:${24+i*12}px"><div class="shade"></div><div class="head"><b>${p.t}</b><p>${p.x}</p><a href="#/work/${p.s}">Case study</a></div><div class="comp ${p.comp}">${p.shots()}</div></article>`).join('');
+document.getElementById('wl').innerHTML=POSTS.slice(0,4).map(p=>`<li><span class="faint">${p.d}</span><a href="#/post/${p.s}">${p.t}</a></li>`).join('');
+
+// case study
+function renderCase(slug){const i=PROJ.findIndex(p=>p.s===slug);if(i<0)return false;const p=PROJ[i],n=PROJ[(i+1)%PROJ.length];
+  document.getElementById('case').innerHTML=`<h1>${p.t}</h1><p class="dek">${p.x} Placeholder second line about the problem.</p>
+  <dl class="summary num"><div><dt>Role</dt><dd>${p.role}</dd></div><div><dt>Team</dt><dd>Placeholder</dd></div><div><dt>Timeline</dt><dd>Placeholder</dd></div><div><dt>Stack</dt><dd>${p.stack}</dd></div><div class="wide"><dt>Outcome</dt><dd>Placeholder: one measurable result.</dd></div><div><dt>Links</dt><dd><a href="#">Live</a> · <a href="#">Repo</a></dd></div></dl>
+  <div class="body"><p>Placeholder body. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+  <figure class="fig"><div class="comp ${p.comp}">${p.shots()}</div><figcaption>Placeholder caption: what this screen shows.</figcaption></figure>
+  <h2>Placeholder: the problem</h2><p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.</p>
+  <figure class="fig narrow">${D()}<figcaption>Placeholder caption.</figcaption></figure>
+  <h2>Placeholder: what changed</h2><p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
+  <a class="nextp" href="#/work/${n.s}"><small>Next project</small><b>${n.t}${arrow}</b></a></div>`;return true}
+
+// post
+function renderPost(slug){const i=POSTS.findIndex(p=>p.s===slug);if(i<0)return false;const p=POSTS[i];
+  const secs=['The setup','What broke','What I changed'];
+  document.getElementById('post').innerHTML=`<ol class="toc" id="toc">${secs.map((s,k)=>`<li><a href="#s${k}" data-s="s${k}">${s}</a></li>`).join('')}</ol>
+  <div class="meta num">${p.d} · ${p.r}</div><h1>${p.t}</h1><p class="dek">${p.x}</p>
+  <p class="tldr"><b>TL;DR</b>Placeholder: the two or three lines a reader needs if they stop here.</p>
+  <h2 id="s0"><button class="anc" aria-label="Copy link to section">#</button>${secs[0]}</h2>
+  <p>Placeholder body. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.<sup data-n="1">1</sup> Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+  <aside class="sn" data-n="1"><sup>1</sup> Placeholder sidenote that sits beside the line it explains instead of at the bottom.</aside>
+  <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+  <div class="fig">${D()}</div>
+  <h2 id="s1"><button class="anc" aria-label="Copy link to section">#</button>${secs[1]}</h2>
+  <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.<sup data-n="2">2</sup></p>
+  <aside class="sn" data-n="2"><sup>2</sup> Second placeholder sidenote.</aside>
+  <pre><button class="cp" data-code>Copy</button><code>// placeholder code
+for await (const chunk of stream) {
+  render(chunk)
+}</code></pre>
+  <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p>
+  <h2 id="s2"><button class="anc" aria-label="Copy link to section">#</button>${secs[2]}</h2>
+  <p>Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.</p>
+  <p>Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur.</p>`;
+  const rest=POSTS.filter(x=>x!==p),nx=POSTS[(i+1)%POSTS.length];
+  document.getElementById('strip').innerHTML=`<a class="big" href="#/post/${nx.s}">${shot('d','Cover').replace('button','div').replace('</button>','</div>')}<small class="num">Next · ${nx.d}</small><b>${nx.t}</b></a>
+  <ol class="num">${rest.filter(x=>x!==nx).map(x=>`<li><a href="#/post/${x.s}"><small>${x.d}</small>${x.t}</a></li>`).join('')}</ol>`;
+  setupToc();return true}
+
+// toc active section
+let tocObs;function setupToc(){tocObs&&tocObs.disconnect();const links=[...document.querySelectorAll('#toc a')];
+  tocObs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)links.forEach(a=>a.dataset.s===e.target.id?a.setAttribute('aria-current','true'):a.removeAttribute('aria-current'))})},{rootMargin:'0px 0px -70% 0px'});
+  document.querySelectorAll('.post h2[id]').forEach(h=>tocObs.observe(h));}
+
+// router
+function route(){const h=location.hash||'#/';if(!h.startsWith('#/')){const el=document.querySelector(h);if(el)el.scrollIntoView({behavior:'smooth'});return}
+  const w=h.match(/^#\/work\/(.+)/),p=h.match(/^#\/post\/(.+)/);
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  if(w){if(renderCase(w[1]))case_.classList.add('on');else nf.classList.add('on')}
+  else if(p){if(renderPost(p[1]))postv.classList.add('on');else nf.classList.add('on')}
+  else if(h==='#/'||h==='#')home.classList.add('on');else nf.classList.add('on');
+  document.querySelectorAll('.rail nav a[data-v]').forEach(a=>a.dataset.v===(p?'post':'home')?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));
+  scrollTo(0,0);tick();}
+const nf=document.getElementById('nf'),case_=document.getElementById('case'),postv=document.getElementById('postv'),home=document.getElementById('home');
+addEventListener('hashchange',route);
+document.querySelector('[data-jump=about]').addEventListener('click',e=>{if(!home.classList.contains('on'))return;e.preventDefault();document.getElementById('about').scrollIntoView({behavior:'smooth'})});
+
+// tonight in Seoul
+const SYN=29.530588853,REF=Date.UTC(2000,0,6,18,14);
+const phaseAt=t=>(((t-REF)/864e5)%SYN+SYN)%SYN/SYN;
+const PN=['new moon','waxing crescent','first quarter','waxing gibbous','full moon','waning gibbous','last quarter','waning crescent'];
+const TONIGHT=phaseAt(Date.now()),TONIGHT_NAME=PN[Math.floor(TONIGHT*8+.5)%8];
+
+// moon: spring-smoothed scroll phase, % read on posts, click = theme (remembered)
+function moonPath(p,r,c){const w=p<.5,k=Math.cos(2*Math.PI*p),rx=Math.max(Math.abs(k)*r,.001);return `M ${c} ${c-r} A ${r} ${r} 0 0 ${w?1:0} ${c} ${c+r} A ${rx} ${r} 0 0 ${k>0?(w?0:1):(w?1:0)} ${c} ${c-r} Z`}
+const mp=document.getElementById('mp'),pct=document.getElementById('pct');let target=.06,pos=.06,vel=0;
+let hovering=false;
+(function spring(){const f=-170*(pos-target)-26*vel;vel+=f/60;pos+=vel/60;mp.setAttribute('d',moonPath(Math.max(.02,Math.min(.4999,pos)),7.5,9));requestAnimationFrame(spring)})();
+const mrow=document.getElementById('moonrow');
+mrow.addEventListener('pointerenter',e=>{if(e.pointerType!=='mouse')return;hovering=true;pct.textContent='Tonight in Seoul: '+TONIGHT_NAME});
+mrow.addEventListener('pointerleave',()=>{hovering=false;tick()});
+function tick(){const max=document.documentElement.scrollHeight-innerHeight,s=max>0?Math.min(1,scrollY/max):0;target=.06+s*(.4999-.06);
+  const onPost=postv.classList.contains('on'),done=onPost&&s>=.995;
+  if(done)target=.5;
+  if(!hovering)pct.textContent=onPost?(done?'Finished':Math.round(s*100)+'% read'):'';
+  where();
+  const ps=[...document.querySelectorAll('.proj')];ps.forEach((p,i)=>{const n=ps[i+1],sh=p.querySelector('.shade');if(!n){sh.style.opacity=0;return}const a=p.getBoundingClientRect(),b=n.getBoundingClientRect();sh.style.opacity=(Math.min(1,Math.max(0,(a.bottom-b.top)/a.height))*.3).toFixed(3)})}
+addEventListener('scroll',tick,{passive:true});
+document.getElementById('moon').addEventListener('click',e=>{
+  const h=document.documentElement,t=h.dataset.theme==='light'?'dark':'light',swap=()=>{h.dataset.theme=t;localStorage.setItem('theme',t)};
+  if(!document.startViewTransition||matchMedia('(prefers-reduced-motion: reduce)').matches){swap();return}
+  const r=e.currentTarget.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,R=Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y));
+  document.startViewTransition(swap).ready.then(()=>h.animate({clipPath:[`circle(0px at ${x}px ${y}px)`,`circle(${R}px at ${x}px ${y}px)`]},{duration:420,easing:'cubic-bezier(.23,1,.32,1)',pseudoElement:'::view-transition-new(root)'}));
+});
+
+// rail: where you are
+const whereEl=document.getElementById('where');
+function where(){let label='';
+  if(home.classList.contains('on')){
+    const ps=[...document.querySelectorAll('.proj')],mid=innerHeight*.5;
+    ps.forEach((p,i)=>{if(p.getBoundingClientRect().top<mid)label=PROJ[i].t});
+    if(document.getElementById('index').getBoundingClientRect().bottom>mid)label='';
+    for(const id of ['writing-s','about'])if(document.getElementById(id).getBoundingClientRect().top<mid)label=id==='about'?'About':'Writing';
+  }else if(case_.classList.contains('on')){
+    label=case_.querySelector('h1')?.textContent||'';
+    case_.querySelectorAll('.body h2').forEach(h=>{if(h.getBoundingClientRect().top<innerHeight*.4)label=h.textContent});
+  }
+  if(whereEl.textContent!==label)whereEl.textContent=label;}
+
+// index row → its stacked project
+document.querySelectorAll('#index tbody tr').forEach((tr,i)=>{
+  tr.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')document.querySelectorAll('.proj')[i].classList.add('hl')});
+  tr.addEventListener('pointerleave',()=>document.querySelectorAll('.proj')[i].classList.remove('hl'))});
+
+// footnote ↔ sidenote
+const postEl=document.getElementById('post');
+postEl.addEventListener('pointerover',e=>{const n=e.target.closest('[data-n]');if(n)postEl.querySelectorAll(`[data-n="${n.dataset.n}"]`).forEach(x=>x.classList.add('hl'))});
+postEl.addEventListener('pointerout',e=>{const n=e.target.closest('[data-n]');if(n)postEl.querySelectorAll(`[data-n="${n.dataset.n}"]`).forEach(x=>x.classList.remove('hl'))});
+
+// copy actions (email, heading links, code)
+function flash(el,label){const o=el.textContent;el.dataset.done='';if(label)el.textContent=label;setTimeout(()=>{delete el.dataset.done;if(label)el.textContent=o},1400)}
+document.addEventListener('click',e=>{
+  const c=e.target.closest('[data-copy]');if(c){navigator.clipboard?.writeText(c.dataset.copy);flash(c,'Copied');return}
+  const a=e.target.closest('.anc');if(a){navigator.clipboard?.writeText(location.href);flash(a);return}
+  const k=e.target.closest('[data-code]');if(k){navigator.clipboard?.writeText(k.nextElementSibling.textContent);flash(k,'Copied');return}
+  const s=e.target.closest('button.shot');if(s&&!s.closest('#lb')){openLb(s);return}
+  if(e.target.closest('#lb'))closeLb();
+});
+
+// lightbox grows out of the thumbnail you clicked, and returns to it
+const lb=document.getElementById('lb'),RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;let lbFrom=null;
+function flip(el,from){const to=el.getBoundingClientRect();return `translate(${from.left-to.left}px,${from.top-to.top}px) scale(${from.width/to.width},${from.height/to.height})`}
+function openLb(s){lbFrom=s;lb.classList.remove('closing');lb.innerHTML=s.outerHTML.replace(/^<button/,'<div').replace(/<\/button>$/,'</div>');lb.showModal();const el=lb.firstElementChild;el.style.transformOrigin='0 0';
+  if(!RM())el.animate([{transform:flip(el,s.getBoundingClientRect())},{transform:'none'}],{duration:280,easing:'cubic-bezier(.23,1,.32,1)'})}
+function closeLb(){const el=lb.firstElementChild;if(!el||RM()||!lbFrom){lb.close();return}lb.classList.add('closing');
+  el.animate([{transform:'none'},{transform:flip(el,lbFrom.getBoundingClientRect())}],{duration:200,easing:'cubic-bezier(.23,1,.32,1)',fill:'forwards'}).finished.then(()=>lb.close())}
+lb.addEventListener('cancel',e=>{e.preventDefault();closeLb()});
+
+// favicon: tonight's moon in Seoul
+(function(){const p=Math.min(Math.max(TONIGHT,.001),.999);
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="#2b2925" stroke="#8c877b" stroke-width="1"/><path fill="#e9e3d4" d="${moonPath(p,14,16)}"/></svg>`;
+  const l=document.createElement('link');l.rel='icon';l.type='image/svg+xml';l.href='data:image/svg+xml,'+encodeURIComponent(svg);document.head.appendChild(l)})();
+
+// colophon: real moon on the last-updated date
+(function(){const syn=29.530588853,ref=Date.UTC(2000,0,6,18,14),t=Date.now(),p=(((t-ref)/864e5)%syn+syn)%syn/syn,d=new Date(t+9*36e5).toISOString().slice(0,10).replaceAll('-','.');
+  const N=['new moon','waxing crescent','first quarter','waxing gibbous','full moon','waning gibbous','last quarter','waning crescent'][Math.floor(p*8+.5)%8];
+  document.getElementById('upd').textContent=d;
+  document.getElementById('dmoon').innerHTML=`<svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="var(--moon-dark)" stroke="var(--rule)"/><path fill="var(--fg)" d="${moonPath(Math.min(Math.max(p,.001),.999),6,7)}"/></svg>${N}`})();
+route();
+</script>
+</body>
+</html>

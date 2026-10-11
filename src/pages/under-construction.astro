@@ -1,0 +1,99 @@
+---
+// Holding page shown at the root for now. Deliberately on-brand with the v6
+// design language (Newsreader serif, 한지-paper palette, the moon motif) so the
+// placeholder already feels like Sean's site rather than a generic splash.
+const year = new Date().getFullYear();
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sean Park — soon</title>
+    <meta name="description" content="Sean Park — frontend engineer in Seoul. A new site is on the way." />
+    <link rel="canonical" href="https://spark33.github.io/" />
+    <meta property="og:title" content="Sean Park" />
+    <meta property="og:description" content="A new site is on the way." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://spark33.github.io/" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap"
+    />
+    <style>
+      :root {
+        --bg: #eeeadf;
+        --fg: #1b1a17;
+        --soft: #57534a;
+        --faint: #6b665c;
+        --moon: #f3efe4;
+        --moon-dark: #d4cebf;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #12110f;
+          --fg: #e9e3d4;
+          --soft: #a8a295;
+          --faint: #888376;
+          --moon: #e9e3d4;
+          --moon-dark: #2b2925;
+        }
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; }
+      body {
+        min-height: 100svh;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: 'Newsreader', Georgia, 'Noto Serif KR', serif;
+        font-optical-sizing: auto;
+        display: grid;
+        place-items: center;
+        padding: 2rem;
+        line-height: 1.5;
+      }
+      main { max-width: 32rem; text-align: center; }
+      .moon {
+        width: 76px; height: 76px; border-radius: 50%;
+        margin: 0 auto 2.25rem;
+        background: var(--moon);
+        box-shadow:
+          inset -22px -8px 0 -8px var(--moon-dark),
+          0 0 44px -8px var(--moon-dark);
+        animation: rise 1.6s cubic-bezier(.22,.61,.36,1) both;
+      }
+      @keyframes rise {
+        from { opacity: 0; transform: translateY(14px) scale(.96); }
+        to   { opacity: 1; transform: none; }
+      }
+      h1 {
+        font-weight: 500; font-size: clamp(1.9rem, 5vw, 2.6rem);
+        letter-spacing: -0.01em; margin: 0 0 0.75rem; text-wrap: balance;
+      }
+      p { color: var(--soft); font-size: 1.075rem; margin: 0 auto; max-width: 26rem; }
+      .meta {
+        margin-top: 2.75rem; color: var(--faint);
+        font-size: 0.85rem; font-style: italic;
+        font-variant-numeric: tabular-nums;
+      }
+      a { color: var(--fg); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+      a:hover { color: var(--soft); }
+      @media (prefers-reduced-motion: reduce) {
+        .moon { animation: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="moon" aria-hidden="true"></div>
+      <h1>Something is being made here.</h1>
+      <p>
+        Sean Park — a frontend engineer in Seoul. The new site is under
+        construction; it will be worth the wait.
+      </p>
+      <p class="meta">Seoul · {year}</p>
+    </main>
+  </body>
+</html>
