@@ -21,20 +21,27 @@ export const LINKS = {
   baze: 'https://baze.co',
 };
 
-// Where I've worked, newest first. TODO(Sean): roles, years, one line each.
+// Where I've worked, newest first. Roles and years from Sean's LinkedIn (2026-10-26). `line` is the short version for the hover card.
 export const EXPERIENCE = [
-  { company: 'Mindlogic', url: LINKS.mindlogic, card: 'mindlogic', where: 'Seoul', role: 'Product lead', years: '2024–now',
+  { company: 'Mindlogic', url: LINKS.mindlogic, card: 'mindlogic', where: 'Seoul', role: 'Product & Frontend Lead', years: '2024–now',
     did: '<a href="/work/baze/" data-card="case" style="view-transition-name:baze-title">Baze</a> <span class="faint">(formerly FactChat)</span>: UX, direction, architecture, frontend. Grew with it from 28 to 100+ universities and 750K users; 2,500+ PRs.' },
-  { company: 'MongoDB', url: 'https://www.mongodb.com', card: 'mongodb', where: 'New York', role: '[role]', years: '[years]', did: '<span class="ph">[One line: what you did there]</span>' },
-  { company: 'Deloitte Digital', url: 'https://www.deloittedigital.com', card: 'deloitte', where: 'New York', role: '[role]', years: '[years]', did: '<span class="ph">[One line: what you did there]</span>' },
+  { company: 'MongoDB', url: 'https://www.mongodb.com', card: 'mongodb', where: 'New York', role: 'UI Engineer', years: '2022–2024',
+    did: 'Led the architecture of MongoDB’s first reusable AI chatbot UI library, and of the Next.js docs site (Okta SSO, two CMS migrations).',
+    line: 'Led the architecture of MongoDB’s first reusable AI chatbot UI library, in React.' },
+  { company: 'Deloitte Digital', url: 'https://www.deloittedigital.com', card: 'deloitte', where: 'Chicago', role: 'Frontend Engineer', years: '2019–2022',
+    did: 'Front-end architect and lead developer on client builds for a telecom and a training platform. Mentored six developers in React, TypeScript and Next.js.',
+    line: 'Front-end architect and lead developer on client builds. Mentored six developers.' },
 ];
+
+// Education, for the About section.
+export const EDUCATION = 'I studied Information Systems and Human-Computer Interaction at Carnegie Mellon (2019), and TA’d programming courses there.';
 
 // The one project shown in depth.
 export const BAZE = {
   title: 'Baze',
   aka: 'formerly FactChat',
-  role: 'Product lead',
-  team: 'Placeholder',
+  role: 'Product & Frontend Lead',
+  team: 'A small team I lead',
   timeline: '2024–',
   stack: 'Next.js · logician-ui',
   outcome: '750K users · 100+ universities',

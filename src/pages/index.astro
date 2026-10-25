@@ -4,7 +4,7 @@
 import Base from '../layouts/Base.astro';
 import LivingTitles from '../components/LivingTitles.astro';
 import BazeMock from '../components/BazeMock.astro';
-import { EXPERIENCE, BAZE, LINKS, EMAIL } from '../data/site';
+import { EXPERIENCE, EDUCATION, BAZE, LINKS, EMAIL } from '../data/site';
 const ext = { target: '_blank', rel: 'noopener' };
 ---
 <Base page="home">
@@ -21,7 +21,7 @@ const ext = { target: '_blank', rel: 'noopener' };
     <LivingTitles />
   </section>
 
-  <h2 class="sec" id="work" data-where="Where I've worked" data-desc="Newest first: Seoul, then New York.">Where I've worked</h2>
+  <h2 class="sec" id="work" data-where="Where I've worked" data-desc="Newest first: Seoul, New York, Chicago.">Where I've worked</h2>
   <table class="index num">
     <thead><tr><th>Company</th><th>Role</th><th>What I did</th><th>Years</th></tr></thead>
     <tbody>
@@ -48,6 +48,7 @@ const ext = { target: '_blank', rel: 'noopener' };
     <h2 class="sec" data-where="About" data-desc="How I work, and the rest of me.">About</h2>
     <div>
       <p class="ph">Placeholder: how I work, in my own words.</p>
+      <p>{EDUCATION}</p>
       <p>I also write songs.</p>
     </div>
   </section>

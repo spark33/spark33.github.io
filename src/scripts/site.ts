@@ -140,6 +140,7 @@ function initCards() {
   const card = document.createElement('div'); card.className = 'card'; card.id = 'card'; card.setAttribute('role', 'tooltip'); document.body.append(card);
   let owner: HTMLElement | null = null, openT = 0, closeT = 0, warm = 0, loop = 0;
   const ext = (label: string, href: string) => `<a href="${href}" target="_blank" rel="noopener">${label} ↗</a>`;
+  const job = (k: string, host: string) => { const j = D.jobs.find((x: any) => x.card === k); return j ? `<p><b>${j.company}</b>, ${j.where}. ${j.role}, ${j.years}.</p><p>${j.line}</p><p class="acts">${ext(host, j.url)}</p>` : ''; };
   const RICH: Record<string, () => string> = {
     baze: () => `<div class="cv cv-baze" aria-hidden="true"><span class="bz">Baze</span><span class="pill">talking to <span class="mdl">GPT-6 Astra</span></span></div>
       <p><b>Baze</b>, formerly FactChat. One account for 80+ AI models (GPT, Claude, Gemini, Grok, DeepSeek, Sora, Kling) plus agents for research, slides, images and video. Built for universities, open to everyone since October 2026 from ₩5,900 a month.</p>
@@ -149,11 +150,11 @@ function initCards() {
     mindlogic: () => `<div class="cv cv-chat" aria-hidden="true"><span class="bb u">Can you explain this?</span><span class="bb a"><i></i><i></i><i></i></span></div>
       <p><b>Mindlogic</b>. An AI company in Seoul, founded in 2019. It makes Baze, used by 100+ universities and 750K people, and Informe, an AI agent for customer service. Revenue grew about 11× in 2026. I lead product there.</p>
       <p class="acts">${ext('mindlogic.ai', D.links.mindlogic)}</p>`,
-    mongodb: () => `<p><b>MongoDB</b>, New York. <span class="ph">[role, years]</span></p><p class="ph">[One line on what you did there.]</p><p class="acts">${ext('mongodb.com', 'https://www.mongodb.com')}</p>`,
-    deloitte: () => `<p><b>Deloitte Digital</b>, New York. <span class="ph">[role, years]</span></p><p class="ph">[One line on what you did there.]</p><p class="acts">${ext('deloittedigital.com', 'https://www.deloittedigital.com')}</p>`,
+    mongodb: () => job('mongodb', 'mongodb.com'),
+    deloitte: () => job('deloitte', 'deloittedigital.com'),
     email: () => `<p><b>${D.email}</b></p><p>Email me, or copy the address.</p><p class="acts"><a href="mailto:${D.email}">Write an email</a><button data-copy="${D.email}">Copy address</button></p>`,
     writing: () => `<p><b>Writing.</b> ${D.posts.length} pieces, all drafts for now.</p><ul class="cl">${D.posts.map((p: any) => `<li><a href="/writing/${p.s}/">${p.t}</a></li>`).join('')}</ul>`,
-    work: () => `<p><b>Where I've worked.</b> Newest first.</p><ul class="cl"><li>Mindlogic, Seoul</li><li>MongoDB, New York</li><li>Deloitte Digital, New York</li></ul>`,
+    work: () => `<p><b>Where I've worked.</b> Newest first.</p><ul class="cl">${D.jobs.map((j: any) => `<li>${j.company}, ${j.where} · ${j.years}</li>`).join('')}</ul>`,
   };
   const postCard = (slug: string) => { const p = D.posts.find((x: any) => x.s === slug); return p ? `<p><b>${p.t}</b></p><p>${p.x}</p><p class="faint">${p.l} · ${p.st}</p>` : ''; };
   const note = (el: HTMLElement) => {

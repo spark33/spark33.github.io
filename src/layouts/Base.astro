@@ -4,7 +4,7 @@
 import '../styles/global.css';
 import { getCollection } from 'astro:content';
 import Analytics from '../components/Analytics.astro';
-import { UNDER_CONSTRUCTION, PREVIEW_HASH, EMAIL, LINKS } from '../data/site';
+import { UNDER_CONSTRUCTION, PREVIEW_HASH, EMAIL, LINKS, EXPERIENCE } from '../data/site';
 
 interface Props { title?: string; description?: string; page?: 'home' | 'case' | 'post' | '404' }
 const { title = 'Sean Park', description = "Sean Park leads product at Mindlogic in Seoul, and writes about building AI products.", page = 'home' } = Astro.props;
@@ -81,7 +81,7 @@ const updated = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).for
     </footer>
   </main>
 
-  <script type="application/json" id="site-data" set:html={JSON.stringify({ posts, email: EMAIL, links: LINKS })} />
+  <script type="application/json" id="site-data" set:html={JSON.stringify({ posts, email: EMAIL, links: LINKS, jobs: EXPERIENCE.map(({ company, where, role, years, url, card, line }) => ({ company, where, role, years, url, card, line })) })} />
   <script>
     import { initSite } from '../scripts/site';
     initSite();
