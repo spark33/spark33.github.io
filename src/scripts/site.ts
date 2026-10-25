@@ -148,7 +148,7 @@ function initCards() {
     case: () => `<div class="cv cv-baze" aria-hidden="true"><span class="bz">Baze</span><span class="pill">talking to <span class="mdl">GPT-6 Astra</span></span></div>
       <p><b>The Baze case study.</b> The bet, the hardest call, and the result.</p>`,
     mindlogic: () => `<div class="cv cv-chat" aria-hidden="true"><span class="bb u">Can you explain this?</span><span class="bb a"><i></i><i></i><i></i></span></div>
-      <p><b>Mindlogic</b>. An AI company in Seoul, founded in 2019. It makes Baze, used by 100+ universities and 750K people, and Informe, an AI agent for customer service. Revenue grew about 11× in 2026. I lead product there.</p>
+      <p><b>Mindlogic</b>. An AI company in Seoul, founded in 2019. It makes Baze, used by 100+ universities and 750K people, and Informe, an AI agent for customer service. I lead product there.</p>
       <p class="acts">${ext('mindlogic.ai', D.links.mindlogic)}</p>`,
     mongodb: () => job('mongodb', 'mongodb.com'),
     deloitte: () => job('deloitte', 'deloittedigital.com'),
