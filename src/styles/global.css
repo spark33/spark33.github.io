@@ -120,6 +120,7 @@ main{margin-left:var(--rail);padding-right:48px}
 @media (hover:hover) and (pointer:fine){.tl li a:hover{background:var(--tint)}}
 .sec{font-size:18px;font-weight:500;margin-bottom:12px;scroll-margin-top:36px}
 .takes .sec{margin-bottom:0}
+#now{margin-top:96px} /* same gap as Writing → Where I've worked (the table keeps its own 24px) */
 /* ── writing: Living titles. Each claim acts out its own argument when you point at it ── */
 /* the performances (.on = performing) */
 .lt{font-weight:500;letter-spacing:-.015em;transition:color var(--t-move) var(--ease-out)}
@@ -150,8 +151,8 @@ main{margin-left:var(--rail);padding-right:48px}
 /* one claim per row */
 .livel{list-style:none}
 .livel li{border-bottom:1px solid var(--rule)}
-.livel a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 24px;align-items:baseline;padding:26px 0 16px;text-decoration:none}
-.livel .lt{display:block;width:fit-content;font-size:clamp(28px,3.4vw,46px);line-height:1.1;text-wrap:balance}
+.livel a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 24px;align-items:baseline;padding:22px 0 14px;text-decoration:none}
+.livel .lt{display:block;width:fit-content;font-size:clamp(24px,2.5vw,34px);line-height:1.15;text-wrap:balance}
 /* the row opens to show what the piece says */
 .livel .xp{grid-column:1/-1;display:grid;grid-template-rows:0fr;transition:grid-template-rows var(--t-move) var(--ease-out)}
 .livel .xpi{overflow:hidden;min-height:0}
