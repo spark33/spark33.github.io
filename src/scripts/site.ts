@@ -95,7 +95,7 @@ export function initSite() {
     const a = (e.target as HTMLElement).closest('a[data-back]'); if (!a || history.length < 2) return;
     let fromHere = inSite; try { fromHere ||= new URL(document.referrer).origin === location.origin; } catch (err) {}
     if (fromHere) { e.preventDefault(); history.back(); }
-  });
+  }, true); // capture: claim the click before the router starts its own navigation (two at once = a skipped transition)
 
   const cards = initCards();
 

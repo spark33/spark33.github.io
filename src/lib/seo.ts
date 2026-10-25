@@ -57,12 +57,12 @@ export const caseLd = () => graph(baze, {
   author: { '@id': ID.sean }, publisher: { '@id': ID.sean }, isPartOf: { '@id': ID.site }, image: OG_IMAGE.url, inLanguage: 'en',
 }, crumbs([['Sean Park', '/'], ['Work', '/#now'], ['Baze', '/work/baze/']]));
 
-export const postLd = (p: CollectionEntry<'writing'>, words: number) => {
+export const postLd = (p: CollectionEntry<'writing'>, words: number, mins: number) => {
   const url = abs(`/writing/${p.id}/`), d = p.data;
   return graph({
     '@type': 'BlogPosting', '@id': url + '#article', url, mainEntityOfPage: url,
     headline: d.title, description: d.dek, ...(d.tldr && !d.tldr.startsWith('Placeholder') && { abstract: d.tldr }),
-    articleSection: d.lens, keywords: d.keywords, wordCount: words, inLanguage: 'en',
+    articleSection: d.lens, keywords: d.keywords, wordCount: words, timeRequired: `PT${mins}M`, inLanguage: 'en',
     creativeWorkStatus: d.published ? 'Published' : 'Draft',
     ...(d.published && { datePublished: iso(d.published) }), ...((d.updated || d.published) && { dateModified: iso(d.updated || d.published) }),
     author: { '@id': ID.sean }, publisher: { '@id': ID.sean }, isPartOf: { '@id': ID.site }, image: OG_IMAGE.url,

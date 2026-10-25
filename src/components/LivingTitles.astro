@@ -1,26 +1,20 @@
 ---
 // Living titles: each claim acts out its own argument when you point at it, and its row opens
 // to say what the piece is about. Touch: the first tap opens the row, the second opens the piece.
+// On a piece, `after` lists the others, starting with the one after it.
 import { getCollection } from 'astro:content';
-const posts = (await getCollection('writing')).sort((a, b) => a.data.order - b.data.order);
-const SPARK = 'M8 1c.5 3.2 1.8 5.5 7 7-5.2 1.5-6.5 3.8-7 7-.5-3.2-1.8-5.5-7-7 5.2-1.5 6.5-3.8 7-7z';
-const words = (t: string) => t.split(' ').map((w) => '<span class="w">' + w + '</span>').join(' ');
-// How each title performs. Slugs without an entry just stay still.
-const LIVE: Record<string, string> = {
-  attention: words('Attention is the new bottleneck'),
-  sparkle: `The <span class="lspk"><svg viewBox="0 0 16 16"><path d="${SPARK}"/></svg><span class="guess"></span></span> icon was a shrug`,
-  'data-model': `The <span class="ent" data-e="a">use cases</span> are in the <span class="ent" data-e="b">data model</span>`,
-  chemistry: 'Team <span class="chem">' + [...'chemistry'].map((c) => '<span class="ch">' + c + '</span>').join('') + '</span> is something you can design',
-  sola: `I built an AI chief-of-staff that talks <span class="once">once a day<span class="bub"></span></span>`,
-  'this-site': `Paper, grain and a m<span class="mo" data-moon></span><span class="mo" data-moon></span>n`,
-};
+import { liveTitle } from '../lib/living';
+interface Props { after?: string }
+const { after } = Astro.props;
+let posts = (await getCollection('writing')).sort((a, b) => a.data.order - b.data.order);
+if (after) { const i = posts.findIndex((p) => p.id === after); posts = [...posts.slice(i + 1), ...posts.slice(0, i)]; }
 ---
 <ul class="livel">
   {posts.map((p) => (
     <li class="cl lhost" data-s={p.id}>
       <a href={`/writing/${p.id}/`} aria-label={`${p.data.title}. ${p.data.lens}, ${p.data.status}`}>
         <span class="sr-only">{p.data.title}</span>{/* the plain claim, for crawlers: the performance below splits or swaps its words */}
-        <span class="lt" aria-hidden="true" set:html={LIVE[p.id] ?? p.data.title} />
+        <span class="lt" aria-hidden="true" set:html={liveTitle(p.id, p.data.title)} />
         <span class="m num" aria-hidden="true">{p.data.lens} · {p.data.status}</span>
         <span class="xp"><span class="xpi"><span class="xbox"><span class="xd">{p.data.dek}</span><span class="xr">Read the draft</span></span></span></span>
       </a>
