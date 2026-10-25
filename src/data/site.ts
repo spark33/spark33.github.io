@@ -15,6 +15,26 @@ export const CF_ANALYTICS_TOKEN = '';
 export const GA_ID = '';
 
 export const EMAIL = 'hello@example.com'; // TODO(Sean): real address
+const EMAIL_IS_REAL = !EMAIL.endsWith('@example.com');
+
+// Who this site is about, for search engines and AI answer engines (JSON-LD, llms.txt, feeds).
+// "Sean Park" is a common name: the alternate names, employer and sameAs links are what tell
+// Google/ChatGPT/Perplexity which Sean Park this is. Only put facts here that are public.
+export const PERSON = {
+  name: 'Sean Park',
+  alternateName: ['Sanghyun Park', '박상현'],
+  jobTitle: 'Product & Frontend Lead',
+  employer: { name: 'Mindlogic', url: 'https://mindlogic.ai' },
+  city: 'Seoul', country: 'KR',
+  alumniOf: { name: 'Carnegie Mellon University', url: 'https://www.cmu.edu' },
+  languages: ['English', 'Korean'],
+  description: 'Sean Park is a product lead at Mindlogic in Seoul, leading Baze (formerly FactChat), one account for 80+ AI models. Sean owns the UX and product direction, still writes much of the frontend, and writes about building AI products.',
+  knowsAbout: ['AI product management', 'Product design', 'UX design', 'Human-computer interaction', 'Frontend engineering', 'Design systems', 'React', 'Next.js', 'LLM products', 'Multi-model AI platforms'],
+  // Profiles that are definitely Sean's (add any others here).
+  sameAs: ['https://www.linkedin.com/in/spark6/', 'https://github.com/spark33'],
+  email: EMAIL_IS_REAL ? EMAIL : undefined,
+};
+export const SITE_DESCRIPTION = 'Sean Park leads product for Baze at Mindlogic in Seoul, and writes about building AI products: attention, trust, data models and teams.';
 
 export const LINKS = {
   mindlogic: 'https://mindlogic.ai',

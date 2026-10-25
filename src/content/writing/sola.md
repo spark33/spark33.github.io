@@ -3,6 +3,7 @@ title: I built an AI chief-of-staff that talks once a day
 dek: sola runs my calendar, inbox and check-ins from Slack. Here's a day of it.
 lens: Building
 order: 5
+keywords: ["AI chief of staff", "personal AI agent in Slack", "one message a day"]
 specimen: agent
 ---
 

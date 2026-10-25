@@ -5,9 +5,13 @@ import Base from '../layouts/Base.astro';
 import LivingTitles from '../components/LivingTitles.astro';
 import BazeMock from '../components/BazeMock.astro';
 import { EXPERIENCE, EDUCATION, BAZE, LINKS, EMAIL } from '../data/site';
+import { getCollection } from 'astro:content';
+import { homeLd } from '../lib/seo';
+const posts = await getCollection('writing');
 const ext = { target: '_blank', rel: 'noopener' };
 ---
-<Base page="home">
+<Base page="home" type="profile" jsonLd={homeLd(posts)}>
+  <h1 class="sr-only">Sean Park, product lead at Mindlogic in Seoul</h1>
   <section class="lede-wrap">
     <div class="lede">
       <p>Hi, I'm Sean. I lead product at <a href={LINKS.mindlogic} {...ext} data-card="mindlogic">Mindlogic</a> in Seoul, where it's <span class="now num" data-seoul-now></span>.</p>

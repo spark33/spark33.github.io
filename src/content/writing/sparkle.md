@@ -3,6 +3,7 @@ title: The sparkle icon was a shrug
 dek: Nobody could say what AI features did, so we gave them a sparkle. The ones that survived either did everything, or just said what they did.
 lens: Design
 order: 2
+keywords: ["sparkle icon AI UX", "AI feature discoverability", "feedforward in AI interfaces"]
 specimen: sparkle
 tldr: "Placeholder: designing around AI as a black box, and which feedforward we can drop."
 ---

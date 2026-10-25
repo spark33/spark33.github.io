@@ -19,6 +19,7 @@ const LIVE: Record<string, string> = {
   {posts.map((p) => (
     <li class="cl lhost" data-s={p.id}>
       <a href={`/writing/${p.id}/`} aria-label={`${p.data.title}. ${p.data.lens}, ${p.data.status}`}>
+        <span class="sr-only">{p.data.title}</span>{/* the plain claim, for crawlers: the performance below splits or swaps its words */}
         <span class="lt" aria-hidden="true" set:html={LIVE[p.id] ?? p.data.title} />
         <span class="m num" aria-hidden="true">{p.data.lens} · {p.data.status}</span>
         <span class="xp"><span class="xpi"><span class="xbox"><span class="xd">{p.data.dek}</span><span class="xr">Read the draft</span></span></span></span>

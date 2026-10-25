@@ -4,11 +4,12 @@ import Base from '../../layouts/Base.astro';
 import BazeMock from '../../components/BazeMock.astro';
 import { getCollection } from 'astro:content';
 import { BAZE, LINKS } from '../../data/site';
+import { caseLd } from '../../lib/seo';
 const related = (await getCollection('writing')).filter((p) => p.data.project === 'baze');
 const arrow = '<svg viewBox="0 0 22 22" aria-hidden="true"><path d="M4 11h13M12 6l5 5-5 5"/></svg>';
 const ph = (s: string) => s.startsWith('Placeholder') || s.startsWith('[');
 ---
-<Base page="case" title="Baze · Sean Park" description={BAZE.blurb}>
+<Base page="case" type="article" section="Work" title="Baze (formerly FactChat): case study · Sean Park" description={BAZE.blurb} jsonLd={caseLd()}>
   <article class="cs">
     <nav class="csnav num"><a href="/#now" data-back data-ff="Back to where you were">← Back</a></nav>
     <h1 style="view-transition-name:baze-title" data-where="Baze" data-desc="Case study">{BAZE.title}</h1>

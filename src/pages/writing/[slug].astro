@@ -5,6 +5,7 @@ import SparkleDoors from '../../components/SparkleDoors.astro';
 import AgentDay from '../../components/AgentDay.astro';
 import SiteSystem from '../../components/SiteSystem.astro';
 import { getCollection, render } from 'astro:content';
+import { postLd, isPublished } from '../../lib/seo';
 
 export async function getStaticPaths() {
   const posts = (await getCollection('writing')).sort((a, b) => a.data.order - b.data.order);
@@ -13,15 +14,18 @@ export async function getStaticPaths() {
 const { post, others } = Astro.props;
 const { Content, headings } = await render(post);
 const d = post.data;
+const words = (post.body ?? '').split(/\s+/).filter(Boolean).length;
 const SPEC = { sparkle: SparkleDoors, agent: AgentDay, system: SiteSystem } as const;
 const Spec = d.specimen ? SPEC[d.specimen] : null;
 ---
-<Base page="post" title={`${d.title} · Sean Park`} description={d.dek}>
+<Base page="post" type="article" title={`${d.title} · Sean Park`} description={d.dek} section={d.lens} keywords={d.keywords}
+  published={d.published} updated={d.updated} noindex={!isPublished(post)} jsonLd={postLd(post, words)}>
   <article class="post">
     <ol class="toc">{headings.filter((h) => h.depth === 2).map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol>
     <a class="back" href="/#writing" data-back data-ff="Back to the writing">← Writing</a>
-    <div class="meta num" data-where={d.title} data-desc={`${d.status} · ${d.lens}`}>{d.status} · {d.lens}</div>
+    <div class="meta num" data-where={d.title} data-desc={`${d.status} · ${d.lens}`}>{d.status} · {d.lens}{d.published && <> · <time datetime={d.published.toISOString().slice(0, 10)}>{d.published.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}</time></>}</div>
     <h1>{d.title}</h1>
+    <p class="sr-only">By <a href="/" rel="author">Sean Park</a></p>
     <p class="dek">{d.dek}</p>
     {d.tldr && <p class="tldr"><b>TL;DR</b><span class="ph">{d.tldr}</span></p>}
     {d.project === 'baze' && <aside class="sn">Where I tried this: <a href="/work/baze/" data-card="case">Baze</a>.</aside>}

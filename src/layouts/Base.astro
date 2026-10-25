@@ -4,14 +4,22 @@
 import '../styles/global.css';
 import { getCollection } from 'astro:content';
 import Analytics from '../components/Analytics.astro';
-import { UNDER_CONSTRUCTION, PREVIEW_HASH, EMAIL, LINKS, EXPERIENCE } from '../data/site';
+import { UNDER_CONSTRUCTION, PREVIEW_HASH, EMAIL, LINKS, EXPERIENCE, PERSON, SITE_DESCRIPTION } from '../data/site';
+import { OG_IMAGE } from '../lib/seo';
 
-interface Props { title?: string; description?: string; page?: 'home' | 'case' | 'post' | '404' }
-const { title = 'Sean Park', description = "Sean Park leads product at Mindlogic in Seoul, and writes about building AI products.", page = 'home' } = Astro.props;
+interface Props {
+  title?: string; description?: string; page?: 'home' | 'case' | 'post' | '404';
+  type?: 'website' | 'profile' | 'article'; noindex?: boolean; jsonLd?: object;
+  published?: Date; updated?: Date; section?: string; keywords?: string[];
+}
+const { title = 'Sean Park · Product lead at Mindlogic, Seoul', description = SITE_DESCRIPTION, page = 'home',
+  type = 'website', noindex = false, jsonLd, published, updated, section, keywords = [] } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
+// Gated pages and drafts stay out of search; everything else invites crawlers to show rich snippets.
+const robots = UNDER_CONSTRUCTION || noindex ? 'noindex, follow' : 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1';
 const posts = (await getCollection('writing')).sort((a, b) => a.data.order - b.data.order)
   .map((p) => ({ s: p.id, t: p.data.title, x: p.data.dek, l: p.data.lens, st: p.data.status }));
-const updated = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).format(new Date()).replaceAll('-', '.');
+const built = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).format(new Date());
 ---
 <!doctype html>
 <html lang="en">
@@ -20,15 +28,36 @@ const updated = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).for
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{title}</title>
   <meta name="description" content={description} />
-  <link rel="canonical" href={canonical} />
+  {page !== '404' && <link rel="canonical" href={canonical} />}
+  <meta name="robots" content={robots} />
+  <meta name="author" content={PERSON.name} />
+  {keywords.length > 0 && <meta name="keywords" content={keywords.join(', ')} />}
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  {UNDER_CONSTRUCTION && <meta name="robots" content="noindex" />}
+  <link rel="alternate" type="application/rss+xml" title="Sean Park · Writing" href="/rss.xml" />
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <meta name="theme-color" content="#eeeadf" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#12110f" media="(prefers-color-scheme: dark)" />
+  <meta property="og:site_name" content={PERSON.name} />
+  <meta property="og:locale" content="en_US" />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content={canonical} />
+  <meta property="og:type" content={type} />
+  {page !== '404' && <meta property="og:url" content={canonical} />}
+  <meta property="og:image" content={OG_IMAGE.url} />
+  <meta property="og:image:width" content={String(OG_IMAGE.width)} />
+  <meta property="og:image:height" content={String(OG_IMAGE.height)} />
+  <meta property="og:image:alt" content={OG_IMAGE.alt} />
+  {type === 'profile' && <><meta property="profile:first_name" content="Sean" /><meta property="profile:last_name" content="Park" /></>}
+  {type === 'article' && <meta property="article:author" content={new URL('/', Astro.site).href} />}
+  {type === 'article' && section && <meta property="article:section" content={section} />}
+  {type === 'article' && published && <meta property="article:published_time" content={published.toISOString()} />}
+  {type === 'article' && (updated || published) && <meta property="article:modified_time" content={(updated || published)!.toISOString()} />}
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={OG_IMAGE.url} />
+  <meta name="twitter:image:alt" content={OG_IMAGE.alt} />
+  {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
   <script is:inline>(function(){var s=localStorage.getItem('theme');document.documentElement.dataset.theme=s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')})();</script>
   {/* Moonrise: the first page of a visit waits on paper while a moon waxes to tonight's phase, then the moon
       settles into the rail and the page inks in. Once per session; ?intro=1 replays it, ?intro=0 skips it.
@@ -76,7 +105,7 @@ const updated = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).for
   <main>
     <slot />
     <footer class="colophon">
-      <p>Built by hand in Seoul. Last updated <span class="num">{updated}</span>.</p>
+      <p>Built by hand in Seoul. Last updated <time class="num" datetime={built}>{built.replaceAll('-', '.')}</time>.</p>
       <div class="dm num"><span id="dmoon"></span><span id="clock"></span></div>
     </footer>
   </main>

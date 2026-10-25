@@ -3,6 +3,7 @@ title: Attention is the new bottleneck
 dek: AI made the work fast. Now the slow part is how much a person can review and decide in a day.
 lens: Product
 order: 1
+keywords: ["human attention in AI workflows", "AI productivity bottleneck", "human review of AI output"]
 tldr: "Placeholder: a framework for human attention capacity, and how to shape AI workflows around it."
 ---
 

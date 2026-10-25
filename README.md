@@ -22,3 +22,15 @@ To publish: set `UNDER_CONSTRUCTION = false`.
 - `src/scripts/site.ts`: theme, the moon, the rail's section line, hover cards
 - `src/styles/global.css`: one stylesheet; motion tokens at the top
 - `public/v6-preview/`: the old v6 design, kept for reference
+
+## Search and AI answers (SEO / AEO / GEO)
+
+- `src/lib/seo.ts`: who's indexable, and the JSON-LD graph (Person, WebSite, Mindlogic, Baze,
+  ProfilePage / Article / BlogPosting, breadcrumbs). Facts about Sean live in `PERSON` in `src/data/site.ts`.
+- `src/lib/llms.ts`: `/llms.txt`, `/llms-full.txt` and `/writing/<slug>.md`, the site in plain text for AI engines.
+- `/robots.txt` (all crawlers welcome, AI bots named), `/sitemap.xml`, `/rss.xml`: generated in `src/pages/`.
+- A piece goes public when it gets `published: YYYY-MM-DD` in its frontmatter. Until then it's a
+  draft: listed on the home page, but noindex and left out of the sitemap, feed and llms.txt.
+- While `UNDER_CONSTRUCTION` is true every page is noindex except `/under-construction/`, which carries
+  the Person entity so a search for Sean already finds the right one. At launch it flips to noindex.
+- `public/og.png` (1200×630 share image) is a Chrome screenshot of `scripts/og.html`.
