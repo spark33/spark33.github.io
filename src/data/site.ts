@@ -23,8 +23,8 @@ export const LINKS = {
 
 // Where I've worked, newest first. TODO(Sean): roles, years, one line each.
 export const EXPERIENCE = [
-  { company: 'Mindlogic', url: LINKS.mindlogic, card: 'mindlogic', where: 'Seoul', role: 'Product lead', years: '[year]–now',
-    did: '<a href="/work/baze/" data-card="case" style="view-transition-name:baze-title">Baze</a> <span class="faint">(formerly FactChat)</span>: UX, direction, architecture, frontend. 750K users, 100 universities.' },
+  { company: 'Mindlogic', url: LINKS.mindlogic, card: 'mindlogic', where: 'Seoul', role: 'Product lead', years: '2024–now',
+    did: '<a href="/work/baze/" data-card="case" style="view-transition-name:baze-title">Baze</a> <span class="faint">(formerly FactChat)</span>: UX, direction, architecture, frontend. Grew with it from 28 to 100+ universities and 750K users; 2,500+ PRs.' },
   { company: 'MongoDB', url: 'https://www.mongodb.com', card: 'mongodb', where: 'New York', role: '[role]', years: '[years]', did: '<span class="ph">[One line: what you did there]</span>' },
   { company: 'Deloitte Digital', url: 'https://www.deloittedigital.com', card: 'deloitte', where: 'New York', role: '[role]', years: '[years]', did: '<span class="ph">[One line: what you did there]</span>' },
 ];
@@ -35,14 +35,14 @@ export const BAZE = {
   aka: 'formerly FactChat',
   role: 'Product lead',
   team: 'Placeholder',
-  timeline: '20xx–',
-  stack: 'Placeholder',
-  outcome: '750K users · 100 universities',
-  blurb: 'One account, about 80 AI models. We built it for universities as FactChat, then renamed it Baze in October 2026 and opened it up to everyone.',
+  timeline: '2024–',
+  stack: 'Next.js · logician-ui',
+  outcome: '750K users · 100+ universities',
+  blurb: 'One account for 80+ AI models, plus agents for research, slides, images and video. We built it for universities as FactChat, then renamed it Baze in October 2026 and opened it to everyone from ₩5,900 a month.',
   tldr: 'Placeholder: the product, your role and the result, in two lines.',
   bet: 'Placeholder: the bet. Why one account for every model, and why universities first?',
   call: 'Placeholder: the hardest call. The rename is a candidate: FactChat for institutions becoming Baze for everyone at ₩5,900 a month.',
-  result: 'Placeholder: the result, in numbers you can share.',
+  result: 'From 28 universities in October 2025 to more than 100 a year later, and 600+ institutions in all. 750,000 people have used it. In September 2026 they ran about 48 times as many tokens as a year before, and every university that rolled it out campus-wide renewed.',
 };
 
 // sola's illustrative day (the agent piece). Replace with a real, redacted one before publishing.

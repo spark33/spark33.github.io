@@ -141,13 +141,13 @@ function initCards() {
   let owner: HTMLElement | null = null, openT = 0, closeT = 0, warm = 0, loop = 0;
   const ext = (label: string, href: string) => `<a href="${href}" target="_blank" rel="noopener">${label} ↗</a>`;
   const RICH: Record<string, () => string> = {
-    baze: () => `<div class="cv cv-baze" aria-hidden="true"><span class="bz">Baze</span><span class="pill">talking to <span class="mdl">GPT-5</span></span></div>
-      <p><b>Baze</b>, formerly FactChat. One account for about 80 AI models, used across 100 universities and open to everyone since October 2026.</p>
+    baze: () => `<div class="cv cv-baze" aria-hidden="true"><span class="bz">Baze</span><span class="pill">talking to <span class="mdl">GPT-6 Astra</span></span></div>
+      <p><b>Baze</b>, formerly FactChat. One account for 80+ AI models (GPT, Claude, Gemini, Grok, DeepSeek, Sora, Kling) plus agents for research, slides, images and video. Built for universities, open to everyone since October 2026 from ₩5,900 a month.</p>
       <p class="acts">${ext('baze.co', D.links.baze)}<a href="/work/baze/">The case study →</a></p>`,
-    case: () => `<div class="cv cv-baze" aria-hidden="true"><span class="bz">Baze</span><span class="pill">talking to <span class="mdl">GPT-5</span></span></div>
+    case: () => `<div class="cv cv-baze" aria-hidden="true"><span class="bz">Baze</span><span class="pill">talking to <span class="mdl">GPT-6 Astra</span></span></div>
       <p><b>The Baze case study.</b> The bet, the hardest call, and the result.</p>`,
     mindlogic: () => `<div class="cv cv-chat" aria-hidden="true"><span class="bb u">Can you explain this?</span><span class="bb a"><i></i><i></i><i></i></span></div>
-      <p><b>Mindlogic</b>. An AI startup in Seoul, founded in 2019. It makes Baze, and Persona chatbots. I lead product there.</p>
+      <p><b>Mindlogic</b>. An AI company in Seoul, founded in 2019. It makes Baze, used by 100+ universities and 750K people, and Informe, an AI agent for customer service. Revenue grew about 11× in 2026. I lead product there.</p>
       <p class="acts">${ext('mindlogic.ai', D.links.mindlogic)}</p>`,
     mongodb: () => `<p><b>MongoDB</b>, New York. <span class="ph">[role, years]</span></p><p class="ph">[One line on what you did there.]</p><p class="acts">${ext('mongodb.com', 'https://www.mongodb.com')}</p>`,
     deloitte: () => `<p><b>Deloitte Digital</b>, New York. <span class="ph">[role, years]</span></p><p class="ph">[One line on what you did there.]</p><p class="acts">${ext('deloittedigital.com', 'https://www.deloittedigital.com')}</p>`,
@@ -179,7 +179,7 @@ function initCards() {
   };
   const animate = () => { // little loops inside the rich cards
     clearInterval(loop); const mdl = $('.mdl', card); if (!mdl || RM()) return;
-    const M = ['GPT-5', 'Claude', 'Gemini', 'Llama', 'DeepSeek', 'Seedance']; let i = 0;
+    const M = ['GPT-6 Astra', 'Claude Opus 5', 'Gemini 3.1 Pro', 'Grok 4.6', 'DeepSeek V4 Pro', 'Kling 3.0']; let i = 0;
     loop = window.setInterval(() => { mdl.classList.add('out'); setTimeout(() => { mdl.textContent = M[i = (i + 1) % M.length]; mdl.classList.remove('out'); }, T.press); }, 1100);
   };
   const open = (el: HTMLElement) => {

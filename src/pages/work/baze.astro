@@ -23,11 +23,11 @@ const ph = (s: string) => s.startsWith('Placeholder') || s.startsWith('[');
     </dl>
     <div class="body">
       <p class="tldr"><b>TL;DR</b><span class="ph">{BAZE.tldr}</span></p>
-      <h2 data-where="The bet" data-desc="Baze case study">The bet</h2><p class="ph">{BAZE.bet}</p>
+      <h2 data-where="The bet" data-desc="Baze case study">The bet</h2><p class={ph(BAZE.bet) ? 'ph' : ''}>{BAZE.bet}</p>
       {related.length > 0 && <p class="argued">More in {related.map((p, i) => <>{i > 0 && ' and '}<a href={`/writing/${p.id}/`}>{p.data.title}</a></>)}.</p>}
       <figure class="fig"><BazeMock /><figcaption>The rename, performed. A schematic until the real screens are in.</figcaption></figure>
-      <h2 data-where="The call" data-desc="Baze case study">The call</h2><p class="ph">{BAZE.call}</p>
-      <h2 data-where="The result" data-desc="Baze case study">The result</h2><p class="ph">{BAZE.result}</p>
+      <h2 data-where="The call" data-desc="Baze case study">The call</h2><p class={ph(BAZE.call) ? 'ph' : ''}>{BAZE.call}</p>
+      <h2 data-where="The result" data-desc="Baze case study">The result</h2><p class={ph(BAZE.result) ? 'ph' : ''}>{BAZE.result} <span class="faint">Figures from Mindlogic's public releases, October 2026.</span></p>
       <a class="nextp" href="/#writing"><small>Next</small><b>The writing<Fragment set:html={arrow} /></b></a>
     </div>
   </article>
