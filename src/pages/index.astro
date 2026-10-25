@@ -10,7 +10,7 @@
 // starting point), then remove src/pages/under-construction.astro.
 const base = import.meta.env.BASE_URL; // '/website/'
 const target = `${base}under-construction`;
-const canonical = `https://spark33.github.io${target}`;
+const canonical = new URL(target, Astro.site).href;
 ---
 <!doctype html>
 <html lang="en">

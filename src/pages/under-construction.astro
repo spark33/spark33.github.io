@@ -3,7 +3,7 @@
 // design language (Newsreader serif, 한지-paper palette, the moon motif) so the
 // placeholder already feels like Sean's site rather than a generic splash.
 const year = new Date().getFullYear();
-const home = `https://spark33.github.io${import.meta.env.BASE_URL}`;
+const home = new URL(import.meta.env.BASE_URL, Astro.site).href;
 ---
 <!doctype html>
 <html lang="en">
