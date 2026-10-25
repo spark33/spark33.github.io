@@ -1,7 +1,8 @@
 // Living titles: see components/LivingTitles.astro
-import { T, RM, phaseNow, moonPath } from './site';
-const list = document.querySelector('.livel') as HTMLElement;
-if (list) {
+import { T, RM, phaseNow, moonPath, everyPage, onLeave } from './site';
+everyPage(() => {
+  const list = document.querySelector('.livel') as HTMLElement;
+  if (!list) return;
   // tonight's moon in the o's of "moon"
   const p = Math.min(Math.max(phaseNow(), .001), .999);
   list.querySelectorAll('[data-moon]').forEach((m) => (m.innerHTML = `<svg viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.5"/><path d="${moonPath(p, 7.5, 9)}"/></svg>`));
@@ -64,4 +65,5 @@ if (list) {
     li.querySelector('a').addEventListener('click', (e: Event) => { const t = li._pt && li._pt !== 'mouse'; li._pt = null; if (t && !li.classList.contains('on')) { e.preventDefault(); set(li); } });
   });
   list.addEventListener('pointerleave', (e) => { if ((e as PointerEvent).pointerType === 'mouse') set(null); });
-}
+  onLeave(() => { set(null); cancelAnimationFrame(bleedRaf); });
+});

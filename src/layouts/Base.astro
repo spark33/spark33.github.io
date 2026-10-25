@@ -2,6 +2,7 @@
 // The frame every page shares: head, the preview gate, the rail (moon + name + where you are),
 // the footer, and the site-wide behaviour (theme, moon, rail label, hover cards).
 import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
 import { getCollection } from 'astro:content';
 import Analytics from '../components/Analytics.astro';
 import { UNDER_CONSTRUCTION, PREVIEW_HASH, EMAIL, LINKS, EXPERIENCE, PERSON, SITE_DESCRIPTION } from '../data/site';
@@ -22,7 +23,7 @@ const posts = (await getCollection('writing')).sort((a, b) => a.data.order - b.d
 const built = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).format(new Date());
 ---
 <!doctype html>
-<html lang="en">
+<html lang="en" transition:animate="initial">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -83,19 +84,21 @@ const built = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).forma
     </>
   )}
   <Analytics />
+  {/* Pages swap in place with a crossfade (no reloads); the rail stays put. Timing lives in global.css. */}
+  <ClientRouter />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet" />
 </head>
-<body data-page={page}>
+<body data-page={page} data-intro={page === 'home' ? `Product lead at <a href="${LINKS.mindlogic}" target="_blank" rel="noopener" data-card="mindlogic">Mindlogic</a>, Seoul.` : ''}>
   <svg class="grain" aria-hidden="true"><filter id="hanji"><feTurbulence type="fractalNoise" baseFrequency="0.005 0.14" numOctaves="3" seed="7"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 -1.2 1"/></filter><filter id="fine"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 -1.5 1"/></filter><rect width="100%" height="100%" filter="url(#hanji)"/><rect width="100%" height="100%" filter="url(#fine)" opacity=".5"/></svg>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="bleed" x="-5%" y="-20%" width="110%" height="140%"><feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="0" id="bleedD" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
 
   <div class="loader" id="loader" aria-hidden="true"><svg viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.5"/><path/></svg></div>
 
-  <aside class="rail">
+  <aside class="rail" transition:persist="rail">
     <div class="mast"><button class="moon" id="moon" aria-label="Switch theme"><svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.5"/><path id="mp"/></svg></button><a class="me" href="/" data-ff="Back to the top">Sean Park</a></div>
-    <div class="where" id="where" aria-live="off" data-intro={page === 'home' ? `Product lead at <a href="${LINKS.mindlogic}" target="_blank" rel="noopener" data-card="mindlogic">Mindlogic</a>, Seoul.` : ''}></div>
+    <div class="where" id="where" aria-live="off"></div>
     <div class="bottom">
       <span id="pct" class="num pct"></span>
       <button class="copy" data-copy={EMAIL} data-card="email">{EMAIL}</button>

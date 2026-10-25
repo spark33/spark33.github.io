@@ -16,8 +16,8 @@ const SPARK = 'M8 1c.5 3.2 1.8 5.5 7 7-5.2 1.5-6.5 3.8-7 7-.5-3.2-1.8-5.5-7-7 5.
 </figure>
 
 <script>
-  import { RM } from '../scripts/site';
-  document.querySelectorAll<HTMLElement>('.specimen.doors').forEach((fig) => {
+  import { RM, everyPage, onLeave } from '../scripts/site';
+  everyPage(() => document.querySelectorAll<HTMLElement>('.specimen.doors').forEach((fig) => {
     const spk = fig.querySelector<HTMLElement>('.spk')!, pop = fig.querySelector<HTMLElement>('.pop')!, txt = fig.querySelector<HTMLButtonElement>('.txt')!, out = fig.querySelector<HTMLElement>('.out')!;
     let run = 0, hint = 0; const wait = (ms: number) => new Promise((r) => setTimeout(r, RM() ? 0 : ms));
     spk.onclick = () => {
@@ -31,5 +31,6 @@ const SPARK = 'M8 1c.5 3.2 1.8 5.5 7 7-5.2 1.5-6.5 3.8-7 7-.5-3.2-1.8-5.5-7-7 5.
       txt.textContent = 'Summarized';
     };
     fig.querySelector<HTMLElement>('.sp-reset')!.onclick = () => { run++; pop.hidden = true; spk.setAttribute('aria-expanded', 'false'); clearTimeout(hint); pop.querySelector('.hint')?.remove(); out.textContent = ''; txt.disabled = false; txt.textContent = 'Summarize 12 unread'; };
-  });
+    onLeave(() => { run++; clearTimeout(hint); });
+  }));
 </script>

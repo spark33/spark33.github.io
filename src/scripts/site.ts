@@ -16,9 +16,26 @@ export function moonPath(p: number, r: number, c: number) {
 }
 export const data = () => JSON.parse($('#site-data')!.textContent || '{}');
 
+// ── pages swap in place (Astro's ClientRouter), so nothing reloads. The document lives on:
+// set things up once, and redo the per-page parts with everyPage(); onLeave() tidies up before the swap.
+const leaving: (() => void)[] = [];
+let loaded = false;
+export const onLeave = (f: () => void) => { leaving.push(f); };
+// a script first loaded by a later page can arrive after that page's astro:page-load, so it also runs right away
+export const everyPage = (f: () => void) => { document.addEventListener('astro:page-load', f); if (loaded) f(); };
+document.addEventListener('astro:page-load', () => { loaded = true; document.documentElement.style.scrollBehavior = ''; });
+document.addEventListener('astro:before-swap', (e: any) => {
+  leaving.splice(0).forEach((f) => f()); loaded = false;
+  const h = e.newDocument.documentElement; h.dataset.theme = document.documentElement.dataset.theme;
+  h.style.scrollBehavior = 'auto'; // jump to the new page's top (or #hash) instead of smooth-scrolling there
+});
+
+
+let started = false;
 export function initSite() {
-  const page = document.body.dataset.page;
-  const where = $('#where')!, pct = $('#pct')!;
+  if (started) return; started = true;
+  const where = $('#where')!, pct = $('#pct')!; // in the rail, which stays put across pages
+  let page = '', intro = '', marks: HTMLElement[] = [];
 
   // ── the rail: which section you're in, and a line about it (elements carry data-where / data-desc)
   let current = '', lastY = 0;
@@ -30,12 +47,11 @@ export function initSite() {
     n.innerHTML = `${label ? `<b>${label}</b>` : ''}${desc ? `<span>${desc}</span>` : ''}`; where.append(n);
     requestAnimationFrame(() => requestAnimationFrame(() => (n.className = 'w')));
   };
-  const marks = $$('[data-where]');
   const tickWhere = () => {
     const atEnd = scrollY + innerHeight >= document.documentElement.scrollHeight - 4, line = innerHeight * (atEnd ? .8 : .3);
     let label = '', desc = '';
     for (const m of marks) if (m.getBoundingClientRect().top < line) { label = m.dataset.where || ''; desc = m.dataset.desc || ''; }
-    if (!label) desc = where.dataset.intro || '';
+    if (!label) desc = intro;
     setWhere(label, desc); lastY = scrollY;
   };
 
@@ -53,7 +69,7 @@ export function initSite() {
     if (!raf) raf = requestAnimationFrame(spring);
     tickWhere();
   };
-  addEventListener('scroll', tick, { passive: true }); addEventListener('resize', tick); tick();
+  addEventListener('scroll', tick, { passive: true }); addEventListener('resize', tick);
   if (document.documentElement.classList.contains('intro')) moonrise(() => Math.max(.02, Math.min(.4999, pos)));
 
   $('#moon')!.addEventListener('click', (e) => {
@@ -66,13 +82,6 @@ export function initSite() {
     vt.finished.catch(() => {}).finally(() => h.classList.remove('theming'));
   });
 
-  // ── footer: tonight's moon, and the time in Seoul and New York
-  const p = Math.min(Math.max(phaseNow(), .001), .999);
-  $('#dmoon')!.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="var(--moon-dark)" stroke="var(--rule)"/><path fill="var(--fg)" d="${moonPath(p, 6, 7)}"/></svg>${PHASES[Math.floor(phaseNow() * 8 + .5) % 8]}`;
-  const fmt = (tz: string) => new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit' }).format(new Date());
-  const clock = () => ($('#clock')!.textContent = `Seoul ${fmt('Asia/Seoul')} · New York ${fmt('America/New_York')}`); clock(); setInterval(clock, 30000);
-  $$('[data-seoul-now]').forEach((el) => { const f = () => (el.textContent = fmt('Asia/Seoul').toLowerCase()); f(); setInterval(f, 30000); });
-
   // ── copy buttons
   document.addEventListener('click', (e) => {
     const c = (e.target as HTMLElement).closest('[data-copy]') as HTMLElement | null; if (!c) return;
@@ -81,12 +90,29 @@ export function initSite() {
   });
 
   // "← Back" goes back (keeping your scroll) when you came from this site; otherwise it's a normal link
+  let inSite = false; document.addEventListener('astro:after-swap', () => (inSite = true));
   document.addEventListener('click', (e) => {
-    const a = (e.target as HTMLElement).closest('a[data-back]'); if (!a) return;
-    try { if (history.length > 1 && new URL(document.referrer).origin === location.origin) { e.preventDefault(); history.back(); } } catch (err) {}
+    const a = (e.target as HTMLElement).closest('a[data-back]'); if (!a || history.length < 2) return;
+    let fromHere = inSite; try { fromHere ||= new URL(document.referrer).origin === location.origin; } catch (err) {}
+    if (fromHere) { e.preventDefault(); history.back(); }
   });
 
-  initCards();
+  const cards = initCards();
+
+  // ── per page
+  everyPage(() => {
+    page = document.body.dataset.page || ''; intro = document.body.dataset.intro || ''; marks = $$('[data-where]');
+    pct.textContent = ''; lastY = 0; cards.attach();
+    // footer: tonight's moon, and the time in Seoul and New York
+    const p = Math.min(Math.max(phaseNow(), .001), .999);
+    $('#dmoon')!.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="var(--moon-dark)" stroke="var(--rule)"/><path fill="var(--fg)" d="${moonPath(p, 6, 7)}"/></svg>${PHASES[Math.floor(phaseNow() * 8 + .5) % 8]}`;
+    const fmt = (tz: string) => new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit' }).format(new Date());
+    const clocks = [() => ($('#clock')!.textContent = `Seoul ${fmt('Asia/Seoul')} · New York ${fmt('America/New_York')}`),
+      ...$$('[data-seoul-now]').map((el) => () => (el.textContent = fmt('Asia/Seoul').toLowerCase()))];
+    clocks.forEach((f) => f()); const iv = setInterval(() => clocks.forEach((f) => f()), 30000);
+    onLeave(() => { clearInterval(iv); cards.close(); });
+    tick();
+  });
 }
 
 // ── moonrise: the first-visit loader (Base.astro decides whether it runs). The moon waxes to tonight's real
@@ -137,7 +163,7 @@ function moonrise(railPhase: () => number) {
 // ── hover cards. Rich ones for the things worth explaining; a short note for everything else.
 function initCards() {
   const D = data();
-  const card = document.createElement('div'); card.className = 'card'; card.id = 'card'; card.setAttribute('role', 'tooltip'); document.body.append(card);
+  const card = document.createElement('div'); card.className = 'card'; card.id = 'card'; card.setAttribute('role', 'tooltip');
   let owner: HTMLElement | null = null, openT = 0, closeT = 0, warm = 0, loop = 0;
   const ext = (label: string, href: string) => `<a href="${href}" target="_blank" rel="noopener">${label} ↗</a>`;
   const job = (k: string, host: string) => { const j = D.jobs.find((x: any) => x.card === k); return j ? `<p><b>${j.company}</b>, ${j.where}. ${j.role}, ${j.years}.</p><p>${j.line}</p><p class="acts">${ext(host, j.url)}</p>` : ''; };
@@ -207,4 +233,6 @@ function initCards() {
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && owner) { const o = owner; close(); o.focus(); } });
   document.addEventListener('pointerdown', (e) => { if (!(e.target as HTMLElement).closest('.card')) close(); }, true);
   addEventListener('scroll', () => { if (owner && !card.matches(':hover')) close(); }, { passive: true });
+  // the body is replaced on every page, so the card goes back in each time
+  return { close, attach: () => { if (!card.isConnected) document.body.append(card); } };
 }

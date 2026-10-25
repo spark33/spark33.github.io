@@ -39,8 +39,12 @@ const Spec = d.specimen ? SPEC[d.specimen] : null;
 </Base>
 
 <script>
+  import { everyPage, onLeave } from '../../scripts/site';
   // contents: highlight the section you're reading
-  const links = [...document.querySelectorAll<HTMLAnchorElement>('.toc a')];
-  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) links.forEach((a) => a.hash === '#' + e.target.id ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current')); }), { rootMargin: '0px 0px -70% 0px' });
-  document.querySelectorAll('.prose h2[id]').forEach((h) => io.observe(h));
+  everyPage(() => {
+    const links = [...document.querySelectorAll<HTMLAnchorElement>('.toc a')]; if (!links.length) return;
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) links.forEach((a) => a.hash === '#' + e.target.id ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current')); }), { rootMargin: '0px 0px -70% 0px' });
+    document.querySelectorAll('.prose h2[id]').forEach((h) => io.observe(h));
+    onLeave(() => io.disconnect());
+  });
 </script>

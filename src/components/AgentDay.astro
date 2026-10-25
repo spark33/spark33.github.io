@@ -12,12 +12,13 @@ import { SOLA_DAY } from '../data/site';
 </figure>
 
 <script>
-  import { RM } from '../scripts/site';
-  document.querySelectorAll<HTMLElement>('.medium.agent').forEach((m) => {
+  import { RM, everyPage, onLeave } from '../scripts/site';
+  everyPage(() => document.querySelectorAll<HTMLElement>('.medium.agent').forEach((m) => {
     const items = [...m.querySelectorAll<HTMLElement>('.log li')]; let run = 0;
     const play = async () => { const me = ++run; items.forEach((li) => li.classList.remove('on'));
       for (const li of items) { if (me !== run) return; li.classList.add('on'); if (!RM()) await new Promise((r) => setTimeout(r, li.classList.contains('me') ? 500 : 900)); } };
     const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { io.disconnect(); play(); } }, { threshold: .35 }); io.observe(m);
     m.querySelector<HTMLElement>('.replay')!.onclick = play;
-  });
+    onLeave(() => { io.disconnect(); run++; });
+  }));
 </script>

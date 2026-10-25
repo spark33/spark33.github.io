@@ -313,8 +313,8 @@ pre .cp[data-done]{color:var(--fg)}
 
 @starting-style{dialog[open]::backdrop{background:transparent}}
 
-/* view transitions: pages crossfade; the Baze title travels from the table into the case study */
-@view-transition{navigation:auto}
+/* view transitions (Astro's ClientRouter, no reloads): pages crossfade on the move timing, the rail
+   stays put, and the Baze title travels from the table into the case study */
 ::view-transition-old(root),::view-transition-new(root){animation-duration:var(--t-move);animation-timing-function:var(--ease-out)}
 ::view-transition-group(*){animation-duration:var(--t-move);animation-timing-function:var(--ease-out)}
 /* theme switch: circle from the moon */
@@ -356,7 +356,8 @@ html.theming::view-transition-old(root),html.theming::view-transition-new(root){
   .system .in{grid-template-columns:1fr 1fr}.system .cell:nth-child(3){border-left:0}.system .cell:nth-child(n+3){border-top:1px solid var(--rule)}
   .takes{grid-template-columns:1fr}.takes .side{position:static;padding-top:0;margin-bottom:20px}
 }
-@media (prefers-reduced-motion:reduce){*{transition-duration:0ms!important;animation:none!important}}
+@media (prefers-reduced-motion:reduce){*{transition-duration:0ms!important;animation:none!important}
+  ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}
 /* the preview gate: the page stays hidden until the gate script lets it through */
 html.gated body{visibility:hidden}
 
@@ -364,7 +365,8 @@ html.gated body{visibility:hidden}
 .card{position:fixed;z-index:95;left:0;top:0;max-width:300px;font-size:14.5px;line-height:1.45;color:var(--soft);background:var(--bg);border:1px solid var(--rule);border-radius:999px;padding:6px 12px;box-shadow:0 6px 24px rgba(var(--shade),.12);opacity:0;scale:.97;pointer-events:none;transition:opacity var(--t-press) var(--ease-out),scale var(--t-press) var(--ease-out)}
 .card:not(.rich){font-size:13.5px;line-height:1.2;white-space:nowrap;color:var(--fg)}
 .card.on{opacity:1;scale:1}
-.card.rich{width:300px;border-radius:8px;padding:12px 14px 13px;pointer-events:auto;display:flex;flex-direction:column;gap:8px}
+.card.rich{width:300px;border-radius:8px;padding:12px 14px 13px;display:flex;flex-direction:column;gap:8px}
+.card.rich.on{pointer-events:auto} /* only while shown: a closed card must not catch clicks */
 .card b{font-weight:500;color:var(--fg)}
 .card .acts{display:flex;gap:14px;flex-wrap:wrap;font-size:14px;margin-top:2px}
 .card .acts a,.card .acts button{color:var(--fg);text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:.22em}
