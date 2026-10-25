@@ -78,7 +78,7 @@ const built = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).forma
           if(!q)return localStorage.getItem(K)===H?ok():go();
           crypto.subtle.digest('SHA-256',new TextEncoder().encode(q)).then(function(b){
             var h=Array.prototype.map.call(new Uint8Array(b),function(x){return x.toString(16).padStart(2,'0')}).join('');
-            if(h!==H)return go();localStorage.setItem(K,H);history.replaceState(null,'',location.pathname+location.hash);ok()}).catch(go)})();
+            if(h!==H)return go();localStorage.setItem(K,H);history.replaceState(history.state,'',location.pathname+location.hash);ok()}).catch(go)})();
       </script>
       <noscript><meta http-equiv="refresh" content="0; url=/under-construction/" /></noscript>
     </>

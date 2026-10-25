@@ -14,7 +14,7 @@ const ext = { target: '_blank', rel: 'noopener' };
   <h1 class="sr-only">Sean Park, product lead at Mindlogic in Seoul</h1>
   <section class="lede-wrap">
     <div class="lede">
-      <p>Hi, I'm Sean. I lead product at <a href={LINKS.mindlogic} {...ext} data-card="mindlogic">Mindlogic</a> in Seoul, where it's <span class="now num" data-seoul-now></span>.</p>
+      <p>Hi, I'm Sean. I lead product at <a href={LINKS.mindlogic} {...ext} data-card="mindlogic">Mindlogic</a> in Seoul, where it's <span class="now num" data-seoul-now></span><script is:inline>/* fill the time before first paint, so the line doesn't rewrap once site.ts runs */document.querySelectorAll('[data-seoul-now]').forEach(function(e){e.textContent=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Seoul',hour:'numeric',minute:'2-digit'}).format(new Date()).toLowerCase()})</script>.</p>
       <p class="more">I work on <a href={LINKS.baze} {...ext} data-card="baze">Baze</a>: one account for 80+ AI models, used at more than 100 universities. I own the UX and the direction, and still write a lot of the frontend.</p>
       <p class="more">I write about what I keep noticing. <a href="#writing" data-card="writing">Start there</a>, see <a href="#work" data-card="work">where I've worked</a>, or <button class="copy" data-copy={EMAIL} data-card="email">grab my email</button>.</p>
     </div>

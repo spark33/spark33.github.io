@@ -12,12 +12,13 @@ import { getCollection, render } from 'astro:content';
 import { postLd, isPublished } from '../../lib/seo';
 import { liveTitle } from '../../lib/living';
 import { EMAIL } from '../../data/site';
+import type { CollectionEntry } from 'astro:content';
 
 export async function getStaticPaths() {
   const posts = (await getCollection('writing')).sort((a, b) => a.data.order - b.data.order);
   return posts.map((p, i) => ({ params: { slug: p.id }, props: { post: p, n: i + 1, of: posts.length } }));
 }
-const { post, n, of } = Astro.props;
+const { post, n, of } = Astro.props as { post: CollectionEntry<'writing'>; n: number; of: number };
 const { Content } = await render(post);
 const d = post.data;
 const words = (post.body ?? '').split(/\s+/).filter(Boolean).length;
@@ -58,8 +59,9 @@ const date = (x: Date) => x.toLocaleDateString('en-US', { month: 'long', day: 'n
     const url = () => location.origin + location.pathname;
     // the # buttons say "Copied" beside themselves (CSS); the others swap their label for a moment
     const copied = (el: HTMLElement, ok: boolean) => {
-      const o = el.textContent; el.dataset.done = ok ? 'Copied' : 'Press ⌘C'; if (!el.matches('.anc')) el.textContent = el.dataset.done;
-      setTimeout(() => { delete el.dataset.done; if (!el.matches('.anc')) el.textContent = o; }, 1400);
+      const o = (el.dataset.label ??= el.textContent || ''); // the real label, even if clicked again while it says "Copied"
+      el.dataset.done = ok ? 'Copied' : 'Press ⌘C'; if (!el.matches('.anc')) el.textContent = el.dataset.done;
+      clearTimeout((el as any)._t); (el as any)._t = setTimeout(() => { delete el.dataset.done; if (!el.matches('.anc')) el.textContent = o; }, 1400);
     };
     const copy = (el: HTMLElement, text: string) => navigator.clipboard ? navigator.clipboard.writeText(text).then(() => copied(el, true), () => copied(el, false)) : copied(el, false);
 
@@ -71,10 +73,14 @@ const date = (x: Date) => x.toLocaleDateString('en-US', { month: 'long', day: 'n
       const a = links.find((l) => l.hash === '#' + id); links.forEach((l) => (l === a ? l.setAttribute('aria-current', 'true') : l.removeAttribute('aria-current')));
       if (tick) { tick.classList.toggle('on', !!a); if (a) tick.style.translate = `0 ${a.offsetTop}px`, tick.style.height = a.offsetHeight + 'px'; }
     };
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) mark(e.target.id); }), { rootMargin: '0px 0px -70% 0px' });
-    hs.forEach((h) => io.observe(h));
-    const top = () => { if (hs[0] && hs[0].getBoundingClientRect().top > innerHeight * .3) mark(''); };
-    addEventListener('scroll', top, { passive: true });
+    // the section you're in = the last heading that has reached the top (an IntersectionObserver picked whichever
+    // heading entered last, wrong when several short sections fit on one screen). A contents click marks its own
+    // section while the page scrolls there.
+    let raf = 0, pin = 0;
+    const where = () => { raf = 0; if (performance.now() < pin) return; let cur = ''; for (const h of hs) if (h.getBoundingClientRect().top < 120) cur = h.id; mark(cur); };
+    const top = () => { if (!raf) raf = requestAnimationFrame(where); };
+    addEventListener('scroll', top, { passive: true }); where();
+    links.forEach((a) => a.addEventListener('click', () => { mark(decodeURIComponent(a.hash.slice(1))); pin = performance.now() + 1000; }));
 
     // every section heading carries a link to itself
     hs.forEach((h) => {
@@ -87,7 +93,7 @@ const date = (x: Date) => x.toLocaleDateString('en-US', { month: 'long', day: 'n
       b.onclick = () => copy(b, pre.querySelector('code')?.textContent || ''); pre.append(b);
     });
     // margin notes: pointing at a number lights its note, and the other way round
-    prose.querySelectorAll<HTMLElement>('.snref').forEach((r) => {
+    prose.querySelectorAll<HTMLLabelElement>('.snref').forEach((r) => {
       const n = document.getElementById(r.htmlFor)?.nextElementSibling as HTMLElement | null; if (!n) return;
       const on = (v: boolean) => { r.classList.toggle('hl', v); n.classList.toggle('hl', v); };
       [r, n].forEach((el) => { el.onpointerenter = () => on(true); el.onpointerleave = () => on(false); });
@@ -97,6 +103,6 @@ const date = (x: Date) => x.toLocaleDateString('en-US', { month: 'long', day: 'n
     if (last) last.insertAdjacentHTML('beforeend', `<svg class="endmark" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="7.5"/><path d="${moonPath(Math.min(Math.max(phaseNow(), .001), .999), 7.5, 9)}"/></svg>`);
     const cl = document.querySelector<HTMLElement>('[data-copylink]'); if (cl) cl.onclick = () => copy(cl, url());
 
-    onLeave(() => { io.disconnect(); removeEventListener('scroll', top); outline.innerHTML = ''; });
+    onLeave(() => { cancelAnimationFrame(raf); removeEventListener('scroll', top); outline.innerHTML = ''; });
   });
 </script>

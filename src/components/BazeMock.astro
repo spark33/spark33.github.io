@@ -32,6 +32,9 @@ const MODELS = ['GPT-6 Astra', 'Claude Opus 5', 'Claude Sonnet 5', 'Gemini 3.1 P
     const inView = (b: HTMLElement) => { const r = b.getBoundingClientRect(), mr = menu.getBoundingClientRect(); menu.scrollTop += r.top - mr.top - (mr.height - r.height) / 2; };
     const open = (o: boolean) => { menu.hidden = !o; btn.setAttribute('aria-expanded', String(o)); };
     btn.onclick = () => open(menu.hidden);
+    const outside = (e: PointerEvent) => { if (!menu.hidden && !(e.target as HTMLElement).closest('.mpick')) open(false); };
+    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape' && !menu.hidden) { open(false); btn.focus(); } };
+    document.addEventListener('pointerdown', outside); m.addEventListener('keydown', esc);
     menu.querySelectorAll<HTMLElement>('button').forEach((b) => (b.onclick = () => { pick(b); open(false); }));
     const play = async () => {
       const me = ++run; open(false); when.classList.remove('on'); name.textContent = 'FactChat';
@@ -46,6 +49,6 @@ const MODELS = ['GPT-6 Astra', 'Claude Opus 5', 'Claude Sonnet 5', 'Gemini 3.1 P
     };
     m.querySelector<HTMLElement>('.replay')!.onclick = play;
     const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { io.disconnect(); play(); } }, { threshold: .4 }); io.observe(m);
-    onLeave(() => { io.disconnect(); run++; });
+    onLeave(() => { io.disconnect(); run++; document.removeEventListener('pointerdown', outside); });
   }));
 </script>

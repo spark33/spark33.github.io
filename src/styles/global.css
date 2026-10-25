@@ -43,8 +43,6 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 main{margin-left:var(--rail);padding-right:48px}
 
-/* placeholder screenshots — real shapes */
-  background-image:repeating-linear-gradient(135deg,var(--hatch) 0 1px,transparent 1px 11px)}
 /* project media: each project shows proof in its own medium */
 .medium{background:var(--frame);border-radius:var(--r-shot);background-image:repeating-linear-gradient(135deg,var(--hatch) 0 1px,transparent 1px 11px);padding:22px 24px}
 .medium .in{background:var(--bg);border:1px solid var(--rule);border-radius:var(--r-shot);padding:20px 22px}
@@ -96,7 +94,7 @@ main{margin-left:var(--rail);padding-right:48px}
 .index a{text-decoration:none}
 .index tr{transition:background-color var(--t-press) var(--ease-out)}
 @media (hover:hover) and (pointer:fine){.index tbody tr:hover{background:var(--tint)}}
-.index td:last-child,.index th:last-child{text-align:right;padding-right:0}
+.index td:last-child,.index th:last-child{text-align:right;padding-right:0;white-space:nowrap}
 
 .work{position:relative}
 .proj{position:sticky;background:var(--bg);padding:20px 0 48px;border-top:1px solid var(--rule)}
@@ -385,6 +383,8 @@ html.theming::view-transition-old(root),html.theming::view-transition-new(root){
 }
 
 @media (max-width:900px){
+  /* one column: the case study kept its desktop grid (200px + text), which squeezed tablets into the 200px track */
+  .cs .body,.colophon{grid-template-columns:minmax(0,1fr)}
   .rail{position:sticky;top:0;width:auto;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px 20px;padding:14px 20px;background:var(--bg);border-bottom:1px solid var(--rule)}
   .rail .where{margin:0;padding:0;height:1.5em;flex:1;min-width:0}.rail .where .w{right:0}.rail .where span{display:none}.rail .where b{font-size:15px;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rail .bottom{margin:0 0 0 auto;flex-direction:row;align-items:center}.rail .bottom>.copy{display:none}
   main{margin:0;padding:0 20px}

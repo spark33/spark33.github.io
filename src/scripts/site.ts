@@ -15,6 +15,10 @@ export function moonPath(p: number, r: number, c: number) {
   return `M ${c} ${c - r} A ${r} ${r} 0 0 ${w ? 1 : 0} ${c} ${c + r} A ${rx} ${r} 0 0 ${k > 0 ? (w ? 0 : 1) : (w ? 1 : 0)} ${c} ${c - r} Z`;
 }
 export const data = () => JSON.parse($('#site-data')!.textContent || '{}');
+// the browser bar matches the theme you picked (the two <meta name=theme-color> only know the OS setting)
+const BAR = { light: '#eeeadf', dark: '#12110f' } as Record<string, string>;
+export const themeColor = (doc: Document) => doc.querySelectorAll('meta[name=theme-color]').forEach((m) => m.setAttribute('content', BAR[document.documentElement.dataset.theme || 'light']));
+themeColor(document);
 
 // ── pages swap in place (Astro's ClientRouter), so nothing reloads. The document lives on:
 // set things up once, and redo the per-page parts with everyPage(); onLeave() tidies up before the swap.
@@ -26,7 +30,7 @@ export const everyPage = (f: () => void) => { document.addEventListener('astro:p
 document.addEventListener('astro:page-load', () => { loaded = true; document.documentElement.style.scrollBehavior = ''; });
 document.addEventListener('astro:before-swap', (e: any) => {
   leaving.splice(0).forEach((f) => f()); loaded = false;
-  const h = e.newDocument.documentElement; h.dataset.theme = document.documentElement.dataset.theme;
+  const h = e.newDocument.documentElement; h.dataset.theme = document.documentElement.dataset.theme; themeColor(e.newDocument);
   h.style.scrollBehavior = 'auto'; // jump to the new page's top (or #hash) instead of smooth-scrolling there
 });
 
@@ -73,7 +77,7 @@ export function initSite() {
   if (document.documentElement.classList.contains('intro')) moonrise();
 
   $('#moon')!.addEventListener('click', (e) => {
-    const h = document.documentElement, t = h.dataset.theme === 'light' ? 'dark' : 'light', swap = () => { h.dataset.theme = t; localStorage.setItem('theme', t); };
+    const h = document.documentElement, t = h.dataset.theme === 'light' ? 'dark' : 'light', swap = () => { h.dataset.theme = t; localStorage.setItem('theme', t); themeColor(document); };
     if (!(document as any).startViewTransition || RM()) return swap();
     const r = (e.currentTarget as HTMLElement).getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2, R = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
     h.classList.add('theming');
@@ -85,17 +89,20 @@ export function initSite() {
   // ── copy buttons
   document.addEventListener('click', (e) => {
     const c = (e.target as HTMLElement).closest('[data-copy]') as HTMLElement | null; if (!c) return;
-    const done = (ok: boolean) => { const o = c.textContent; c.dataset.done = ''; c.textContent = ok ? 'Copied' : 'Press ⌘C'; setTimeout(() => { delete c.dataset.done; c.textContent = o; }, 1400); };
+    const label = (c.dataset.label ??= c.textContent || ''); // the real label, kept even if clicked again while it says "Copied"
+    const done = (ok: boolean) => { c.dataset.done = ''; c.textContent = ok ? 'Copied' : 'Press ⌘C'; clearTimeout((c as any)._t); (c as any)._t = setTimeout(() => { delete c.dataset.done; c.textContent = label; }, 1400); };
     navigator.clipboard ? navigator.clipboard.writeText(c.dataset.copy!).then(() => done(true), () => done(false)) : done(false);
   });
 
-  // "← Back" goes back (keeping your scroll) when you came from this site; otherwise it's a normal link
-  let inSite = false; document.addEventListener('astro:after-swap', () => (inSite = true));
+  // "← Back" / "← Writing" go back (keeping your scroll) when the page you came from is the one they point to;
+  // otherwise (you arrived from elsewhere, or from another piece) they're a normal link
+  let prev = '', here = location.pathname;
+  try { const r = new URL(document.referrer); if (r.origin === location.origin) prev = r.pathname; } catch (err) {}
+  document.addEventListener('astro:after-swap', () => { prev = here; here = location.pathname; });
   document.addEventListener('click', (e) => {
-    const a = (e.target as HTMLElement).closest('a[data-back]'); if (!a || history.length < 2) return;
-    let fromHere = inSite; try { fromHere ||= new URL(document.referrer).origin === location.origin; } catch (err) {}
-    if (fromHere) { e.preventDefault(); history.back(); }
-  }, true); // capture: claim the click before the router starts its own navigation (two at once = a skipped transition)
+    const a = (e.target as HTMLElement).closest('a[data-back]') as HTMLAnchorElement | null; if (!a || history.length < 2) return;
+    if (prev && prev === a.pathname) { e.preventDefault(); history.back(); }
+  }, true); // capture: runs before the router's own link handler, which would otherwise navigate too
 
   const cards = initCards();
 
@@ -136,7 +143,9 @@ function moonrise() {
     if (skip) return cleanup();
     h.classList.add('landed', 'inked'); setTimeout(cleanup, T.reveal + MAXI * STEP + 60);
   };
-  const skipIt = () => end(true);
+  // a tap that skips the intro shouldn't also press whatever invisible link was under it
+  const swallow = (e: Event) => { e.preventDefault(); e.stopPropagation(); };
+  const skipIt = (e: Event) => { if (e.type === 'pointerdown' && !h.classList.contains('inked')) { addEventListener('click', swallow, { capture: true, once: true }); setTimeout(() => removeEventListener('click', swallow, true), 600); } end(true); };
   ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach((ev) => addEventListener(ev, skipIt, { passive: true }));
   // the full moon becomes a circle of your theme's paper, the same size, which then opens past the corners
   const open = () => {
