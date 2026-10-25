@@ -64,7 +64,7 @@ const built = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).forma
       settles into the rail and the page inks in. Once per session; ?intro=1 replays it, ?intro=0 skips it.
       If the site script never runs, the 3 s fallback shows the page anyway. */}
   <script is:inline>(function(){var d=document.documentElement,q=new URLSearchParams(location.search).get('intro');
-    if(q!=='1'&&(q==='0'||sessionStorage.getItem('sp-intro')||matchMedia('(prefers-reduced-motion: reduce)').matches))return;
+    if(q==='0'||matchMedia('(prefers-reduced-motion: reduce)').matches||(q!=='1'&&sessionStorage.getItem('sp-intro')))return;
     d.classList.add('intro');setTimeout(function(){if(!d.classList.contains('inked'))d.classList.remove('intro')},3000)})();</script>
   {UNDER_CONSTRUCTION && (
     <>

@@ -116,17 +116,17 @@ export function initSite() {
 }
 
 // ── moonrise: the first-visit loader (Base.astro decides whether it runs). The moon waxes to tonight's real
-// phase while the font loads, flies into the rail (still waxing forward to the scroll phase it lands on),
+// phase while the font loads, then flies into the rail, easing to the scroll phase it lands on,
 // and the page inks in behind it, top to bottom. Any click, key or scroll skips straight to the page.
 function moonrise(railPhase: () => number) {
   const h = document.documentElement, svg = $('#loader svg')!, path = $('#loader path')!, rail = $('#moon svg')!;
   const WAX = 640, MAXWAIT = 1100, FLY = 520, STEP = 70, MAXI = 6;
   const tonight = Math.min(Math.max(phaseNow(), .001), .999), out3 = (t: number) => 1 - Math.pow(1 - t, 3);
-  const draw = (p: number) => path.setAttribute('d', moonPath(p % 1 || .001, 7.5, 9));
+  const draw = (p: number) => path.setAttribute('d', moonPath((p % 1 + 1) % 1 || .001, 7.5, 9));
   const inks = [$('.rail .me'), ...$$('.lede>p'), ...$$('main>:not(.lede-wrap)')].filter(Boolean) as HTMLElement[];
   inks.forEach((el, i) => el.style.setProperty('--i', String(Math.min(i, MAXI))));
   $('.rail .where')!.style.setProperty('--i', '1'); $('.rail .bottom')!.style.setProperty('--i', '3');
-  let fonts = false, t0 = 0, fly0 = 0, from = 0, raf = 0, over = false;
+  let fonts = false, t0 = 0, fly0 = 0, raf = 0, over = false, fl: { dx: number; dy: number; sc: number; to: number } | null = null;
   document.fonts.ready.then(() => (fonts = true));
   const cleanup = () => { h.classList.remove('intro', 'inked', 'landed'); [...inks, $('.rail .where')!, $('.rail .bottom')!].forEach((el) => el.style.removeProperty('--i')); svg.style.transform = ''; };
   const end = (skip: boolean) => {
@@ -145,13 +145,12 @@ function moonrise(railPhase: () => number) {
       draw(tonight * out3(Math.min(1, t / WAX)));
       if (t >= WAX && (fonts || t >= MAXWAIT)) fly0 = now;
     } else {
-      // first frame of the flight: measure both moons, and pick the forward way round to the rail's phase
-      const f = Math.min(1, (now - fly0) / FLY), e = Math.pow(1 - f, 4), k = 1 - e; // ease-out on the move token's curve
-      const a = svg.getBoundingClientRect(), b = rail.getBoundingClientRect();
-      if (!from) { from = tonight; const q = railPhase(); (svg as any)._d = [b.left + b.width / 2 - (a.left + a.width / 2), b.top + b.height / 2 - (a.top + a.height / 2), b.width / a.width, q >= from ? q : q + 1]; }
-      const [dx, dy, sc, to] = (svg as any)._d;
+      // first frame of the flight: measure both moons once, and take the short way round to the rail's phase
+      if (!fl) { const a = svg.getBoundingClientRect(), b = rail.getBoundingClientRect(), q = railPhase();
+        fl = { dx: b.left + b.width / 2 - (a.left + a.width / 2), dy: b.top + b.height / 2 - (a.top + a.height / 2), sc: b.width / a.width, to: tonight + ((q - tonight + 1.5) % 1 - .5) }; }
+      const f = Math.min(1, (now - fly0) / FLY), k = 1 - Math.pow(1 - f, 4), { dx, dy, sc, to } = fl;
       svg.style.transform = `translate(${dx * k}px, ${dy * k}px) scale(${1 + (sc - 1) * k})`;
-      draw(from + (to - from) * k);
+      draw(tonight + (to - tonight) * k);
       if (f >= .35) h.classList.add('inked');
       if (f >= 1) return end(false);
     }

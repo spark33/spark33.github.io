@@ -403,6 +403,8 @@ html{scroll-padding-top:24px}
 .loader{display:none}
 html.intro .loader{display:grid;position:fixed;inset:0;place-items:center;z-index:96;pointer-events:none}
 .loader svg{width:64px;height:64px;transform-origin:center}
+html.intro .loader svg{animation:moonin var(--t-reveal) var(--ease-out)}
+@keyframes moonin{from{opacity:0;scale:.92}}
 .loader circle{fill:var(--moon-dark)}.loader path{fill:var(--fg)}
 html.intro .rail .moon{opacity:0}
 html.intro.landed .rail .moon{opacity:1}
