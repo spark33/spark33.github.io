@@ -70,7 +70,7 @@ export function initSite() {
     tickWhere();
   };
   addEventListener('scroll', tick, { passive: true }); addEventListener('resize', tick);
-  if (document.documentElement.classList.contains('intro')) moonrise(() => Math.max(.02, Math.min(.4999, pos)));
+  if (document.documentElement.classList.contains('intro')) moonrise();
 
   $('#moon')!.addEventListener('click', (e) => {
     const h = document.documentElement, t = h.dataset.theme === 'light' ? 'dark' : 'light', swap = () => { h.dataset.theme = t; localStorage.setItem('theme', t); };
@@ -115,44 +115,47 @@ export function initSite() {
   });
 }
 
-// ── moonrise: the first-visit loader (Base.astro decides whether it runs). The moon waxes to tonight's real
-// phase while the font loads, then flies into the rail, easing to the scroll phase it lands on,
-// and the page inks in behind it, top to bottom. Any click, key or scroll skips straight to the page.
-function moonrise(railPhase: () => number) {
-  const h = document.documentElement, svg = $('#loader svg')!, path = $('#loader path')!, rail = $('#moon svg')!;
-  const WAX = 640, MAXWAIT = 1100, FLY = 520, STEP = 70, MAXI = 6;
+// ── moonrise: the first-visit loader (Base.astro decides whether it runs). In the other theme's paper, the moon
+// waxes to tonight's real phase while the font loads, fills to full, then grows until your theme's colour covers
+// the page, and the page inks in behind it, top to bottom. Any click, key or scroll skips straight to the page.
+function moonrise() {
+  const h = document.documentElement, svg = $('#loader svg')!, path = $('#loader path')!, fill = $('#loader .fill')!;
+  const WAX = 600, MAXWAIT = 1100, FULL = 260, GROW = 640, STEP = 60, MAXI = 6;
   const tonight = Math.min(Math.max(phaseNow(), .001), .999), out3 = (t: number) => 1 - Math.pow(1 - t, 3);
+  const toFull = ((.5 - tonight + 1.5) % 1) - .5; // the short way round to a full moon
   const draw = (p: number) => path.setAttribute('d', moonPath((p % 1 + 1) % 1 || .001, 7.5, 9));
-  const inks = [$('.rail .me'), ...$$('.lede>p'), ...$$('main>:not(.lede-wrap)')].filter(Boolean) as HTMLElement[];
+  const inks = [$('.rail .mast'), ...$$('.lede>p'), ...$$('main>:not(.lede-wrap)')].filter(Boolean) as HTMLElement[];
   inks.forEach((el, i) => el.style.setProperty('--i', String(Math.min(i, MAXI))));
   $('.rail .where')!.style.setProperty('--i', '1'); $('.rail .bottom')!.style.setProperty('--i', '3');
-  let fonts = false, t0 = 0, fly0 = 0, raf = 0, over = false, fl: { dx: number; dy: number; sc: number; to: number } | null = null;
+  let fonts = false, t0 = 0, full0 = 0, raf = 0, over = false, grow: Animation | null = null;
   document.fonts.ready.then(() => (fonts = true));
-  const cleanup = () => { h.classList.remove('intro', 'inked', 'landed'); [...inks, $('.rail .where')!, $('.rail .bottom')!].forEach((el) => el.style.removeProperty('--i')); svg.style.transform = ''; };
+  const cleanup = () => { h.classList.remove('intro', 'inked', 'landed'); [...inks, $('.rail .where')!, $('.rail .bottom')!].forEach((el) => el.style.removeProperty('--i')); };
   const end = (skip: boolean) => {
-    if (over) return; over = true; cancelAnimationFrame(raf); sessionStorage.setItem('sp-intro', '1');
+    if (over) return; over = true; cancelAnimationFrame(raf); grow?.cancel(); sessionStorage.setItem('sp-intro', '1');
     ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach((ev) => removeEventListener(ev, skipIt));
     if (skip) return cleanup();
-    h.classList.add('landed'); setTimeout(cleanup, T.reveal + MAXI * STEP + 60);
+    h.classList.add('landed', 'inked'); setTimeout(cleanup, T.reveal + MAXI * STEP + 60);
   };
   const skipIt = () => end(true);
   ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach((ev) => addEventListener(ev, skipIt, { passive: true }));
+  // the full moon becomes a circle of your theme's paper, the same size, which then opens past the corners
+  const open = () => {
+    const r = svg.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2, r0 = r.width * 7.5 / 18;
+    const R = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y)) + 2;
+    grow = fill.animate({ clipPath: [`circle(${r0}px at ${x}px ${y}px)`, `circle(${R}px at ${x}px ${y}px)`] }, { duration: GROW, easing: 'cubic-bezier(.7,0,.2,1)', fill: 'forwards' });
+    grow.finished.then(() => end(false), () => {});
+  };
   draw(.001);
   const frame = (now: number) => {
     if (h.classList.contains('gated') || !t0) t0 = now; // the clock starts once the page is allowed to show
     const t = now - t0;
-    if (!fly0) {
+    if (!full0) {
       draw(tonight * out3(Math.min(1, t / WAX)));
-      if (t >= WAX && (fonts || t >= MAXWAIT)) fly0 = now;
+      if (t >= WAX && (fonts || t >= MAXWAIT)) full0 = now;
     } else {
-      // first frame of the flight: measure both moons once, and take the short way round to the rail's phase
-      if (!fl) { const a = svg.getBoundingClientRect(), b = rail.getBoundingClientRect(), q = railPhase();
-        fl = { dx: b.left + b.width / 2 - (a.left + a.width / 2), dy: b.top + b.height / 2 - (a.top + a.height / 2), sc: b.width / a.width, to: tonight + ((q - tonight + 1.5) % 1 - .5) }; }
-      const f = Math.min(1, (now - fly0) / FLY), k = 1 - Math.pow(1 - f, 4), { dx, dy, sc, to } = fl;
-      svg.style.transform = `translate(${dx * k}px, ${dy * k}px) scale(${1 + (sc - 1) * k})`;
-      draw(tonight + (to - tonight) * k);
-      if (f >= .35) h.classList.add('inked');
-      if (f >= 1) return end(false);
+      const f = Math.abs(toFull) < .01 ? 1 : Math.min(1, (now - full0) / FULL);
+      draw(tonight + toFull * out3(f));
+      if (f >= 1) return open();
     }
     raf = requestAnimationFrame(frame);
   };

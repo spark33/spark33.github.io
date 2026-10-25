@@ -4,8 +4,8 @@
 :root{--ease-out:cubic-bezier(.23,1,.32,1);--t-press:150ms;--t-move:280ms;--t-reveal:420ms;
   --r-shot:3px;--r-phone:14px;
   --font:'Newsreader',Georgia,'Apple SD Gothic Neo','Noto Serif KR',serif;--rail:232px}
-[data-theme=light]{--bg:#eeeadf;--fg:#1b1a17;--soft:#57534a;--faint:#6b665c;--rule:rgba(27,26,23,.14);--frame:#e4dfd2;--hatch:rgba(27,26,23,.07);--moon-dark:#d4cebf;--shade:27,26,23;--blend:multiply;--grain-filter:invert(1);--tint:rgba(27,26,23,.04);--flash:rgba(27,26,23,.1)}
-[data-theme=dark]{--bg:#12110f;--fg:#e9e3d4;--soft:#a8a295;--faint:#888376;--rule:rgba(233,227,212,.13);--frame:#1b1a17;--hatch:rgba(233,227,212,.05);--moon-dark:#2b2925;--shade:0,0,0;--blend:screen;--grain-filter:none;--tint:rgba(233,227,212,.04);--flash:rgba(233,227,212,.1)}
+[data-theme=light]{--bg:#eeeadf;--fg:#1b1a17;--soft:#57534a;--faint:#6b665c;--rule:rgba(27,26,23,.14);--frame:#e4dfd2;--hatch:rgba(27,26,23,.07);--moon-dark:#d4cebf;--inv:#12110f;--inv-moon:#2b2925;--shade:27,26,23;--blend:multiply;--grain-filter:invert(1);--tint:rgba(27,26,23,.04);--flash:rgba(27,26,23,.1)}
+[data-theme=dark]{--bg:#12110f;--fg:#e9e3d4;--soft:#a8a295;--faint:#888376;--rule:rgba(233,227,212,.13);--frame:#1b1a17;--hatch:rgba(233,227,212,.05);--moon-dark:#2b2925;--inv:#eeeadf;--inv-moon:#d4cebf;--shade:0,0,0;--blend:screen;--grain-filter:none;--tint:rgba(233,227,212,.04);--flash:rgba(233,227,212,.1)}
 *{box-sizing:border-box;margin:0;padding:0}
 html{background:var(--bg);color:var(--fg);font:400 18px/1.55 var(--font);font-optical-sizing:auto;-webkit-font-smoothing:antialiased;scrollbar-color:var(--faint) var(--bg);caret-color:var(--fg)}
 ::selection{background:var(--fg);color:var(--bg)}
@@ -398,17 +398,17 @@ html{scroll-padding-top:24px}
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 .nf h1{font-size:24px;font-weight:400}
 
-/* moonrise: the first-visit loader (Base.astro decides, site.ts runs it). Paper first, one moon in the middle
-   waxing to tonight's phase; it flies into the rail, and the page inks in behind it, top to bottom. */
+/* moonrise: the first-visit loader (Base.astro decides, site.ts runs it). The page opens in the other theme's paper
+   (--inv), with one moon waxing to tonight's phase, lit in your theme's colour. The moon fills, then grows until it
+   covers the page, and the page inks in, top to bottom. Under the grain (z 90) so the paper texture never changes. */
 .loader{display:none}
-html.intro .loader{display:grid;position:fixed;inset:0;place-items:center;z-index:96;pointer-events:none}
-.loader svg{width:64px;height:64px;transform-origin:center}
+html.intro .loader{display:grid;position:fixed;inset:0;place-items:center;z-index:89;pointer-events:none;background:var(--inv)}
+.loader svg{width:64px;height:64px}
 html.intro .loader svg{animation:moonin var(--t-reveal) var(--ease-out)}
 @keyframes moonin{from{opacity:0;scale:.92}}
-.loader circle{fill:var(--moon-dark)}.loader path{fill:var(--fg)}
-html.intro .rail .moon{opacity:0}
-html.intro.landed .rail .moon{opacity:1}
+.loader circle{fill:var(--inv-moon)}.loader path{fill:var(--bg)}
+.loader .fill{position:absolute;inset:0;background:var(--bg);clip-path:circle(0 at 50% 50%)}
 html.intro.landed .loader{display:none}
-html.intro :is(.rail .me,.rail .where,.rail .bottom,.lede>p,main>:not(.lede-wrap)){opacity:0;translate:0 6px;filter:blur(3px)}
-html.intro.inked :is(.rail .me,.rail .where,.rail .bottom,.lede>p,main>:not(.lede-wrap)){opacity:1;translate:0 0;filter:blur(0);
-  transition:opacity var(--t-reveal) var(--ease-out),translate var(--t-reveal) var(--ease-out),filter var(--t-reveal) var(--ease-out);transition-delay:calc(var(--i,0) * 70ms)}
+html.intro :is(.rail .mast,.rail .where,.rail .bottom,.lede>p,main>:not(.lede-wrap)){opacity:0;translate:0 6px;filter:blur(3px)}
+html.intro.inked :is(.rail .mast,.rail .where,.rail .bottom,.lede>p,main>:not(.lede-wrap)){opacity:1;translate:0 0;filter:blur(0);
+  transition:opacity var(--t-reveal) var(--ease-out),translate var(--t-reveal) var(--ease-out),filter var(--t-reveal) var(--ease-out);transition-delay:calc(var(--i,0) * 60ms)}
