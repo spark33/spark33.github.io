@@ -1,0 +1,13 @@
+---
+// Visit counting. Loads nothing until an ID is set in src/data/site.ts.
+// Browsers that hold the preview key (Sean's own) are skipped, so your visits don't count.
+import { CF_ANALYTICS_TOKEN, GA_ID } from '../data/site';
+---
+{(CF_ANALYTICS_TOKEN || GA_ID) && (
+  <script is:inline define:vars={{ CF: CF_ANALYTICS_TOKEN, GA: GA_ID }}>
+    (function(){if(localStorage.getItem('sp-preview'))return;
+      function add(src,attrs){var s=document.createElement('script');s.defer=true;s.src=src;for(var k in attrs)s.setAttribute(k,attrs[k]);document.head.appendChild(s)}
+      if(CF)add('https://static.cloudflareinsights.com/beacon.min.js',{'data-cf-beacon':JSON.stringify({token:CF})});
+      if(GA){window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config',GA);add('https://www.googletagmanager.com/gtag/js?id='+GA,{})}})();
+  </script>
+)}

@@ -394,3 +394,16 @@ html.gated body{visibility:hidden}
 html{scroll-padding-top:24px}
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 .nf h1{font-size:24px;font-weight:400}
+
+/* moonrise: the first-visit loader (Base.astro decides, site.ts runs it). Paper first, one moon in the middle
+   waxing to tonight's phase; it flies into the rail, and the page inks in behind it, top to bottom. */
+.loader{display:none}
+html.intro .loader{display:grid;position:fixed;inset:0;place-items:center;z-index:96;pointer-events:none}
+.loader svg{width:64px;height:64px;transform-origin:center}
+.loader circle{fill:var(--moon-dark)}.loader path{fill:var(--fg)}
+html.intro .rail .moon{opacity:0}
+html.intro.landed .rail .moon{opacity:1}
+html.intro.landed .loader{display:none}
+html.intro :is(.rail .me,.rail .where,.rail .bottom,.lede>p,main>:not(.lede-wrap)){opacity:0;translate:0 6px;filter:blur(3px)}
+html.intro.inked :is(.rail .me,.rail .where,.rail .bottom,.lede>p,main>:not(.lede-wrap)){opacity:1;translate:0 0;filter:blur(0);
+  transition:opacity var(--t-reveal) var(--ease-out),translate var(--t-reveal) var(--ease-out),filter var(--t-reveal) var(--ease-out);transition-delay:calc(var(--i,0) * 70ms)}

@@ -8,6 +8,12 @@ export const UNDER_CONSTRUCTION = true;
 // This is a curtain, not a lock: the built HTML is public, so don't put secrets in drafts.
 export const PREVIEW_HASH = 'bed2d1ba849b13e933561c18ab689a0823f9a87e1c551fa4f67c4f66f528a653';
 
+// Analytics. Paste one (or both) and push; empty means no script is loaded.
+// Cloudflare Web Analytics token (cookieless, no consent banner): dash.cloudflare.com → Web Analytics → Add a site.
+export const CF_ANALYTICS_TOKEN = '';
+// Google Analytics 4 measurement ID, e.g. 'G-XXXXXXXXXX'.
+export const GA_ID = '';
+
 export const EMAIL = 'hello@example.com'; // TODO(Sean): real address
 
 export const LINKS = {

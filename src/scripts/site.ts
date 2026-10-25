@@ -54,6 +54,7 @@ export function initSite() {
     tickWhere();
   };
   addEventListener('scroll', tick, { passive: true }); addEventListener('resize', tick); tick();
+  if (document.documentElement.classList.contains('intro')) moonrise(() => Math.max(.02, Math.min(.4999, pos)));
 
   $('#moon')!.addEventListener('click', (e) => {
     const h = document.documentElement, t = h.dataset.theme === 'light' ? 'dark' : 'light', swap = () => { h.dataset.theme = t; localStorage.setItem('theme', t); };
@@ -86,6 +87,51 @@ export function initSite() {
   });
 
   initCards();
+}
+
+// ── moonrise: the first-visit loader (Base.astro decides whether it runs). The moon waxes to tonight's real
+// phase while the font loads, flies into the rail (still waxing forward to the scroll phase it lands on),
+// and the page inks in behind it, top to bottom. Any click, key or scroll skips straight to the page.
+function moonrise(railPhase: () => number) {
+  const h = document.documentElement, svg = $('#loader svg')!, path = $('#loader path')!, rail = $('#moon svg')!;
+  const WAX = 640, MAXWAIT = 1100, FLY = 520, STEP = 70, MAXI = 6;
+  const tonight = Math.min(Math.max(phaseNow(), .001), .999), out3 = (t: number) => 1 - Math.pow(1 - t, 3);
+  const draw = (p: number) => path.setAttribute('d', moonPath(p % 1 || .001, 7.5, 9));
+  const inks = [$('.rail .me'), ...$$('.lede>p'), ...$$('main>:not(.lede-wrap)')].filter(Boolean) as HTMLElement[];
+  inks.forEach((el, i) => el.style.setProperty('--i', String(Math.min(i, MAXI))));
+  $('.rail .where')!.style.setProperty('--i', '1'); $('.rail .bottom')!.style.setProperty('--i', '3');
+  let fonts = false, t0 = 0, fly0 = 0, from = 0, raf = 0, over = false;
+  document.fonts.ready.then(() => (fonts = true));
+  const cleanup = () => { h.classList.remove('intro', 'inked', 'landed'); [...inks, $('.rail .where')!, $('.rail .bottom')!].forEach((el) => el.style.removeProperty('--i')); svg.style.transform = ''; };
+  const end = (skip: boolean) => {
+    if (over) return; over = true; cancelAnimationFrame(raf); sessionStorage.setItem('sp-intro', '1');
+    ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach((ev) => removeEventListener(ev, skipIt));
+    if (skip) return cleanup();
+    h.classList.add('landed'); setTimeout(cleanup, T.reveal + MAXI * STEP + 60);
+  };
+  const skipIt = () => end(true);
+  ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach((ev) => addEventListener(ev, skipIt, { passive: true }));
+  draw(.001);
+  const frame = (now: number) => {
+    if (h.classList.contains('gated') || !t0) t0 = now; // the clock starts once the page is allowed to show
+    const t = now - t0;
+    if (!fly0) {
+      draw(tonight * out3(Math.min(1, t / WAX)));
+      if (t >= WAX && (fonts || t >= MAXWAIT)) fly0 = now;
+    } else {
+      // first frame of the flight: measure both moons, and pick the forward way round to the rail's phase
+      const f = Math.min(1, (now - fly0) / FLY), e = Math.pow(1 - f, 4), k = 1 - e; // ease-out on the move token's curve
+      const a = svg.getBoundingClientRect(), b = rail.getBoundingClientRect();
+      if (!from) { from = tonight; const q = railPhase(); (svg as any)._d = [b.left + b.width / 2 - (a.left + a.width / 2), b.top + b.height / 2 - (a.top + a.height / 2), b.width / a.width, q >= from ? q : q + 1]; }
+      const [dx, dy, sc, to] = (svg as any)._d;
+      svg.style.transform = `translate(${dx * k}px, ${dy * k}px) scale(${1 + (sc - 1) * k})`;
+      draw(from + (to - from) * k);
+      if (f >= .35) h.classList.add('inked');
+      if (f >= 1) return end(false);
+    }
+    raf = requestAnimationFrame(frame);
+  };
+  raf = requestAnimationFrame(frame);
 }
 
 // ── hover cards. Rich ones for the things worth explaining; a short note for everything else.
