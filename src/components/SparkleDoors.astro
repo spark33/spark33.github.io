@@ -1,0 +1,35 @@
+---
+// Specimen for "The sparkle icon was a shrug": the same feature behind a sparkle and behind a plain label.
+const SPARK = 'M8 1c.5 3.2 1.8 5.5 7 7-5.2 1.5-6.5 3.8-7 7-.5-3.2-1.8-5.5-7-7 5.2-1.5 6.5-3.8 7-7z';
+---
+<figure class="fig specimen doors">
+  <div class="in">
+    <div class="q">Specimen · one feature, two ways in</div>
+    <div class="door"><div class="bar"><span>#launch-plan</span><button class="spk press" aria-label="AI" aria-expanded="false" data-ff="An icon. What does it do?"><svg viewBox="0 0 16 16" aria-hidden="true"><path d={SPARK} /></svg></button></div>
+      <div class="pop" hidden><span class="faint">Ask AI anything</span><span class="caret"></span></div>
+      <small class="faint">An icon. What does it do? Click and find out.</small></div>
+    <div class="door"><div class="bar"><span>#launch-plan</span><button class="txt press">Summarize 12 unread</button></div>
+      <p class="out" aria-live="polite"></p>
+      <small class="faint">A label. You know before you click.</small></div>
+    <div class="row"><button class="press sp-reset" data-ff="Start over">Reset</button><span>Same model behind both. One makes you guess; the other just tells you.</span></div>
+  </div>
+</figure>
+
+<script>
+  import { RM } from '../scripts/site';
+  document.querySelectorAll<HTMLElement>('.specimen.doors').forEach((fig) => {
+    const spk = fig.querySelector<HTMLElement>('.spk')!, pop = fig.querySelector<HTMLElement>('.pop')!, txt = fig.querySelector<HTMLButtonElement>('.txt')!, out = fig.querySelector<HTMLElement>('.out')!;
+    let run = 0, hint = 0; const wait = (ms: number) => new Promise((r) => setTimeout(r, RM() ? 0 : ms));
+    spk.onclick = () => {
+      const open = pop.hidden; pop.hidden = !open; spk.setAttribute('aria-expanded', String(open)); clearTimeout(hint); pop.querySelector('.hint')?.remove();
+      // the catch-all: it can do anything, so it tells you nothing
+      if (open) hint = window.setTimeout(() => pop.insertAdjacentHTML('beforeend', '<span class="hint">Try: summarize, translate, rewrite, explain, draft a reply…</span>'), RM() ? 0 : 1400);
+    };
+    txt.onclick = async () => {
+      const me = ++run; txt.disabled = true; out.textContent = '';
+      for (const w of 'Mina moved the launch to Thursday. Design review needs your sign-off by Wednesday. Two people asked about pricing.'.split(/(\s+)/)) { if (me !== run) return; out.textContent += w; await wait(22 + Math.random() * 30); }
+      txt.textContent = 'Summarized';
+    };
+    fig.querySelector<HTMLElement>('.sp-reset')!.onclick = () => { run++; pop.hidden = true; spk.setAttribute('aria-expanded', 'false'); clearTimeout(hint); pop.querySelector('.hint')?.remove(); out.textContent = ''; txt.disabled = false; txt.textContent = 'Summarize 12 unread'; };
+  });
+</script>

@@ -1,33 +1,54 @@
 ---
-// Root path. For now it redirects to the under-construction page (Sean's ask,
-// Oct 2026) until the real site is ready. GitHub Pages is static, so the
-// redirect is a meta-refresh + canonical, with a visible link as a no-JS /
-// crawler fallback. BASE_URL keeps it correct whether this is a project site
-// (/website/) or later a root site (/).
-//
-// TO GO LIVE LATER: delete this redirect and render the real homepage here
-// (the shipped v6 design is preserved at `${BASE_URL}v6-preview/` as the
-// starting point), then remove src/pages/under-construction.astro.
-const base = import.meta.env.BASE_URL; // '/website/'
-const target = `${base}under-construction`;
-const canonical = new URL(target, Astro.site).href;
+// Home: a short hello, the writing (the main thing), where I've worked, what I'm working on now, about.
+// Under construction: Base.astro hides this behind the preview gate (see src/data/site.ts).
+import Base from '../layouts/Base.astro';
+import LivingTitles from '../components/LivingTitles.astro';
+import BazeMock from '../components/BazeMock.astro';
+import { EXPERIENCE, BAZE, LINKS, EMAIL } from '../data/site';
+const ext = { target: '_blank', rel: 'noopener' };
 ---
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="refresh" content={`0; url=${target}`} />
-    <link rel="canonical" href={canonical} />
-    <meta name="robots" content="noindex" />
-    <title>Sean Park</title>
-    <style>
-      body { font-family: Georgia, 'Times New Roman', serif; background: #eeeadf; color: #1b1a17; display: grid; place-items: center; min-height: 100svh; margin: 0; }
-      @media (prefers-color-scheme: dark) { body { background: #12110f; color: #e9e3d4; } }
-      a { color: inherit; }
-    </style>
-  </head>
-  <body>
-    <p>Redirecting to <a href={target}>the site</a>…</p>
-  </body>
-</html>
+<Base page="home">
+  <section class="lede-wrap">
+    <div class="lede">
+      <p>Hi, I'm Sean. I lead product at <a href={LINKS.mindlogic} {...ext} data-card="mindlogic">Mindlogic</a> in Seoul, where it's <span class="now num" data-seoul-now></span>.</p>
+      <p class="more">I work on <a href={LINKS.baze} {...ext} data-card="baze">Baze</a>: one account for about 80 AI models. I own the UX and the direction, and still write a lot of the frontend.</p>
+      <p class="more">I write about what I keep noticing. <a href="#writing" data-card="writing">Start there</a>, see <a href="#work" data-card="work">where I've worked</a>, or <button class="copy" data-copy={EMAIL} data-card="email">grab my email</button>.</p>
+    </div>
+  </section>
+
+  <section class="takes" id="writing">
+    <h2 class="sec" data-where="Writing" data-desc="What I keep noticing about building AI products. Six drafts so far.">Writing</h2>
+    <LivingTitles />
+  </section>
+
+  <h2 class="sec" id="work" data-where="Where I've worked" data-desc="Newest first: Seoul, then New York.">Where I've worked</h2>
+  <table class="index num">
+    <thead><tr><th>Company</th><th>Role</th><th>What I did</th><th>Years</th></tr></thead>
+    <tbody>
+      {EXPERIENCE.map((e) => (
+        <tr>
+          <td><a href={e.url} {...ext} data-card={e.card}>{e.company}</a> <span class="faint">{e.where}</span></td>
+          <td class={e.role.startsWith('[') ? 'ph' : ''}>{e.role}</td>
+          <td class="outcome" set:html={e.did} />
+          <td class={e.years.startsWith('[') ? 'ph' : ''}>{e.years}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  <h2 class="sec" id="now" data-where="What I'm working on now" data-desc="Baze. The case study has the bet, the call and the result.">What I'm working on now</h2>
+  <div class="work">
+    <article class="proj">
+      <div class="head"><b><a href="/work/baze/" data-card="case">{BAZE.title}</a></b><p>{BAZE.blurb}</p><a href="/work/baze/" data-card="case">Case study</a></div>
+      <BazeMock />
+    </article>
+  </div>
+
+  <section class="about" id="about">
+    <h2 class="sec" data-where="About" data-desc="How I work, and the rest of me.">About</h2>
+    <div>
+      <p class="ph">Placeholder: how I work, in my own words.</p>
+      <p>I also write songs.</p>
+    </div>
+  </section>
+</Base>

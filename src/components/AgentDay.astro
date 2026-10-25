@@ -1,0 +1,23 @@
+---
+// Specimen for the sola piece: a day of its messages, played back. Illustrative until a real, redacted day replaces it.
+import { SOLA_DAY } from '../data/site';
+---
+<figure class="fig">
+  <div class="medium agent"><div class="in">
+    <ol class="log" aria-label="An illustrative day with sola">
+      {SOLA_DAY.map((l) => <li class={l.me ? 'me' : ''}><time class="num">{l.t}</time><div><span class="who">{l.who}</span><p class="msg">{l.m}</p></div></li>)}
+    </ol>
+    <div class="runs"><b>How it runs</b><span>Lives in Slack. One message a day, unless something needs me.</span><span>Reads and writes Google Calendar, Gmail (drafts only) and Sheets.</span><span>Remembers through a memory kept in git. Heavy jobs go to GitHub Actions.</span><button class="replay" data-ff="Play the day again">Replay the day</button></div>
+  </div><p class="cap faint">An illustrative day; the numbers are made up.</p></div>
+</figure>
+
+<script>
+  import { RM } from '../scripts/site';
+  document.querySelectorAll<HTMLElement>('.medium.agent').forEach((m) => {
+    const items = [...m.querySelectorAll<HTMLElement>('.log li')]; let run = 0;
+    const play = async () => { const me = ++run; items.forEach((li) => li.classList.remove('on'));
+      for (const li of items) { if (me !== run) return; li.classList.add('on'); if (!RM()) await new Promise((r) => setTimeout(r, li.classList.contains('me') ? 500 : 900)); } };
+    const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { io.disconnect(); play(); } }, { threshold: .35 }); io.observe(m);
+    m.querySelector<HTMLElement>('.replay')!.onclick = play;
+  });
+</script>

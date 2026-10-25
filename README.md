@@ -1,18 +1,24 @@
-# spark33.github.io
+# seanpark.page
 
-Sean Park's personal site. Built with [Astro](https://astro.build), deployed to
-GitHub Pages by the workflow in `.github/workflows/deploy.yml` — the build runs
-**in CI**, never locally on a memory-constrained host.
+Sean Park's site. Astro, static, deployed to GitHub Pages by `.github/workflows/deploy.yml`
+on every push to `main` (the build runs in CI).
 
-## Status
-`/` currently redirects to `/under-construction` (a holding page). The shipped
-v6 design is preserved at `/v6-preview/` as the starting point for the real
-build. To go live: replace `src/pages/index.astro` with the real homepage and
-remove the under-construction page (see the comments in those files).
+## Under construction
 
-## Develop
-```
-npm install
-npm run dev      # http://localhost:4321
-npm run build    # output in dist/
-```
+`UNDER_CONSTRUCTION` in `src/data/site.ts` puts every page behind a preview gate:
+visitors are sent to `/under-construction/`. Open any page once with `?preview=<key>`
+and the browser remembers it; `?preview=off` forgets. Only the key's SHA-256 is in the
+repo (`PREVIEW_HASH`). It's a curtain, not a lock: the built HTML is public.
+
+To publish: set `UNDER_CONSTRUCTION = false`.
+
+## Where things are
+
+- `src/data/site.ts`: email, links, experience table, the Baze case-study copy, sola's sample day
+- `src/content/writing/*.md`: the writing. Frontmatter: title (the claim), dek, lens, status, order, tldr, project, specimen
+- `src/components/LivingTitles.astro` + `src/scripts/living.ts`: titles that act out their claim
+- `src/components/BazeMock.astro`: the Baze schematic (the rename, performed)
+- `src/components/{SparkleDoors,AgentDay,SiteSystem}.astro`: live demos inside pieces
+- `src/scripts/site.ts`: theme, the moon, the rail's section line, hover cards
+- `src/styles/global.css`: one stylesheet; motion tokens at the top
+- `public/v6-preview/`: the old v6 design, kept for reference

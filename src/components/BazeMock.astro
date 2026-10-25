@@ -1,0 +1,47 @@
+---
+// Baze, performed: a schematic of the product that renames itself (FactChat → Baze),
+// then opens its model menu. A schematic until real screens are in.
+const MODELS = ['GPT-5', 'GPT-4o', 'o3', 'Claude Opus', 'Claude Sonnet', 'Gemini 2.5 Pro', 'Gemini Flash', 'Llama', 'DeepSeek', 'Mistral', 'Qwen', 'Grok', 'Perplexity', 'Seedance', 'Veo'];
+---
+<div class="mock">
+  <div class="mwin" aria-label="Schematic of Baze: one account, about 80 models">
+    <div class="mbar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="mname">FactChat</span><span class="mwhen">renamed Oct 2026</span></div>
+    <div class="mbody">
+      <div class="mside"><b>Chats</b><span>Lecture notes</span><span>Grant draft</span><span>Code review</span><span>Reading list</span></div>
+      <div class="mmain">
+        <div class="mpick"><button class="mbtn" aria-haspopup="listbox" aria-expanded="false" data-ff="Pick a model">GPT-5 ▾</button>
+          <ul class="mmenu" hidden><li class="mh">About 80 models, one account</li>{MODELS.map((m, i) => <li><button aria-current={i === 0 ? 'true' : undefined}>{m}</button></li>)}<li class="mh">…and more</li></ul>
+        </div>
+        <div class="mmsg u">Summarize this week's lecture in five bullets.</div>
+        <div class="mmsg a"><small class="who">GPT-5</small>Here are the five points from Tuesday's lecture…</div>
+        <div class="minput">Ask anything</div>
+      </div>
+    </div>
+  </div>
+  <div class="mctl"><button class="replay" data-ff="Play the rename again">Replay the rename</button><span class="faint">A schematic, not a screenshot. Real screens to come.</span></div>
+</div>
+
+<script>
+  import { RM } from '../scripts/site';
+  document.querySelectorAll<HTMLElement>('.mock').forEach((m) => {
+    const name = m.querySelector('.mname')!, when = m.querySelector('.mwhen')!, btn = m.querySelector<HTMLElement>('.mbtn')!, menu = m.querySelector<HTMLElement>('.mmenu')!, who = m.querySelector('.who')!;
+    let run = 0; const wait = (ms: number) => new Promise((r) => setTimeout(r, RM() ? 0 : ms));
+    const pick = (b: HTMLElement) => { menu.querySelectorAll('button').forEach((x) => x.removeAttribute('aria-current')); b.setAttribute('aria-current', 'true'); btn.textContent = b.textContent + ' ▾'; who.textContent = b.textContent; };
+    const open = (o: boolean) => { menu.hidden = !o; btn.setAttribute('aria-expanded', String(o)); };
+    btn.onclick = () => open(menu.hidden);
+    menu.querySelectorAll<HTMLElement>('button').forEach((b) => (b.onclick = () => { pick(b); open(false); }));
+    const play = async () => {
+      const me = ++run; open(false); when.classList.remove('on'); name.textContent = 'FactChat';
+      const car = document.createElement('span'); car.className = 'car'; await wait(700); name.append(car);
+      for (let n = 8; n > 0; n--) { if (me !== run) return; (name.firstChild as Text).data = 'FactChat'.slice(0, n - 1); await wait(70); }
+      await wait(300); for (const c of 'Baze') { if (me !== run) return; (name.firstChild as Text).data += c; await wait(110); }
+      await wait(400); car.remove(); when.classList.add('on');
+      // then: one account, any model
+      await wait(700); if (me !== run) return; open(true); const bs = [...menu.querySelectorAll<HTMLElement>('button')];
+      for (const k of [4, 5, 8]) { await wait(650); if (me !== run) return; pick(bs[k]); bs[k].scrollIntoView({ block: 'nearest' }); }
+      await wait(800); if (me === run) open(false);
+    };
+    m.querySelector<HTMLElement>('.replay')!.onclick = play;
+    const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { io.disconnect(); play(); } }, { threshold: .4 }); io.observe(m);
+  });
+</script>

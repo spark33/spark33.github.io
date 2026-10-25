@@ -1,0 +1,34 @@
+---
+// The Baze case study: TL;DR first, then the bet → the call → the result.
+import Base from '../../layouts/Base.astro';
+import BazeMock from '../../components/BazeMock.astro';
+import { getCollection } from 'astro:content';
+import { BAZE, LINKS } from '../../data/site';
+const related = (await getCollection('writing')).filter((p) => p.data.project === 'baze');
+const arrow = '<svg viewBox="0 0 22 22" aria-hidden="true"><path d="M4 11h13M12 6l5 5-5 5"/></svg>';
+const ph = (s: string) => s.startsWith('Placeholder') || s.startsWith('[');
+---
+<Base page="case" title="Baze · Sean Park" description={BAZE.blurb}>
+  <article class="cs">
+    <nav class="csnav num"><a href="/#now" data-back data-ff="Back to where you were">← Back</a></nav>
+    <h1 style="view-transition-name:baze-title" data-where="Baze" data-desc="Case study">{BAZE.title}</h1>
+    <p class="dek"><span class="soft">Formerly FactChat.</span> {BAZE.blurb}</p>
+    <dl class="summary num">
+      <div><dt>Role</dt><dd>{BAZE.role}</dd></div>
+      <div><dt>Team</dt><dd class={ph(BAZE.team) ? 'ph' : ''}>{BAZE.team}</dd></div>
+      <div><dt>Timeline</dt><dd>{BAZE.timeline}</dd></div>
+      <div><dt>Stack</dt><dd class={ph(BAZE.stack) ? 'ph' : ''}>{BAZE.stack}</dd></div>
+      <div><dt>Outcome</dt><dd>{BAZE.outcome}</dd></div>
+      <div><dt>Links</dt><dd><a href={LINKS.baze} target="_blank" rel="noopener">baze.co</a></dd></div>
+    </dl>
+    <div class="body">
+      <p class="tldr"><b>TL;DR</b><span class="ph">{BAZE.tldr}</span></p>
+      <h2 data-where="The bet" data-desc="Baze case study">The bet</h2><p class="ph">{BAZE.bet}</p>
+      {related.length > 0 && <p class="argued">More in {related.map((p, i) => <>{i > 0 && ' and '}<a href={`/writing/${p.id}/`}>{p.data.title}</a></>)}.</p>}
+      <figure class="fig"><BazeMock /><figcaption>The rename, performed. A schematic until the real screens are in.</figcaption></figure>
+      <h2 data-where="The call" data-desc="Baze case study">The call</h2><p class="ph">{BAZE.call}</p>
+      <h2 data-where="The result" data-desc="Baze case study">The result</h2><p class="ph">{BAZE.result}</p>
+      <a class="nextp" href="/#writing"><small>Next</small><b>The writing<Fragment set:html={arrow} /></b></a>
+    </div>
+  </article>
+</Base>

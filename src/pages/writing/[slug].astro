@@ -1,0 +1,42 @@
+---
+// A piece of writing. The live specimen (if any) sits right after the opening.
+import Base from '../../layouts/Base.astro';
+import SparkleDoors from '../../components/SparkleDoors.astro';
+import AgentDay from '../../components/AgentDay.astro';
+import SiteSystem from '../../components/SiteSystem.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('writing')).sort((a, b) => a.data.order - b.data.order);
+  return posts.map((p) => ({ params: { slug: p.id }, props: { post: p, others: posts.filter((o) => o.id !== p.id) } }));
+}
+const { post, others } = Astro.props;
+const { Content, headings } = await render(post);
+const d = post.data;
+const SPEC = { sparkle: SparkleDoors, agent: AgentDay, system: SiteSystem } as const;
+const Spec = d.specimen ? SPEC[d.specimen] : null;
+---
+<Base page="post" title={`${d.title} · Sean Park`} description={d.dek}>
+  <article class="post">
+    <ol class="toc">{headings.filter((h) => h.depth === 2).map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol>
+    <a class="back" href="/#writing" data-back data-ff="Back to the writing">← Writing</a>
+    <div class="meta num" data-where={d.title} data-desc={`${d.status} · ${d.lens}`}>{d.status} · {d.lens}</div>
+    <h1>{d.title}</h1>
+    <p class="dek">{d.dek}</p>
+    {d.tldr && <p class="tldr"><b>TL;DR</b><span class="ph">{d.tldr}</span></p>}
+    {d.project === 'baze' && <aside class="sn">Where I tried this: <a href="/work/baze/" data-card="case">Baze</a>.</aside>}
+    {Spec && <Spec />}
+    <div class="prose"><Content /></div>
+  </article>
+  <section class="after">
+    <h2>Next</h2>
+    <ul class="nextl">{others.map((o) => <li><a href={`/writing/${o.id}/`}><span>{o.data.title}</span><small>{o.data.lens} · {o.data.status}</small></a></li>)}</ul>
+  </section>
+</Base>
+
+<script>
+  // contents: highlight the section you're reading
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('.toc a')];
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) links.forEach((a) => a.hash === '#' + e.target.id ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current')); }), { rootMargin: '0px 0px -70% 0px' });
+  document.querySelectorAll('.prose h2[id]').forEach((h) => io.observe(h));
+</script>

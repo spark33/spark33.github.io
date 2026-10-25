@@ -1,0 +1,80 @@
+---
+// The frame every page shares: head, the preview gate, the rail (moon + name + where you are),
+// the footer, and the site-wide behaviour (theme, moon, rail label, hover cards).
+import '../styles/global.css';
+import { getCollection } from 'astro:content';
+import { UNDER_CONSTRUCTION, PREVIEW_HASH, EMAIL, LINKS } from '../data/site';
+
+interface Props { title?: string; description?: string; page?: 'home' | 'case' | 'post' | '404' }
+const { title = 'Sean Park', description = "Sean Park leads product at Mindlogic in Seoul, and writes about building AI products.", page = 'home' } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const posts = (await getCollection('writing')).sort((a, b) => a.data.order - b.data.order)
+  .map((p) => ({ s: p.id, t: p.data.title, x: p.data.dek, l: p.data.lens, st: p.data.status }));
+const updated = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).format(new Date()).replaceAll('-', '.');
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  {UNDER_CONSTRUCTION && <meta name="robots" content="noindex" />}
+  <meta name="theme-color" content="#eeeadf" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#12110f" media="(prefers-color-scheme: dark)" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonical} />
+  <script is:inline>(function(){var s=localStorage.getItem('theme');document.documentElement.dataset.theme=s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')})();</script>
+  {UNDER_CONSTRUCTION && (
+    <>
+      {/* Preview gate: without Sean's key, every page sends you to /under-construction/. */}
+      <script is:inline define:vars={{ H: PREVIEW_HASH }}>
+        (function(){var K='sp-preview',d=document.documentElement,q=new URLSearchParams(location.search).get('preview');
+          d.classList.add('gated');
+          function go(){location.replace('/under-construction/')}
+          function ok(){d.classList.remove('gated')}
+          if(q==='off'){localStorage.removeItem(K);return go()}
+          if(!q)return localStorage.getItem(K)===H?ok():go();
+          crypto.subtle.digest('SHA-256',new TextEncoder().encode(q)).then(function(b){
+            var h=Array.prototype.map.call(new Uint8Array(b),function(x){return x.toString(16).padStart(2,'0')}).join('');
+            if(h!==H)return go();localStorage.setItem(K,H);history.replaceState(null,'',location.pathname+location.hash);ok()}).catch(go)})();
+      </script>
+      <noscript><meta http-equiv="refresh" content="0; url=/under-construction/" /></noscript>
+    </>
+  )}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet" />
+</head>
+<body data-page={page}>
+  <svg class="grain" aria-hidden="true"><filter id="hanji"><feTurbulence type="fractalNoise" baseFrequency="0.005 0.14" numOctaves="3" seed="7"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 -1.2 1"/></filter><filter id="fine"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 -1.5 1"/></filter><rect width="100%" height="100%" filter="url(#hanji)"/><rect width="100%" height="100%" filter="url(#fine)" opacity=".5"/></svg>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="bleed" x="-5%" y="-20%" width="110%" height="140%"><feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="0" id="bleedD" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
+
+  <aside class="rail">
+    <div class="mast"><button class="moon" id="moon" aria-label="Switch theme"><svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.5"/><path id="mp"/></svg></button><a class="me" href="/" data-ff="Back to the top">Sean Park</a></div>
+    <div class="where" id="where" aria-live="off" data-intro={page === 'home' ? `Product lead at <a href="${LINKS.mindlogic}" target="_blank" rel="noopener" data-card="mindlogic">Mindlogic</a>, Seoul.` : ''}></div>
+    <div class="bottom">
+      <span id="pct" class="num pct"></span>
+      <button class="copy" data-copy={EMAIL} data-card="email">{EMAIL}</button>
+    </div>
+  </aside>
+
+  <main>
+    <slot />
+    <footer class="colophon">
+      <p>Built by hand in Seoul. Last updated <span class="num">{updated}</span>.</p>
+      <div class="dm num"><span id="dmoon"></span><span id="clock"></span></div>
+    </footer>
+  </main>
+
+  <script type="application/json" id="site-data" set:html={JSON.stringify({ posts, email: EMAIL, links: LINKS })} />
+  <script>
+    import { initSite } from '../scripts/site';
+    initSite();
+  </script>
+</body>
+</html>
