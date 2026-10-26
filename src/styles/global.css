@@ -3,7 +3,7 @@
    press = small feedback, move = things changing place, reveal = whole-view changes */
 :root{--ease-out:cubic-bezier(.23,1,.32,1);--t-press:150ms;--t-move:280ms;--t-reveal:420ms;
   --r-shot:3px;--r-phone:14px;
-  --font:'Newsreader',Georgia,'Apple SD Gothic Neo','Noto Serif KR',serif;--rail:232px}
+  --font:'Newsreader',Georgia,'Apple SD Gothic Neo','Noto Serif KR',serif;--rail:232px;--top:72px}
 [data-theme=light]{--bg:#eeeadf;--fg:#1b1a17;--soft:#57534a;--faint:#6b665c;--rule:rgba(27,26,23,.14);--frame:#e4dfd2;--hatch:rgba(27,26,23,.07);--moon-dark:#d4cebf;--inv:#12110f;--inv-moon:#2b2925;--shade:27,26,23;--blend:multiply;--grain-filter:invert(1);--tint:rgba(27,26,23,.04);--flash:rgba(27,26,23,.1)}
 [data-theme=dark]{--bg:#12110f;--fg:#e9e3d4;--soft:#a8a295;--faint:#888376;--rule:rgba(233,227,212,.13);--frame:#1b1a17;--hatch:rgba(233,227,212,.05);--moon-dark:#2b2925;--inv:#eeeadf;--inv-moon:#d4cebf;--shade:0,0,0;--blend:screen;--grain-filter:none;--tint:rgba(233,227,212,.04);--flash:rgba(233,227,212,.1)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -22,7 +22,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .grain{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:90;opacity:.03;mix-blend-mode:var(--blend);filter:var(--grain-filter)}
 
 /* ── left rail ── */
-.rail{position:fixed;left:0;top:0;bottom:0;width:var(--rail);padding:97px 0 32px 36px;display:flex;flex-direction:column;z-index:50;font-size:16px}
+.rail{position:fixed;left:0;top:0;bottom:0;width:var(--rail);padding:calc(var(--top) + 1px) 0 32px 36px;display:flex;flex-direction:column;z-index:50;font-size:16px}
 .mast{display:flex;align-items:center;gap:8px;margin-left:-6px}
 .rail .me{font-weight:500;font-size:18px;text-decoration:none}
 .pct{color:var(--faint);font-size:15px}
@@ -41,7 +41,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .rail .where .w.from-below{translate:0 40%;opacity:0}
 .rail .where .w.to-above{translate:0 -40%;opacity:0}
 
-main{margin-left:var(--rail);padding-right:48px}
+main{margin-left:var(--rail);padding-right:48px;max-width:1000px} /* ~950px of content: wide screens don't stretch the rows */
 
 /* project media: each project shows proof in its own medium */
 .medium{background:var(--frame);border-radius:var(--r-shot);background-image:repeating-linear-gradient(135deg,var(--hatch) 0 1px,transparent 1px 11px);padding:22px 24px}
@@ -79,7 +79,7 @@ main{margin-left:var(--rail);padding-right:48px}
 
 /* ── HOME ── */
 /* Lede + marginalia: context lives beside the sentence, not in a hover card */
-.lede-wrap{padding:96px 0 48px;max-width:34em}
+.lede-wrap{padding:var(--top) 0 48px;max-width:34em}
 .lede{font-size:24px;line-height:1.38}
 .lede p.more{font-size:19px;line-height:1.55;color:var(--soft);margin-top:.7em;max-width:30em}
 .now{color:var(--fg)}
@@ -228,7 +228,7 @@ main{margin-left:var(--rail);padding-right:48px}
 .ff.on{opacity:1;translate:0 0}
 
 /* ── CASE STUDY ── */
-.cs{padding:96px 0 0}
+.cs{padding:var(--top) 0 0}
 .csnav{display:flex;gap:20px;align-items:baseline;font-size:15px;color:var(--faint);margin-bottom:24px}
 .csnav a{text-decoration:none;color:var(--faint);transition:color var(--t-press) var(--ease-out)}
 @media (hover:hover) and (pointer:fine){.csnav a:hover{color:var(--fg)}}
@@ -257,7 +257,7 @@ main{margin-left:var(--rail);padding-right:48px}
 @media (hover:hover) and (pointer:fine){.nextp:hover svg{translate:4px 0}}
 
 /* ── POST: one reading column, a margin beside it for notes, and wide things (titles, specimens, images) span both ── */
-.post{max-width:640px;padding:96px 0 0;--margin:288px}
+.post{max-width:640px;padding:var(--top) 0 0;--margin:288px}
 .post .back{display:block;width:max-content;font-size:15px;color:var(--faint);text-decoration:none;margin-bottom:28px;transition:color var(--t-press) var(--ease-out)}
 @media (hover:hover) and (pointer:fine){.post .back:hover{color:var(--fg)}}
 .phead{margin-bottom:44px}
