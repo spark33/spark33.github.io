@@ -14,6 +14,7 @@ To publish: set `UNDER_CONSTRUCTION = false`.
 
 ## Where things are
 
+- `DESIGN.md`: rules for what goes where (start with the rail)
 - `src/data/site.ts`: email, links, experience table, the Baze case-study copy, sola's sample day
 - `src/content/writing/*.md`: the writing. Frontmatter: title (the claim), dek, lens, status, order, tldr, project, specimen
 - `src/components/LivingTitles.astro` + `src/scripts/living.ts`: titles that act out their claim
