@@ -1,0 +1,112 @@
+---
+// A piece of writing, in either language. The claim is the title, and it performs (Living titles) as you arrive.
+// The rail says where you are (Writing, then the piece's title once you're reading) and holds the contents.
+// Footnotes sit in the margin (src/lib/sidenotes.mjs); the live specimen, if any, comes right after the opening.
+// At the end: a way to write back, then the other pieces as Living titles.
+import Base from '../layouts/Base.astro';
+import LivingTitles from '../components/LivingTitles.astro';
+import SparkleDoors from '../components/SparkleDoors.astro';
+import AgentDay from '../components/AgentDay.astro';
+import SiteSystem from '../components/SiteSystem.astro';
+import { render } from 'astro:content';
+import { postLd, isPublished } from '../lib/seo';
+import { liveTitle } from '../lib/living';
+import { EMAIL, isPh } from '../data/site';
+import type { Piece } from '../lib/posts';
+import { UI, loc, type Lang } from '../i18n';
+
+interface Props { lang: Lang; post: Piece; n: number; of: number }
+const { lang, post, n, of } = Astro.props;
+const t = UI[lang];
+const { Content } = await render(post.entry as any);
+const d = post.data, body = post.entry.body ?? '';
+// reading time: ~230 words a minute in English; Korean has no word spaces to count, so ~500 characters a minute
+const words = body.split(/\s+/).filter(Boolean).length;
+const mins = Math.max(1, Math.round(lang === 'ko' && !post.fallback ? body.replace(/\s/g, '').length / 500 : words / 230));
+const SPEC = { sparkle: SparkleDoors, agent: AgentDay, system: SiteSystem } as const;
+const Spec = d.specimen ? SPEC[d.specimen] : null;
+const date = (x: Date) => x.toLocaleDateString(t.locale, { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+const iso = (x: Date) => x.toISOString().slice(0, 10);
+const textLang = post.fallback ? 'en' : undefined; // a piece not translated yet stays English, and says so
+---
+<Base lang={lang} page="post" type="article" title={`${d.title} · ${t.name}`} description={d.dek} section={d.lens} keywords={d.keywords}
+  published={d.published} updated={d.updated} noindex={!isPublished(post.en)} jsonLd={postLd(post, words, mins, lang)}>
+  <article class="post">
+    <header class="phead" data-where={t.writing[0]} data-desc={t.piece(n, of, mins)}>
+      <a class="back" href={loc('/#writing', lang)} data-back data-ff={t.backWFF}>{t.backW}</a>
+      <h1 class="ptitle lhost" data-s={post.id} lang={textLang}><span class="sr-only">{d.title}</span><span class="lt" aria-hidden="true" set:html={liveTitle(post.id, d.title, post.fallback ? 'en' : lang)} /></h1>
+      <p class="dek" lang={textLang}>{d.dek}</p>
+      <p class="meta num">{d.lens} · {d.published ? <time datetime={iso(d.published)}>{date(d.published)}</time> : d.status} · {t.mins(mins)}{d.updated && d.published && +d.updated !== +d.published && <> · <time datetime={iso(d.updated)}>{t.updated(date(d.updated))}</time></>}</p>
+      <p class="sr-only">{t.by} <a href={loc('/', lang)} rel="author">{t.name}</a></p>
+      {d.project === 'baze' && <aside class="sn tried">{t.tried} <a href={loc('/work/baze/', lang)} data-card="case">Baze</a>.</aside>}
+    </header>
+    {d.tldr && <p class="tldr" lang={textLang}><b>TL;DR</b><span class={isPh(d.tldr) ? 'ph' : ''}>{d.tldr}</span></p>}
+    {Spec && <div class="wide"><Spec lang={lang} /></div>}
+    <div class="prose" data-where={d.title} lang={textLang}><Content /></div>
+    <footer class="pend">
+      <p set:html={t.disagree(`<a href="mailto:${EMAIL}?subject=${encodeURIComponent(t.re + d.title)}" data-card="email">`)} />
+      <p class="acts"><button class="copy" data-copylink data-ff={t.copyLinkFF}>{t.copyLink}</button><a href="/rss.xml" data-ff={t.rssFF}>RSS</a></p>
+    </footer>
+  </article>
+  <section class="more" aria-labelledby="more-h">
+    <h2 class="sec" id="more-h" data-where={t.keep[0]} data-desc={t.keep[1]}>{t.keep[0]}</h2>
+    <LivingTitles lang={lang} after={post.id} />
+  </section>
+</Base>
+
+<script>
+  import { phaseNow, moonPath, everyPage, onLeave } from '../scripts/site';
+  import { client } from '../i18n';
+  everyPage(() => {
+    const prose = document.querySelector<HTMLElement>('.post .prose'); if (!prose) return;
+    const L = client();
+    const url = () => location.origin + location.pathname;
+    // the # buttons say "Copied" beside themselves (CSS); the others swap their label for a moment
+    const copied = (el: HTMLElement, ok: boolean) => {
+      const o = (el.dataset.label ??= el.textContent || ''); // the real label, even if clicked again while it says "Copied"
+      el.dataset.done = ok ? L.copied : L.pressC; if (!el.matches('.anc')) el.textContent = el.dataset.done;
+      clearTimeout((el as any)._t); (el as any)._t = setTimeout(() => { delete el.dataset.done; if (!el.matches('.anc')) el.textContent = o; }, 1400);
+    };
+    const copy = (el: HTMLElement, text: string) => navigator.clipboard ? navigator.clipboard.writeText(text).then(() => copied(el, true), () => copied(el, false)) : copied(el, false);
+
+    // contents, in the rail: the section you're reading is marked, and the mark slides between them
+    const outline = document.getElementById('outline')!, hs = [...prose.querySelectorAll<HTMLElement>('h2[id]')];
+    outline.innerHTML = hs.length > 1 ? `<i class="tick" aria-hidden="true"></i><ol>${hs.map((h) => `<li><a href="#${h.id}">${h.textContent}</a></li>`).join('')}</ol>` : '';
+    const links = [...outline.querySelectorAll<HTMLAnchorElement>('a')], tick = outline.querySelector<HTMLElement>('.tick');
+    const mark = (id: string) => {
+      const a = links.find((l) => l.hash === '#' + id); links.forEach((l) => (l === a ? l.setAttribute('aria-current', 'true') : l.removeAttribute('aria-current')));
+      if (tick) { tick.classList.toggle('on', !!a); if (a) tick.style.translate = `0 ${a.offsetTop}px`, tick.style.height = a.offsetHeight + 'px'; }
+    };
+    // the section you're in = the last heading that has reached the top (an IntersectionObserver picked whichever
+    // heading entered last, wrong when several short sections fit on one screen). A contents click marks its own
+    // section while the page scrolls there.
+    let raf = 0, pin = 0;
+    const where = () => { raf = 0; if (performance.now() < pin) return; let cur = ''; for (const h of hs) if (h.getBoundingClientRect().top < 120) cur = h.id; mark(cur); };
+    const top = () => { if (!raf) raf = requestAnimationFrame(where); };
+    addEventListener('scroll', top, { passive: true }); where();
+    links.forEach((a) => a.addEventListener('click', () => { mark(decodeURIComponent(a.hash.slice(1))); pin = performance.now() + 1000; }));
+
+    // every section heading carries a link to itself
+    hs.forEach((h) => {
+      const b = document.createElement('button'); b.className = 'anc'; b.textContent = '#'; b.dataset.ff = L.copySection; b.setAttribute('aria-label', L.copySectionAria(h.textContent || ''));
+      b.onclick = () => { history.replaceState(history.state, '', '#' + h.id); copy(b, url() + '#' + h.id); }; h.append(b);
+    });
+    // code blocks get a copy button
+    prose.querySelectorAll('pre').forEach((pre) => {
+      const b = document.createElement('button'); b.className = 'cp'; b.textContent = L.copy; b.dataset.ff = L.copyCode;
+      b.onclick = () => copy(b, pre.querySelector('code')?.textContent || ''); pre.append(b);
+    });
+    // margin notes: pointing at a number lights its note, and the other way round
+    prose.querySelectorAll<HTMLLabelElement>('.snref').forEach((r) => {
+      const n = document.getElementById(r.htmlFor)?.nextElementSibling as HTMLElement | null; if (!n) return;
+      const on = (v: boolean) => { r.classList.toggle('hl', v); n.classList.toggle('hl', v); };
+      [r, n].forEach((el) => { el.onpointerenter = () => on(true); el.onpointerleave = () => on(false); });
+    });
+    // the end mark: tonight's moon, after the last line
+    const last = [...prose.children].reverse().find((el) => el.matches('p'));
+    if (last) last.insertAdjacentHTML('beforeend', `<svg class="endmark" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="7.5"/><path d="${moonPath(Math.min(Math.max(phaseNow(), .001), .999), 7.5, 9)}"/></svg>`);
+    const cl = document.querySelector<HTMLElement>('[data-copylink]'); if (cl) cl.onclick = () => copy(cl, url());
+
+    onLeave(() => { cancelAnimationFrame(raf); removeEventListener('scroll', top); outline.innerHTML = ''; });
+  });
+</script>

@@ -1,4 +1,4 @@
-// End-to-end checks for the site (237 at last run, 2026-10-26). Run via the bot's offload job (CI): build with a
+// End-to-end checks for the site, both languages (2026-10-26). Run via the bot's offload job (CI): build with a
 // throwaway preview key (PREVIEW_HASH = sha256('testkey')), serve dist/ on :4321, then: H=<that hash> node tests/e2e.mjs
 // (needs puppeteer-core and Chrome at /usr/bin/google-chrome). See tests/run.sh.
 import puppeteer from 'puppeteer-core';
@@ -22,7 +22,9 @@ async function mk({ w = 1440, h = 900, mobile = false, theme = null, reduced = f
   }, { H, theme, key, intro });
   return p;
 }
-const PAGES = ['/', '/work/baze/', '/writing/attention/', '/writing/sparkle/', '/writing/data-model/', '/writing/chemistry/', '/writing/sola/', '/writing/this-site/', '/404.html'];
+const EN = ['/', '/work/baze/', '/writing/attention/', '/writing/sparkle/', '/writing/data-model/', '/writing/chemistry/', '/writing/sola/', '/writing/this-site/'];
+const KO = EN.map((p) => '/ko' + p);
+const PAGES = [...EN, ...KO, '/404.html'];
 const audit = () => {
   const W = document.documentElement.clientWidth, out = [];
   for (const el of document.querySelectorAll('body *')) {
@@ -339,7 +341,7 @@ for (const [w, h, mobile] of [[1440, 900, false], [1024, 768, false], [768, 1024
     const okXml = await p.evaluate((x) => !new DOMParser().parseFromString(x, 'application/xml').querySelector('parsererror'), x);
     ok(`${ep} is well-formed XML`, okXml);
   }
-  for (const path of PAGES.slice(0, 8)) {
+  for (const path of [...EN, ...KO]) {
     await p.goto(B + path, { waitUntil: 'networkidle0' });
     const m = await p.evaluate(() => ({ t: document.title, d: document.querySelector('meta[name=description]')?.content, c: document.querySelector('link[rel=canonical]')?.href, h1: document.querySelectorAll('h1').length, ld: [...document.querySelectorAll('script[type="application/ld+json"]')].every((s) => { try { JSON.parse(s.textContent); return true; } catch { return false; } }), ids: (() => { const ids = [...document.querySelectorAll('[id]')].map((e) => e.id); return ids.filter((x, i) => ids.indexOf(x) !== i); })() }));
     ok(`meta ${path}: title, description, canonical, one h1, valid JSON-LD, unique ids`, m.t && m.d && m.c && m.h1 === 1 && m.ld && m.ids.length === 0, JSON.stringify(m));
@@ -350,6 +352,54 @@ for (const [w, h, mobile] of [[1440, 900, false], [1024, 768, false], [768, 1024
   const hm = await p.evaluate(() => ({ t: document.title, c: document.querySelector('link[rel=canonical]')?.href, ld: document.querySelectorAll('script[type="application/ld+json"]').length, desc: document.querySelector('meta[name=description]').content }));
   ok('soft nav swaps title/canonical/JSON-LD', /chief-of-staff|sola/i.test(hm.t) && hm.c.endsWith('/writing/sola/') && hm.ld === 1, JSON.stringify(hm));
   await p.close();
+}
+
+// ── 13. 한국어: the /ko/ pages, the 한/EN switch, staying in your language, landing on the same spot
+{ phase = 'ko';
+  const p = await mk();
+  for (const path of KO) {
+    await p.goto(B + path, { waitUntil: 'networkidle0' });
+    const m = await p.evaluate(() => ({
+      lang: document.documentElement.lang,
+      alt: [...document.querySelectorAll('link[rel=alternate][hreflang]')].map((l) => l.hreflang + ' ' + new URL(l.href).pathname),
+      hangul: /[가-힣]/.test(document.querySelector('main').textContent),
+      leak: [...document.querySelectorAll('a[href]')].filter((a) => a.origin === location.origin && !a.closest('.rail .lang') && a.pathname !== '/rss.xml' && !a.pathname.startsWith('/ko/')).map((a) => a.pathname),
+      sw: document.querySelector('.rail .lang a')?.getAttribute('href'),
+      font: document.fonts.check('500 20px "Noto Serif KR"', '가'),
+    }));
+    ok(`ko ${path}: lang=ko, Korean text, hreflang en+ko`, m.lang === 'ko' && m.hangul && m.alt.includes('ko ' + path) && m.alt.includes('en ' + path.slice(3)), JSON.stringify(m));
+    ok(`ko ${path}: every internal link stays in Korean`, m.leak.length === 0, m.leak.join(' '));
+    ok(`ko ${path}: EN goes to the same page in English`, m.sw === path.slice(3), m.sw);
+    ok(`ko ${path}: Korean serif font loaded`, m.font);
+  }
+  // English pages point 한 at their Korean twin, and keep it current across soft navigation (the rail persists)
+  await p.goto(B + '/', { waitUntil: 'networkidle0' });
+  ok('en home: 한 → /ko/', (await p.$eval('.rail .lang a', (a) => a.getAttribute('href'))) === '/ko/');
+  await p.evaluate(() => document.querySelector('.livel a[href="/writing/sola/"]').click()); await sleep(900);
+  ok('after soft nav, 한 → the Korean twin of this page', (await p.$eval('.rail .lang a', (a) => a.getAttribute('href'))) === '/ko/writing/sola/');
+  // switch mid-page: land on the same block, at about the same height
+  await p.evaluate(() => document.querySelector('.medium.agent').scrollIntoView({ block: 'start', behavior: 'instant' })); await sleep(400);
+  const before = await p.evaluate(() => Math.round(document.querySelector('.medium.agent').getBoundingClientRect().top));
+  await Promise.all([p.waitForNavigation({ waitUntil: 'networkidle0' }), p.click('.rail .lang a')]); await sleep(900);
+  const after = await p.evaluate(() => ({ path: location.pathname, lang: document.documentElement.lang, top: Math.round(document.querySelector('.medium.agent').getBoundingClientRect().top), intro: document.documentElement.classList.contains('intro') }));
+  ok('한 switches to /ko/ (lang ko, no moonrise)', after.path === '/ko/writing/sola/' && after.lang === 'ko' && !after.intro, JSON.stringify(after));
+  ok('switching keeps your place on the page', Math.abs(after.top - before) < 120, `before=${before} after=${after.top}`);
+  // Korean pages navigate softly among themselves, cards and labels in Korean
+  await p.evaluate(() => document.querySelector('a.back').click()); await sleep(1200);
+  ok('ko: ← 글 goes to /ko/#writing', new URL(p.url()).pathname === '/ko/', p.url());
+  await p.evaluate(() => document.querySelector('.lede a[data-card="writing"]').scrollIntoView({ block: 'center', behavior: 'instant' })); await sleep(200);
+  await p.mouse.move(2, 2); await sleep(300); await p.hover('.lede a[data-card="writing"]'); await sleep(700);
+  const card = await p.evaluate(() => ({ t: document.querySelector('#card').textContent, links: [...document.querySelectorAll('#card a')].map((a) => a.pathname) }));
+  ok('ko: hover card is Korean and links stay in Korean', /[가-힣]/.test(card.t) && card.links.length > 0 && card.links.every((l) => l.startsWith('/ko/')), JSON.stringify(card));
+  ok('ko: footer clock in Korean', /서울/.test(await p.$eval('#clock', (e) => e.textContent)));
+  await Promise.all([p.waitForNavigation({ waitUntil: 'networkidle0' }), p.click('.rail .lang a')]);
+  ok('EN switches back to English', new URL(p.url()).pathname === '/' && (await p.evaluate(() => document.documentElement.lang)) === 'en', p.url());
+  // phones: the switch sits in the top bar and is tappable
+  const ph = await mk({ w: 390, h: 844, mobile: true });
+  await ph.goto(B + '/ko/', { waitUntil: 'networkidle0' });
+  const bx = await ph.evaluate(() => { const r = document.querySelector('.rail .lang').getBoundingClientRect(); return { x: r.left, r: r.right, y: r.top, h: r.height }; });
+  ok('phone: 한/EN visible in the bar', bx.r <= 390 && bx.y >= 0 && bx.y < 80 && bx.h > 0, JSON.stringify(bx));
+  await ph.close(); await p.close();
 }
 
 ok('no JS errors anywhere', errors.length === 0, [...new Set(errors)].slice(0, 15).join('\n   '));

@@ -1,14 +1,24 @@
 ---
 // Specimen for the sola piece: a day of its messages, played back. Illustrative until a real, redacted day replaces it.
-import { SOLA_DAY } from '../data/site';
+import { forLang } from '../data/site';
+import type { Lang } from '../i18n';
+interface Props { lang?: Lang }
+const { lang = 'en' } = Astro.props;
+const { SOLA_DAY } = forLang(lang);
+const W = {
+  en: { aria: 'An illustrative day with sola', how: 'How it runs', runs: ['Lives in Slack. One message a day, unless something needs me.', 'Reads and writes Google Calendar, Gmail (drafts only) and Sheets.', 'Remembers through a memory kept in git. Heavy jobs go to GitHub Actions.'],
+    replay: 'Replay the day', replayFF: 'Play the day again', cap: 'An illustrative day; the numbers are made up.' },
+  ko: { aria: 'sola와 보낸 하루(예시)', how: '돌아가는 방식', runs: ['슬랙에 살아요. 제가 봐야 할 일이 없으면 하루에 메시지 한 번.', '구글 캘린더, 지메일(초안만), 시트를 읽고 써요.', 'git에 둔 메모리로 기억해요. 무거운 작업은 GitHub Actions로 보내요.'],
+    replay: '하루 다시 보기', replayFF: '하루를 다시 재생', cap: '예시로 만든 하루예요. 숫자는 지어낸 거예요.' },
+}[lang];
 ---
 <figure class="fig">
   <div class="medium agent"><div class="in">
-    <ol class="log" aria-label="An illustrative day with sola">
+    <ol class="log" aria-label={W.aria}>
       {SOLA_DAY.map((l) => <li class={l.me ? 'me' : ''}><time class="num">{l.t}</time><div><span class="who">{l.who}</span><p class="msg">{l.m}</p></div></li>)}
     </ol>
-    <div class="runs"><b>How it runs</b><span>Lives in Slack. One message a day, unless something needs me.</span><span>Reads and writes Google Calendar, Gmail (drafts only) and Sheets.</span><span>Remembers through a memory kept in git. Heavy jobs go to GitHub Actions.</span><button class="replay" data-ff="Play the day again">Replay the day</button></div>
-  </div><p class="cap faint">An illustrative day; the numbers are made up.</p></div>
+    <div class="runs"><b>{W.how}</b>{W.runs.map((r) => <span>{r}</span>)}<button class="replay" data-ff={W.replayFF}>{W.replay}</button></div>
+  </div><p class="cap faint">{W.cap}</p></div>
 </figure>
 
 <script>

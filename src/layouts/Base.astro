@@ -4,33 +4,40 @@
 // What may go in the rail: see DESIGN.md.
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
-import { getCollection } from 'astro:content';
 import Analytics from '../components/Analytics.astro';
-import { UNDER_CONSTRUCTION, PREVIEW_HASH, EMAIL, LINKS, EXPERIENCE, PERSON, SITE_DESCRIPTION } from '../data/site';
+import { UNDER_CONSTRUCTION, PREVIEW_HASH, EMAIL, LINKS, PERSON, SITE_DESCRIPTION, forLang } from '../data/site';
 import { OG_IMAGE } from '../lib/seo';
+import { getPosts } from '../lib/posts';
+import { UI, loc, strip, other, type Lang } from '../i18n';
 
 interface Props {
   title?: string; description?: string; page?: 'home' | 'case' | 'post' | '404';
   type?: 'website' | 'profile' | 'article'; noindex?: boolean; jsonLd?: object;
-  published?: Date; updated?: Date; section?: string; keywords?: string[];
+  published?: Date; updated?: Date; section?: string; keywords?: string[]; lang?: Lang;
 }
-const { title = 'Sean Park · Product lead at Mindlogic, Seoul', description = SITE_DESCRIPTION, page = 'home',
+const { lang = 'en' } = Astro.props;
+const t = UI[lang];
+const { title = t.title, description = SITE_DESCRIPTION, page = 'home',
   type = 'website', noindex = false, jsonLd, published, updated, section, keywords = [] } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
+// the same page in each language (hreflang), and the 한/EN switch in the rail
+const path = strip(Astro.url.pathname), alt = loc(path, other(lang));
+const altOf = (l: Lang) => new URL(loc(path, l), Astro.site).href;
 // Gated pages and drafts stay out of search; everything else invites crawlers to show rich snippets.
 const robots = UNDER_CONSTRUCTION || noindex ? 'noindex, follow' : 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1';
-const posts = (await getCollection('writing')).sort((a, b) => a.data.order - b.data.order)
-  .map((p) => ({ s: p.id, t: p.data.title, x: p.data.dek, l: p.data.lens, st: p.data.status }));
+const posts = (await getPosts(lang)).map((p) => ({ s: p.id, t: p.data.title, x: p.data.dek, l: p.data.lens, st: p.data.status }));
+const { EXPERIENCE: JOBS } = forLang(lang);
 const built = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).format(new Date());
 ---
 <!doctype html>
-<html lang="en" transition:animate="initial">
+<html lang={lang} transition:animate="initial">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{title}</title>
   <meta name="description" content={description} />
   {page !== '404' && <link rel="canonical" href={canonical} />}
+  {page !== '404' && <><link rel="alternate" hreflang="en" href={altOf('en')} /><link rel="alternate" hreflang="ko" href={altOf('ko')} /><link rel="alternate" hreflang="x-default" href={altOf('en')} /></>}
   <meta name="robots" content={robots} />
   <meta name="author" content={PERSON.name} />
   {keywords.length > 0 && <meta name="keywords" content={keywords.join(', ')} />}
@@ -39,8 +46,9 @@ const built = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).forma
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <meta name="theme-color" content="#eeeadf" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#12110f" media="(prefers-color-scheme: dark)" />
-  <meta property="og:site_name" content={PERSON.name} />
-  <meta property="og:locale" content="en_US" />
+  <meta property="og:site_name" content={t.name} />
+  <meta property="og:locale" content={t.ogLocale} />
+  <meta property="og:locale:alternate" content={UI[other(lang)].ogLocale} />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:type" content={type} />
@@ -50,7 +58,7 @@ const built = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).forma
   <meta property="og:image:height" content={String(OG_IMAGE.height)} />
   <meta property="og:image:alt" content={OG_IMAGE.alt} />
   {type === 'profile' && <><meta property="profile:first_name" content="Sean" /><meta property="profile:last_name" content="Park" /></>}
-  {type === 'article' && <meta property="article:author" content={new URL('/', Astro.site).href} />}
+  {type === 'article' && <meta property="article:author" content={new URL(loc('/', lang), Astro.site).href} />}
   {type === 'article' && section && <meta property="article:section" content={section} />}
   {type === 'article' && published && <meta property="article:published_time" content={published.toISOString()} />}
   {type === 'article' && (updated || published) && <meta property="article:modified_time" content={(updated || published)!.toISOString()} />}
@@ -90,32 +98,42 @@ const built = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).forma
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet" />
+  {/* Hangul: Noto Serif KR beside Newsreader. Korean pages load all of it (Google serves it in slices, so only the
+      characters on the page download); English pages only need the 한 of the switch and the 한지 in the site piece. */}
+  <link href={lang === 'ko' ? 'https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500&display=swap' : 'https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500&text=%ED%95%9C%EC%A7%80&display=swap'} rel="stylesheet" />
 </head>
-<body data-page={page} data-intro={page === 'home' ? `Product lead at <a href="${LINKS.mindlogic}" target="_blank" rel="noopener" data-card="mindlogic">Mindlogic</a>, Seoul.` : ''}>
+<body data-page={page} data-intro={page === 'home' ? t.intro(`<a href="${LINKS.mindlogic}" target="_blank" rel="noopener" data-card="mindlogic">${t.mindlogic}</a>`) : ''}>
   <svg class="grain" aria-hidden="true"><filter id="hanji"><feTurbulence type="fractalNoise" baseFrequency="0.005 0.14" numOctaves="3" seed="7"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 -1.2 1"/></filter><filter id="fine"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 -1.5 1"/></filter><rect width="100%" height="100%" filter="url(#hanji)"/><rect width="100%" height="100%" filter="url(#fine)" opacity=".5"/></svg>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="bleed" x="-5%" y="-20%" width="110%" height="140%"><feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="0" id="bleedD" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
 
   <div class="loader" id="loader" aria-hidden="true"><svg viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.5"/><path/></svg><i class="fill"></i></div>
 
   <aside class="rail" transition:persist="rail">
-    <div class="mast"><button class="moon" id="moon" aria-label="Switch theme"><svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.5"/><path id="mp"/></svg></button><a class="me" href="/" data-ff="Back to the top">Sean Park</a></div>
+    <div class="mast"><button class="moon" id="moon" aria-label={t.theme}><svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.5"/><path id="mp"/></svg></button><a class="me" href={loc('/', lang)} data-ff={t.toTop}>{t.name}</a></div>
     <div class="where" id="where" aria-live="off"></div>
     <nav class="outline" id="outline" aria-label="Contents"></nav>
     <div class="bottom">
       <span id="pct" class="num pct"></span>
       <button class="copy" data-copy={EMAIL} data-card="email">{EMAIL}</button>
+      {/* the language switch: a site-wide setting, like the theme. The other language's link follows you from page
+          to page (site.ts keeps its href current, since the rail persists) and lands you on the same spot. */}
+      <nav class="lang" aria-label={t.langNav}>
+        {lang === 'ko' ? <span aria-current="true">한</span> : <a href={alt} hreflang="ko" lang="ko" data-lang="ko" data-astro-reload data-ff={UI.ko.switchTo}>한</a>}
+        <i aria-hidden="true">/</i>
+        {lang === 'en' ? <span aria-current="true">EN</span> : <a href={alt} hreflang="en" lang="en" data-lang="en" data-astro-reload data-ff={UI.en.switchTo}>EN</a>}
+      </nav>
     </div>
   </aside>
 
   <main>
     <slot />
     <footer class="colophon">
-      <p>Built by hand in Seoul. Last updated <time class="num" datetime={built}>{built.replaceAll('-', '.')}</time>.</p>
+      <p set:html={t.built(`<time class="num" datetime="${built}">${built.replaceAll('-', '.')}</time>`)} />
       <div class="dm num"><span id="dmoon"></span><span id="clock"></span></div>
     </footer>
   </main>
 
-  <script type="application/json" id="site-data" set:html={JSON.stringify({ posts, email: EMAIL, links: LINKS, jobs: EXPERIENCE.map(({ company, where, role, years, url, card, line }) => ({ company, where, role, years, url, card, line })) })} />
+  <script type="application/json" id="site-data" set:html={JSON.stringify({ posts, base: lang === 'ko' ? '/ko' : '', email: EMAIL, links: LINKS, jobs: JOBS.map(({ company, where, role, years, url, card, line }) => ({ company, where, role, years, url, card, line })) })} />
   <script>
     import { initSite } from '../scripts/site';
     initSite();

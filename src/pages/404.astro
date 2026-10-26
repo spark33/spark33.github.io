@@ -1,10 +1,20 @@
 ---
+// One 404 for both languages (GitHub Pages serves this file for every missing path): under /ko/ it switches to Korean.
 import Base from '../layouts/Base.astro';
+import { UI } from '../i18n';
 ---
 <Base page="404" title="Not found · Sean Park" noindex>
   <section class="nf">
     <svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="26" fill="var(--moon-dark)" stroke="var(--rule)"/></svg>
-    <h1 class="sec">Nothing here tonight.</h1>
-    <a href="/">Back to the work</a>
+    <h1 class="sec">{UI.en.nf}</h1>
+    <a href="/">{UI.en.nfBack}</a>
   </section>
+  <script is:inline define:vars={{ K: { nf: UI.ko.nf, back: UI.ko.nfBack, name: UI.ko.name, theme: UI.ko.theme } }}>
+    if (/^\/ko(\/|$)/.test(location.pathname)) {
+      document.documentElement.lang = 'ko'; document.title = K.nf + ' · ' + K.name;
+      document.querySelector('.nf h1').textContent = K.nf; var a = document.querySelector('.nf a'); a.textContent = K.back; a.href = '/ko/';
+      var me = document.querySelector('.rail .me'); me.textContent = K.name; me.href = '/ko/'; document.getElementById('moon').setAttribute('aria-label', K.theme);
+      l.innerHTML = '<span aria-current="true">한</span><i aria-hidden="true">/</i><a href="/" hreflang="en" lang="en" data-lang="en" data-astro-reload data-ff="Read in English">EN</a>';
+    }
+  </script>
 </Base>

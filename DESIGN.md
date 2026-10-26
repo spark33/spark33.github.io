@@ -28,6 +28,7 @@ What's in it today, and which question each item answers:
 | Section title + one-liner | Where am I? |
 | Contents (posts), % read | Where am I, in more detail |
 | Email | How do I reach Sean? |
+| 한 / EN | Whose site is this? (a site-wide setting, like the theme; it lands you on the same page and spot) |
 
 Things that were tried and cut, and the rule each one broke:
 

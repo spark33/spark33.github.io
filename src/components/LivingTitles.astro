@@ -2,21 +2,22 @@
 // Living titles: each claim acts out its own argument when you point at it, and its row opens
 // to say what the piece is about. Touch: the first tap opens the row, the second opens the piece.
 // On a piece, `after` lists the others, starting with the one after it.
-import { getCollection } from 'astro:content';
 import { liveTitle } from '../lib/living';
-interface Props { after?: string }
-const { after } = Astro.props;
-let posts = (await getCollection('writing')).sort((a, b) => a.data.order - b.data.order);
+import { getPosts } from '../lib/posts';
+import { UI, loc, type Lang } from '../i18n';
+interface Props { after?: string; lang?: Lang }
+const { after, lang = 'en' } = Astro.props;
+let posts = await getPosts(lang);
 if (after) { const i = posts.findIndex((p) => p.id === after); posts = [...posts.slice(i + 1), ...posts.slice(0, i)]; }
 ---
 <ul class="livel">
   {posts.map((p) => (
     <li class="cl lhost" data-s={p.id}>
-      <a href={`/writing/${p.id}/`} aria-label={`${p.data.title}. ${p.data.lens}, ${p.data.status}`}>
+      <a href={loc(`/writing/${p.id}/`, lang)} aria-label={`${p.data.title}. ${p.data.lens}, ${p.data.status}`}>
         <span class="sr-only">{p.data.title}</span>{/* the plain claim, for crawlers: the performance below splits or swaps its words */}
-        <span class="lt" aria-hidden="true" set:html={liveTitle(p.id, p.data.title)} />
+        <span class="lt" aria-hidden="true" lang={p.fallback ? 'en' : undefined} set:html={liveTitle(p.id, p.data.title, p.fallback ? 'en' : lang)} />
         <span class="m num" aria-hidden="true">{p.data.lens} · {p.data.status}</span>
-        <span class="xp"><span class="xpi"><span class="xbox"><span class="xd">{p.data.dek}</span><span class="xr">Read the draft</span></span></span></span>
+        <span class="xp"><span class="xpi"><span class="xbox"><span class="xd">{p.data.dek}</span><span class="xr">{UI[lang].readDraft}</span></span></span></span>
       </a>
     </li>
   ))}

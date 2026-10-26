@@ -1,17 +1,28 @@
 ---
 // Specimen for "The sparkle icon was a shrug": the same feature behind a sparkle and behind a plain label.
+import type { Lang } from '../i18n';
+interface Props { lang?: Lang }
+const { lang = 'en' } = Astro.props;
+const W = {
+  en: { q: 'Specimen · one feature, two ways in', ch: '#launch-plan', ff: 'An icon. What does it do?', pop: 'Ask AI anything', s1: 'An icon. What does it do? Click and find out.',
+    btn: 'Summarize 12 unread', done: 'Summarized', s2: 'A label. You know before you click.', reset: 'Reset', resetFF: 'Start over', row: 'Same model behind both. One makes you guess; the other just tells you.',
+    hint: 'Try: summarize, translate, rewrite, explain, draft a reply…', out: 'Mina moved the launch to Thursday. Design review needs your sign-off by Wednesday. Two people asked about pricing.' },
+  ko: { q: '견본 · 같은 기능, 두 개의 입구', ch: '#출시-계획', ff: '아이콘이네요. 뭘 할까요?', pop: 'AI에게 무엇이든 물어보세요', s1: '아이콘 하나. 뭘 할까요? 눌러 봐야 알아요.',
+    btn: '안 읽은 12개 요약', done: '요약 완료', s2: '글자 라벨. 누르기 전에 알아요.', reset: '처음부터', resetFF: '처음 상태로', row: '뒤에 있는 모델은 같아요. 하나는 짐작하게 하고, 하나는 그냥 알려 줘요.',
+    hint: '예: 요약, 번역, 다듬기, 설명, 답장 초안…', out: '민아 님이 출시를 목요일로 옮겼어요. 디자인 리뷰는 수요일까지 승인이 필요해요. 가격을 물어본 사람이 두 명 있어요.' },
+}[lang];
 const SPARK = 'M8 1c.5 3.2 1.8 5.5 7 7-5.2 1.5-6.5 3.8-7 7-.5-3.2-1.8-5.5-7-7 5.2-1.5 6.5-3.8 7-7z';
 ---
-<figure class="fig specimen doors">
+<figure class="fig specimen doors" data-w={JSON.stringify({ btn: W.btn, done: W.done, hint: W.hint, out: W.out })}>
   <div class="in">
-    <div class="q">Specimen · one feature, two ways in</div>
-    <div class="door"><div class="bar"><span>#launch-plan</span><button class="spk press" aria-label="AI" aria-expanded="false" data-ff="An icon. What does it do?"><svg viewBox="0 0 16 16" aria-hidden="true"><path d={SPARK} /></svg></button></div>
-      <div class="pop" hidden><span class="faint">Ask AI anything</span><span class="caret"></span></div>
-      <small class="faint">An icon. What does it do? Click and find out.</small></div>
-    <div class="door"><div class="bar"><span>#launch-plan</span><button class="txt press">Summarize 12 unread</button></div>
+    <div class="q">{W.q}</div>
+    <div class="door"><div class="bar"><span>{W.ch}</span><button class="spk press" aria-label="AI" aria-expanded="false" data-ff={W.ff}><svg viewBox="0 0 16 16" aria-hidden="true"><path d={SPARK} /></svg></button></div>
+      <div class="pop" hidden><span class="faint">{W.pop}</span><span class="caret"></span></div>
+      <small class="faint">{W.s1}</small></div>
+    <div class="door"><div class="bar"><span>{W.ch}</span><button class="txt press">{W.btn}</button></div>
       <p class="out" aria-live="polite"></p>
-      <small class="faint">A label. You know before you click.</small></div>
-    <div class="row"><button class="press sp-reset" data-ff="Start over">Reset</button><span>Same model behind both. One makes you guess; the other just tells you.</span></div>
+      <small class="faint">{W.s2}</small></div>
+    <div class="row"><button class="press sp-reset" data-ff={W.resetFF}>{W.reset}</button><span>{W.row}</span></div>
   </div>
 </figure>
 
@@ -19,18 +30,19 @@ const SPARK = 'M8 1c.5 3.2 1.8 5.5 7 7-5.2 1.5-6.5 3.8-7 7-.5-3.2-1.8-5.5-7-7 5.
   import { RM, everyPage, onLeave } from '../scripts/site';
   everyPage(() => document.querySelectorAll<HTMLElement>('.specimen.doors').forEach((fig) => {
     const spk = fig.querySelector<HTMLElement>('.spk')!, pop = fig.querySelector<HTMLElement>('.pop')!, txt = fig.querySelector<HTMLButtonElement>('.txt')!, out = fig.querySelector<HTMLElement>('.out')!;
+    const W = JSON.parse(fig.dataset.w || '{}');
     let run = 0, hint = 0; const wait = (ms: number) => new Promise((r) => setTimeout(r, RM() ? 0 : ms));
     spk.onclick = () => {
       const open = pop.hidden; pop.hidden = !open; spk.setAttribute('aria-expanded', String(open)); clearTimeout(hint); pop.querySelector('.hint')?.remove();
       // the catch-all: it can do anything, so it tells you nothing
-      if (open) hint = window.setTimeout(() => pop.insertAdjacentHTML('beforeend', '<span class="hint">Try: summarize, translate, rewrite, explain, draft a reply…</span>'), RM() ? 0 : 1400);
+      if (open) hint = window.setTimeout(() => pop.insertAdjacentHTML('beforeend', `<span class="hint">${W.hint}</span>`), RM() ? 0 : 1400);
     };
     txt.onclick = async () => {
       const me = ++run; txt.disabled = true; out.textContent = '';
-      for (const w of 'Mina moved the launch to Thursday. Design review needs your sign-off by Wednesday. Two people asked about pricing.'.split(/(\s+)/)) { if (me !== run) return; out.textContent += w; await wait(22 + Math.random() * 30); }
-      txt.textContent = 'Summarized';
+      for (const w of (W.out as string).split(/(\s+)/)) { if (me !== run) return; out.textContent += w; await wait(22 + Math.random() * 30); }
+      txt.textContent = W.done;
     };
-    fig.querySelector<HTMLElement>('.sp-reset')!.onclick = () => { run++; pop.hidden = true; spk.setAttribute('aria-expanded', 'false'); clearTimeout(hint); pop.querySelector('.hint')?.remove(); out.textContent = ''; txt.disabled = false; txt.textContent = 'Summarize 12 unread'; };
+    fig.querySelector<HTMLElement>('.sp-reset')!.onclick = () => { run++; pop.hidden = true; spk.setAttribute('aria-expanded', 'false'); clearTimeout(hint); pop.querySelector('.hint')?.remove(); out.textContent = ''; txt.disabled = false; txt.textContent = W.btn; };
     onLeave(() => { run++; clearTimeout(hint); });
   }));
 </script>

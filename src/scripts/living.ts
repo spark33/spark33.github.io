@@ -1,11 +1,11 @@
 // Living titles: see components/LivingTitles.astro (the list) and the piece's own title (pages/writing/[slug].astro).
 // A host (.lhost, data-s = slug) gets .on while it performs; ENACT runs the slug's performance.
 import { T, RM, phaseNow, moonPath, everyPage, onLeave } from './site';
+import { client } from '../i18n';
 
-const GUESS = ['summarize?', 'translate?', 'rewrite?', 'explain?', '…anything?'];
 const nextSola = () => {
   const k = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' })), n = new Date(k); n.setHours(9, 17, 0, 0); if (n <= k) n.setDate(n.getDate() + 1);
-  const m = Math.round((+n - +k) / 6e4); return `sola · 09:17 · next one in ${Math.floor(m / 60)}h ${m % 60}m`;
+  const m = Math.round((+n - +k) / 6e4); return client().sola(Math.floor(m / 60), m % 60);
 };
 let bleedRaf = 0;
 const bleed = (el: HTMLElement, on: boolean) => {
@@ -19,7 +19,7 @@ const conn = (el: HTMLElement) => { // the "has many" line between the two entit
   const r = el.getBoundingClientRect(), a = el.querySelector('[data-e=a]')!.getBoundingClientRect(), b = el.querySelector('[data-e=b]')!.getBoundingClientRect();
   const ax = a.left + a.width / 2 - r.left, ay = a.top - r.top - 5, bx = b.left + b.width / 2 - r.left, by = b.top - r.top - 5, top = Math.min(ay, by) - 22;
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('class', 'conn'); svg.setAttribute('width', String(r.width)); svg.setAttribute('height', String(r.height)); svg.setAttribute('aria-hidden', 'true');
-  svg.innerHTML = `<path d="M${ax} ${ay}C${ax} ${top},${bx} ${top},${bx} ${by}"/><text x="${(ax + bx) / 2}" y="${top + 4}" text-anchor="middle">has many</text>`; el.append(svg);
+  svg.innerHTML = `<path d="M${ax} ${ay}C${ax} ${top},${bx} ${top},${bx} ${by}"/><text x="${(ax + bx) / 2}" y="${top + 4}" text-anchor="middle">${client().hasMany}</text>`; el.append(svg);
   const path = svg.querySelector('path')!; path.style.setProperty('--len', String(path.getTotalLength()));
 };
 const ENACT: Record<string, (el: any, on: boolean) => void> = {
@@ -29,7 +29,7 @@ const ENACT: Record<string, (el: any, on: boolean) => void> = {
   },
   sparkle(el, on) {
     const g = el.querySelector('.guess'); el.querySelector('.lspk').classList.toggle('loop', on); clearInterval(el._t); if (!on) return;
-    let i = 0; g.textContent = GUESS[0]; if (!RM()) el._t = setInterval(() => (g.textContent = GUESS[(i = (i + 1) % GUESS.length)]), 800);
+    const G = client().guess; let i = 0; g.textContent = G[0]; if (!RM()) el._t = setInterval(() => (g.textContent = G[(i = (i + 1) % G.length)]), 800);
   },
   'data-model'(el, on) { el.querySelector(':scope>.conn')?.remove(); if (on) conn(el); },
   chemistry(el, on) {
@@ -92,8 +92,8 @@ const NAME = (s: string) => 'lt-' + s;
 const lt = (doc: Document, s: string) => doc.querySelector<HTMLElement>(`.ptitle[data-s="${s}"] .lt`) || doc.querySelector<HTMLElement>(`.livel [data-s="${s}"] .lt`);
 document.addEventListener('astro:before-preparation', (e: any) => {
   document.querySelectorAll<HTMLElement>('.lt').forEach((el) => (el.style.viewTransitionName = ''));
-  const to = e.to.pathname.match(/^\/writing\/([^/.]+)\/?$/), here = document.querySelector<HTMLElement>('.ptitle')?.dataset.s;
-  morph = to ? to[1] : here && e.to.pathname === '/' ? here : '';
+  const to = e.to.pathname.match(/^(?:\/ko)?\/writing\/([^/.]+)\/?$/), here = document.querySelector<HTMLElement>('.ptitle')?.dataset.s;
+  morph = to ? to[1] : here && /^(\/ko)?\/$/.test(e.to.pathname) ? here : '';
   const el = morph && lt(document, morph); if (el) el.style.viewTransitionName = NAME(morph); else morph = '';
 });
 document.addEventListener('astro:before-swap', (e: any) => {

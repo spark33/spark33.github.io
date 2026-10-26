@@ -1,0 +1,41 @@
+---
+// The Baze case study: TL;DR first, then the bet → the call → the result. Both languages.
+import Base from '../layouts/Base.astro';
+import BazeMock from '../components/BazeMock.astro';
+import { LINKS, forLang, isPh } from '../data/site';
+import { caseLd } from '../lib/seo';
+import { getPosts } from '../lib/posts';
+import { UI, loc, type Lang } from '../i18n';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = UI[lang], { BAZE } = forLang(lang);
+const related = (await getPosts(lang)).filter((p) => p.data.project === 'baze');
+const arrow = '<svg viewBox="0 0 22 22" aria-hidden="true"><path d="M4 11h13M12 6l5 5-5 5"/></svg>';
+const ph = (s: string) => (isPh(s) ? 'ph' : '');
+// (no template literal inside another here: Astro's frontmatter parser chokes on them)
+const relatedHtml = related.map((p) => '<a href="' + loc('/writing/' + p.id + '/', lang) + '">' + p.data.title + '</a>').join(t.and);
+---
+<Base lang={lang} page="case" type="article" section="Work" title={t.caseTitle} description={BAZE.blurb} jsonLd={caseLd(lang)}>
+  <article class="cs">
+    <nav class="csnav num"><a href={loc('/#now', lang)} data-back data-ff={t.backFF}>{t.back}</a></nav>
+    <h1 style="view-transition-name:baze-title" data-where="Baze" data-desc={t.caseStudy}>{BAZE.title}</h1>
+    <p class="dek"><span class="soft">{t.formerly}</span> {BAZE.blurb}</p>
+    <dl class="summary num">
+      <div><dt>{t.dl[0]}</dt><dd>{BAZE.role}</dd></div>
+      <div><dt>{t.dl[1]}</dt><dd class={ph(BAZE.team)}>{BAZE.team}</dd></div>
+      <div><dt>{t.dl[2]}</dt><dd>{BAZE.timeline}</dd></div>
+      <div><dt>{t.dl[3]}</dt><dd class={ph(BAZE.stack)}>{BAZE.stack}</dd></div>
+      <div><dt>{t.dl[4]}</dt><dd>{BAZE.outcome}</dd></div>
+      <div><dt>{t.dl[5]}</dt><dd><a href={LINKS.baze} target="_blank" rel="noopener">baze.co</a></dd></div>
+    </dl>
+    <div class="body">
+      <p class="tldr"><b>TL;DR</b><span class="ph">{BAZE.tldr}</span></p>
+      <h2 data-where={t.bet} data-desc={t.caseStudy}>{t.bet}</h2><p class={ph(BAZE.bet)}>{BAZE.bet}</p>
+      {related.length > 0 && <p class="argued" set:html={t.moreIn(relatedHtml)} />}
+      <figure class="fig"><BazeMock lang={lang} /><figcaption>{t.figcap}</figcaption></figure>
+      <h2 data-where={t.call} data-desc={t.caseStudy}>{t.call}</h2><p class={ph(BAZE.call)}>{BAZE.call}</p>
+      <h2 data-where={t.result} data-desc={t.caseStudy}>{t.result}</h2><p class={ph(BAZE.result)}>{BAZE.result} <span class="faint">{t.sources}</span></p>
+      <a class="nextp" href={loc('/#writing', lang)}><small>{t.next}</small><b>{t.theWriting}<Fragment set:html={arrow} /></b></a>
+    </div>
+  </article>
+</Base>

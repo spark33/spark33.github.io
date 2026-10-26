@@ -1,15 +1,24 @@
 ---
 // Specimen for "Paper, grain and a moon": the parts the site is made of, live.
+import type { Lang } from '../i18n';
+interface Props { lang?: Lang }
+const { lang = 'en' } = Astro.props;
+const W = {
+  en: { paper: 'Paper', paperS: '한지 by day, ink by night. Grain from two noise layers.', type: 'Type', aa: 'Aa', typeS: 'Newsreader, optical sizes 6–72. Sizes 15 · 18 · 24 · 44.',
+    moon: 'Moon', moonS: 'Fills as you read. The ringed one is tonight in Seoul.', motion: 'Motion', run: 'Run', runFF: 'Run the three timings', cap: "No screenshots for this one: it's the page you're on." },
+  ko: { paper: '종이', paperS: '낮에는 한지, 밤에는 먹. 결은 노이즈 두 겹으로.', type: '글꼴', aa: 'Aa 가', typeS: 'Newsreader(광학 크기 6–72), 한글은 Noto Serif KR. 크기 15 · 18 · 24 · 44.',
+    moon: '달', moonS: '읽을수록 차올라요. 테두리가 있는 게 오늘 밤 서울의 달이에요.', motion: '모션', run: '실행', runFF: '세 가지 타이밍 실행', cap: '이건 스크린샷이 없어요. 지금 보고 있는 이 페이지니까요.' },
+}[lang];
 const LIGHT = ['#eeeadf', '#e4dfd2', '#6b665c', '#57534a', '#1b1a17'], DARK = ['#12110f', '#1b1a17', '#888376', '#a8a295', '#e9e3d4'];
 const TRACKS = [['press', '--t-press', '150'], ['move', '--t-move', '280'], ['reveal', '--t-reveal', '420']];
 ---
 <figure class="fig">
   <div class="medium system"><div class="in">
-    <div class="cell"><b>Paper</b><div class="sw">{LIGHT.map((c) => <span style={`background:${c}`} title={c}></span>)}</div><div class="sw">{DARK.map((c) => <span style={`background:${c}`} title={c}></span>)}</div><small>한지 by day, ink by night. Grain from two noise layers.</small></div>
-    <div class="cell"><b>Type</b><div class="aa">Aa</div><small>Newsreader, optical sizes 6–72. Sizes 15 · 18 · 24 · 44.</small></div>
-    <div class="cell"><b>Moon</b><div class="phases" data-phases></div><small>Fills as you read. The ringed one is tonight in Seoul.</small></div>
-    <div class="cell"><b>Motion</b><div class="tracks">{TRACKS.map(([n, v, ms]) => <div class="track"><span class="num">{n} {ms}</span><span class="r2"><i style={`--d:var(${v})`}></i></span></div>)}</div><button class="run" data-ff="Run the three timings">Run</button></div>
-  </div><p class="cap faint">No screenshots for this one: it's the page you're on.</p></div>
+    <div class="cell"><b>{W.paper}</b><div class="sw">{LIGHT.map((c) => <span style={`background:${c}`} title={c}></span>)}</div><div class="sw">{DARK.map((c) => <span style={`background:${c}`} title={c}></span>)}</div><small>{W.paperS}</small></div>
+    <div class="cell"><b>{W.type}</b><div class="aa">{W.aa}</div><small>{W.typeS}</small></div>
+    <div class="cell"><b>{W.moon}</b><div class="phases" data-phases></div><small>{W.moonS}</small></div>
+    <div class="cell"><b>{W.motion}</b><div class="tracks">{TRACKS.map(([n, v, ms]) => <div class="track"><span class="num">{n} {ms}</span><span class="r2"><i style={`--d:var(${v})`}></i></span></div>)}</div><button class="run" data-ff={W.runFF}>{W.run}</button></div>
+  </div><p class="cap faint">{W.cap}</p></div>
 </figure>
 
 <script>

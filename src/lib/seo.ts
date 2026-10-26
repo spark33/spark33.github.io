@@ -2,7 +2,9 @@
 // One entity graph with stable @ids (#sean, #website, #mindlogic, #baze) so Google, Bing and
 // AI crawlers resolve every page to the same Sean Park.
 import type { CollectionEntry } from 'astro:content';
-import { UNDER_CONSTRUCTION, PERSON, SITE_DESCRIPTION, LINKS, BAZE } from '../data/site';
+import { UNDER_CONSTRUCTION, PERSON, SITE_DESCRIPTION, LINKS, BAZE, forLang } from '../data/site';
+import type { Piece } from './posts';
+import { UI, loc, type Lang } from '../i18n';
 
 export const SITE = 'https://seanpark.page';
 export const abs = (path: string) => new URL(path, SITE).href;
@@ -37,7 +39,7 @@ const baze = {
 };
 const website = {
   '@type': 'WebSite', '@id': ID.site, url: abs('/'), name: PERSON.name,
-  description: SITE_DESCRIPTION, inLanguage: 'en', author: { '@id': ID.sean }, publisher: { '@id': ID.sean },
+  description: SITE_DESCRIPTION, inLanguage: ['en', 'ko'], author: { '@id': ID.sean }, publisher: { '@id': ID.sean },
 };
 const crumbs = (items: [string, string][]) => ({
   '@type': 'BreadcrumbList',
@@ -45,29 +47,30 @@ const crumbs = (items: [string, string][]) => ({
 });
 const graph = (...nodes: object[]) => ({ '@context': 'https://schema.org', '@graph': [website, person, mindlogic, ...nodes] });
 
-export const homeLd = (posts: CollectionEntry<'writing'>[]) => graph({
-  '@type': 'ProfilePage', '@id': abs('/#page'), url: abs('/'), name: PERSON.name, description: SITE_DESCRIPTION,
-  isPartOf: { '@id': ID.site }, mainEntity: { '@id': ID.sean }, about: { '@id': ID.sean },
-  hasPart: posts.filter(isPublished).map((p) => ({ '@id': abs(`/writing/${p.id}/#article`) })),
+// Each page's node is in its own language (Korean pages live under /ko/); the people and companies are shared.
+export const homeLd = (posts: Piece[], lang: Lang = 'en') => graph({
+  '@type': 'ProfilePage', '@id': abs(loc('/#page', lang)), url: abs(loc('/', lang)), name: UI[lang].name, description: SITE_DESCRIPTION,
+  inLanguage: lang, isPartOf: { '@id': ID.site }, mainEntity: { '@id': ID.sean }, about: { '@id': ID.sean },
+  hasPart: posts.filter((p) => isPublished(p.en)).map((p) => ({ '@id': abs(loc(`/writing/${p.id}/#article`, lang)) })),
 }, baze);
 
-export const caseLd = () => graph(baze, {
-  '@type': 'Article', '@id': abs('/work/baze/#article'), url: abs('/work/baze/'), mainEntityOfPage: abs('/work/baze/'),
-  headline: 'Baze: case study', description: BAZE.blurb, about: { '@id': ID.baze },
-  author: { '@id': ID.sean }, publisher: { '@id': ID.sean }, isPartOf: { '@id': ID.site }, image: OG_IMAGE.url, inLanguage: 'en',
-}, crumbs([['Sean Park', '/'], ['Work', '/#now'], ['Baze', '/work/baze/']]));
+export const caseLd = (lang: Lang = 'en') => graph(baze, {
+  '@type': 'Article', '@id': abs(loc('/work/baze/#article', lang)), url: abs(loc('/work/baze/', lang)), mainEntityOfPage: abs(loc('/work/baze/', lang)),
+  headline: `Baze: ${UI[lang].caseStudy}`, description: forLang(lang).BAZE.blurb, about: { '@id': ID.baze },
+  author: { '@id': ID.sean }, publisher: { '@id': ID.sean }, isPartOf: { '@id': ID.site }, image: OG_IMAGE.url, inLanguage: lang,
+}, crumbs([[UI[lang].name, loc('/', lang)], [UI[lang].now[0], loc('/#now', lang)], ['Baze', loc('/work/baze/', lang)]]));
 
-export const postLd = (p: CollectionEntry<'writing'>, words: number, mins: number) => {
-  const url = abs(`/writing/${p.id}/`), d = p.data;
+export const postLd = (p: Piece, words: number, mins: number, lang: Lang = 'en') => {
+  const url = abs(loc(`/writing/${p.id}/`, lang)), d = p.data;
   return graph({
     '@type': 'BlogPosting', '@id': url + '#article', url, mainEntityOfPage: url,
     headline: d.title, description: d.dek, ...(d.tldr && !d.tldr.startsWith('Placeholder') && { abstract: d.tldr }),
-    articleSection: d.lens, keywords: d.keywords, wordCount: words, timeRequired: `PT${mins}M`, inLanguage: 'en',
+    articleSection: d.lens, keywords: d.keywords, wordCount: words, timeRequired: `PT${mins}M`, inLanguage: p.fallback ? 'en' : lang,
     creativeWorkStatus: d.published ? 'Published' : 'Draft',
     ...(d.published && { datePublished: iso(d.published) }), ...((d.updated || d.published) && { dateModified: iso(d.updated || d.published) }),
     author: { '@id': ID.sean }, publisher: { '@id': ID.sean }, isPartOf: { '@id': ID.site }, image: OG_IMAGE.url,
     ...(d.project === 'baze' && { about: { '@id': ID.baze } }),
-  }, ...(d.project === 'baze' ? [baze] : []), crumbs([['Sean Park', '/'], ['Writing', '/#writing'], [d.title, `/writing/${p.id}/`]]));
+  }, ...(d.project === 'baze' ? [baze] : []), crumbs([[UI[lang].name, loc('/', lang)], [UI[lang].writing[0], loc('/#writing', lang)], [d.title, loc(`/writing/${p.id}/`, lang)]]));
 };
 
 // The holding page: just the person, so a search for Sean already finds the right one.

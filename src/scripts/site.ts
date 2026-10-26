@@ -3,13 +3,13 @@
 export const T = { press: 150, move: 280, reveal: 420 };
 export const EASE = 'cubic-bezier(.23,1,.32,1)';
 export const RM = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+import { client, counterpart, langOf, loc } from '../i18n';
 const $ = (s: string, r: ParentNode = document) => r.querySelector(s) as HTMLElement | null;
 const $$ = (s: string, r: ParentNode = document) => [...r.querySelectorAll(s)] as HTMLElement[];
 
 // ── moon geometry, shared with the living titles
 const SYN = 29.530588853, REF = Date.UTC(2000, 0, 6, 18, 14);
 export const phaseNow = () => (((Date.now() - REF) / 864e5) % SYN + SYN) % SYN / SYN;
-export const PHASES = ['new moon', 'waxing crescent', 'first quarter', 'waxing gibbous', 'full moon', 'waning gibbous', 'last quarter', 'waning crescent'];
 export function moonPath(p: number, r: number, c: number) {
   const w = p < .5, k = Math.cos(2 * Math.PI * p), rx = Math.max(Math.abs(k) * r, .001);
   return `M ${c} ${c - r} A ${r} ${r} 0 0 ${w ? 1 : 0} ${c} ${c + r} A ${rx} ${r} 0 0 ${k > 0 ? (w ? 0 : 1) : (w ? 1 : 0)} ${c} ${c - r} Z`;
@@ -69,7 +69,7 @@ export function initSite() {
   const tick = () => {
     const max = document.documentElement.scrollHeight - innerHeight, s = max > 0 ? Math.min(1, scrollY / max) : 0;
     target = .06 + s * (.4999 - .06);
-    if (page === 'post') { const done = s >= .995; if (done) target = .5; pct.textContent = done ? 'Finished' : Math.round(s * 100) + '% read'; }
+    if (page === 'post') { const done = s >= .995; if (done) target = .5; pct.textContent = done ? client().finished : client().read(Math.round(s * 100)); }
     if (!raf) raf = requestAnimationFrame(spring);
     tickWhere();
   };
@@ -90,7 +90,7 @@ export function initSite() {
   document.addEventListener('click', (e) => {
     const c = (e.target as HTMLElement).closest('[data-copy]') as HTMLElement | null; if (!c) return;
     const label = (c.dataset.label ??= c.textContent || ''); // the real label, kept even if clicked again while it says "Copied"
-    const done = (ok: boolean) => { c.dataset.done = ''; c.textContent = ok ? 'Copied' : 'Press ⌘C'; clearTimeout((c as any)._t); (c as any)._t = setTimeout(() => { delete c.dataset.done; c.textContent = label; }, 1400); };
+    const done = (ok: boolean) => { c.dataset.done = ''; c.textContent = ok ? client().copied : client().pressC; clearTimeout((c as any)._t); (c as any)._t = setTimeout(() => { delete c.dataset.done; c.textContent = label; }, 1400); };
     navigator.clipboard ? navigator.clipboard.writeText(c.dataset.copy!).then(() => done(true), () => done(false)) : done(false);
   });
 
@@ -105,17 +105,19 @@ export function initSite() {
   }, true); // capture: runs before the router's own link handler, which would otherwise navigate too
 
   const cards = initCards();
+  const lang = initLang();
 
   // ── per page
   everyPage(() => {
     page = document.body.dataset.page || ''; intro = document.body.dataset.intro || ''; marks = $$('[data-where]');
-    pct.textContent = ''; lastY = 0; cards.attach();
+    pct.textContent = ''; lastY = 0; cards.attach(); lang.update();
     // footer: tonight's moon, and the time in Seoul and New York
     const p = Math.min(Math.max(phaseNow(), .001), .999);
-    $('#dmoon')!.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="var(--moon-dark)" stroke="var(--rule)"/><path fill="var(--fg)" d="${moonPath(p, 6, 7)}"/></svg>${PHASES[Math.floor(phaseNow() * 8 + .5) % 8]}`;
-    const fmt = (tz: string) => new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit' }).format(new Date());
-    const clocks = [() => ($('#clock')!.textContent = `Seoul ${fmt('Asia/Seoul')} · New York ${fmt('America/New_York')}`),
-      ...$$('[data-seoul-now]').map((el) => () => (el.textContent = fmt('Asia/Seoul').toLowerCase()))];
+    const L = client();
+    $('#dmoon')!.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="var(--moon-dark)" stroke="var(--rule)"/><path fill="var(--fg)" d="${moonPath(p, 6, 7)}"/></svg>${L.phases[Math.floor(phaseNow() * 8 + .5) % 8]}`;
+    const fmt = (tz: string) => new Intl.DateTimeFormat(L.locale, { timeZone: tz, hour: 'numeric', minute: '2-digit' }).format(new Date());
+    const clocks = [() => ($('#clock')!.textContent = L.clock(fmt('Asia/Seoul'), fmt('America/New_York'))),
+      ...$$('[data-seoul-now]').map((el) => () => (el.textContent = L.locale === 'en-US' ? fmt('Asia/Seoul').toLowerCase() : fmt('Asia/Seoul')))];
     clocks.forEach((f) => f()); const iv = setInterval(() => clocks.forEach((f) => f()), 30000);
     onLeave(() => { clearInterval(iv); cards.close(); });
     tick();
@@ -171,42 +173,69 @@ function moonrise() {
   raf = requestAnimationFrame(frame);
 }
 
+// ── 한/EN: the other language's link in the rail. The rail persists across pages, so its href is kept current
+// (on a 404 it goes to the other home). Switching reloads the page (the rail and every label change), and you land
+// on the same spot: the block at the top of the screen is found again by its position among the page's blocks,
+// which line up one to one between the two languages.
+const BLOCKS = 'main :is(h1,h2,h3,p,li,tr,figure,pre,blockquote,dl,.proj)';
+function initLang() {
+  const KEY = 'sp-lang-spot';
+  const link = () => $('.rail .lang a[data-lang]') as HTMLAnchorElement | null;
+  const target = () => (document.body.dataset.page === '404' ? loc('/', langOf(counterpart(location.pathname))) : counterpart(location.pathname) + location.hash);
+  document.addEventListener('click', (e) => {
+    const a = (e.target as HTMLElement).closest('.rail .lang a[data-lang]') as HTMLAnchorElement | null; if (!a) return;
+    a.href = target();
+    const top = innerWidth <= 900 ? ($('.rail')!.getBoundingClientRect().bottom) : 0;
+    const bs = $$(BLOCKS), i = bs.findIndex((b) => b.getBoundingClientRect().bottom > top + 8);
+    if (scrollY > 40 && i >= 0) sessionStorage.setItem(KEY, JSON.stringify({ to: new URL(a.href).pathname, i, dy: bs[i].getBoundingClientRect().top, f: scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight) }));
+  }, true);
+  // arriving from the switch: find the same block and put it where it was
+  let spot: any = null; try { spot = JSON.parse(sessionStorage.getItem(KEY) || 'null'); } catch (e) {}
+  sessionStorage.removeItem(KEY);
+  if (spot && spot.to === location.pathname && !location.hash) {
+    const go = () => {
+      const b = $$(BLOCKS)[spot.i];
+      const y = b ? scrollY + b.getBoundingClientRect().top - spot.dy : spot.f * (document.documentElement.scrollHeight - innerHeight);
+      document.documentElement.style.scrollBehavior = 'auto'; scrollTo(0, Math.max(0, y)); document.documentElement.style.scrollBehavior = '';
+    };
+    if (history.scrollRestoration) history.scrollRestoration = 'manual';
+    go(); requestAnimationFrame(go); document.fonts.ready.then(go);
+  }
+  return { update: () => { const a = link(); if (a) a.href = target(); } };
+}
+
 // ── hover cards. Rich ones for the things worth explaining; a short note for everything else.
 function initCards() {
-  const D = data();
+  const D = data(), L = client(), C = L.card;
   const card = document.createElement('div'); card.className = 'card'; card.id = 'card'; card.setAttribute('role', 'tooltip');
   let owner: HTMLElement | null = null, openT = 0, closeT = 0, warm = 0, loop = 0;
   const ext = (label: string, href: string) => `<a href="${href}" target="_blank" rel="noopener">${label} ↗</a>`;
   const job = (k: string, host: string) => { const j = D.jobs.find((x: any) => x.card === k); return j ? `<p><b>${j.company}</b>, ${j.where}. ${j.role}, ${j.years}.</p><p>${j.line}</p><p class="acts">${ext(host, j.url)}</p>` : ''; };
+  const bz = `<div class="cv cv-baze" aria-hidden="true"><span class="bz">Baze</span><span class="pill">${C.talking} <span class="mdl">GPT-6 Astra</span></span></div>`;
   const RICH: Record<string, () => string> = {
-    baze: () => `<div class="cv cv-baze" aria-hidden="true"><span class="bz">Baze</span><span class="pill">talking to <span class="mdl">GPT-6 Astra</span></span></div>
-      <p><b>Baze</b>, formerly FactChat. One account for 80+ AI models (GPT, Claude, Gemini, Grok, DeepSeek, Sora, Kling) plus agents for research, slides, images and video. Built for universities, open to everyone since October 2026 from ₩5,900 a month.</p>
-      <p class="acts">${ext('baze.co', D.links.baze)}<a href="/work/baze/">The case study →</a></p>`,
-    case: () => `<div class="cv cv-baze" aria-hidden="true"><span class="bz">Baze</span><span class="pill">talking to <span class="mdl">GPT-6 Astra</span></span></div>
-      <p><b>The Baze case study.</b> The bet, the hardest call, and the result.</p>`,
-    mindlogic: () => `<div class="cv cv-chat" aria-hidden="true"><span class="bb u">Can you explain this?</span><span class="bb a"><i></i><i></i><i></i></span></div>
-      <p><b>Mindlogic</b>. An AI company in Seoul, founded in 2019. It makes Baze, used by 100+ universities and 750K people, and Informe, an AI agent for customer service. I lead product there.</p>
-      <p class="acts">${ext('mindlogic.ai', D.links.mindlogic)}</p>`,
+    baze: () => bz + C.baze(D),
+    case: () => bz + C.caseText,
+    mindlogic: () => `<div class="cv cv-chat" aria-hidden="true"><span class="bb u">${C.chatQ}</span><span class="bb a"><i></i><i></i><i></i></span></div>` + C.mindlogic(D),
     mongodb: () => job('mongodb', 'mongodb.com'),
     deloitte: () => job('deloitte', 'deloittedigital.com'),
-    email: () => `<p><b>${D.email}</b></p><p>Email me, or copy the address.</p><p class="acts"><a href="mailto:${D.email}">Write an email</a><button data-copy="${D.email}">Copy address</button></p>`,
-    writing: () => `<p><b>Writing.</b> ${D.posts.length} pieces, all drafts for now.</p><ul class="cl">${D.posts.map((p: any) => `<li><a href="/writing/${p.s}/">${p.t}</a></li>`).join('')}</ul>`,
-    work: () => `<p><b>Where I've worked.</b> Newest first.</p><ul class="cl">${D.jobs.map((j: any) => `<li>${j.company}, ${j.where} · ${j.years}</li>`).join('')}</ul>`,
+    email: () => C.email(D),
+    writing: () => C.writing(D.posts.length) + `<ul class="cl">${D.posts.map((p: any) => `<li><a href="${D.base}/writing/${p.s}/">${p.t}</a></li>`).join('')}</ul>`,
+    work: () => C.work + `<ul class="cl">${D.jobs.map((j: any) => `<li>${j.company}, ${j.where} · ${j.years}</li>`).join('')}</ul>`,
   };
   const postCard = (slug: string) => { const p = D.posts.find((x: any) => x.s === slug); return p ? `<p><b>${p.t}</b></p><p>${p.x}</p><p class="faint">${p.l} · ${p.st}</p>` : ''; };
   const note = (el: HTMLElement) => {
     if (el.dataset.ff) return el.dataset.ff;
-    if (el.id === 'moon') return `Switch to ${document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'} mode`;
-    if (el.matches('[data-copy]')) return `Copy ${el.dataset.copy}`;
+    if (el.id === 'moon') return L.themeTo(document.documentElement.dataset.theme === 'light');
+    if (el.matches('[data-copy]')) return L.copyX(el.dataset.copy!);
     if (el instanceof HTMLAnchorElement) {
-      if (el.target === '_blank') { try { return `${new URL(el.href).hostname.replace(/^www\./, '')} ↗ opens in a new tab`; } catch (e) {} }
-      if (el.hash && el.pathname === location.pathname) return 'Jump to this section';
+      if (el.target === '_blank') { try { return L.newTab(new URL(el.href).hostname.replace(/^www\./, '')); } catch (e) {} }
+      if (el.hash && el.pathname === location.pathname) return L.jump;
     }
     return el.getAttribute('aria-label') || '';
   };
   const content = (el: HTMLElement) => {
     const k = el.dataset.card; if (k && RICH[k]) return { rich: true, html: RICH[k]() };
-    const m = el instanceof HTMLAnchorElement && el.pathname.match(/^\/writing\/([^/]+)\/?$/); if (m) return { rich: true, html: postCard(m[1]) };
+    const m = el instanceof HTMLAnchorElement && el.pathname.match(/^(?:\/ko)?\/writing\/([^/]+)\/?$/); if (m) return { rich: true, html: postCard(m[1]) };
     const t = note(el); return t ? { rich: false, html: t } : null;
   };
   const place = (el: HTMLElement) => {

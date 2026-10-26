@@ -1,0 +1,9 @@
+---
+import Post from '../../../views/Post.astro';
+import { getPosts } from '../../../lib/posts';
+export async function getStaticPaths() {
+  const posts = await getPosts('ko');
+  return posts.map((post, i) => ({ params: { slug: post.id }, props: { post, n: i + 1, of: posts.length } }));
+}
+---
+<Post lang="ko" {...(Astro.props as any)} />

@@ -1,25 +1,36 @@
 ---
 // Baze, performed: a schematic of the product that renames itself (FactChat → Baze),
 // then opens its model menu. A schematic until real screens are in.
+import type { Lang } from '../i18n';
+interface Props { lang?: Lang }
+const { lang = 'en' } = Astro.props;
+const W = {
+  en: { aria: 'Schematic of Baze: one account, 80+ models', when: 'renamed Oct 2026', chats: 'Chats', side: ['Lecture notes', 'Grant draft', 'Code review', 'Reading list'],
+    pick: 'Pick a model', head: '80+ models, one account', more: '…and more', u: "Summarize this week's lecture in five bullets.", a: "Here are the five points from Tuesday's lecture…",
+    ask: 'Ask anything', replay: 'Replay the rename', replayFF: 'Play the rename again', note: 'A schematic, not a screenshot. Real screens to come.' },
+  ko: { aria: 'Baze 도식: 계정 하나, 모델 80여 개', when: '2026년 10월 이름 변경', chats: '대화', side: ['강의 노트', '연구비 신청서 초안', '코드 리뷰', '읽을거리'],
+    pick: '모델 고르기', head: '계정 하나로 모델 80여 개', more: '…그리고 더', u: '이번 주 강의를 다섯 줄로 요약해 줘.', a: '화요일 강의의 핵심 다섯 가지예요…',
+    ask: '무엇이든 물어보세요', replay: '리브랜딩 다시 보기', replayFF: '이름 바꾸기를 다시 재생', note: '스크린샷이 아니라 도식이에요. 실제 화면은 곧 넣을게요.' },
+}[lang];
 // The names baze.co lists (Oct 2026).
 const MODELS = ['GPT-6 Astra', 'Claude Opus 5', 'Claude Sonnet 5', 'Gemini 3.1 Pro', 'Gemini 3.8 Flash', 'Grok 4.6', 'DeepSeek V4 Pro', 'Sora 2 Pro', 'Kling 3.0', 'Seedance'];
 ---
 <div class="mock">
-  <div class="mwin" aria-label="Schematic of Baze: one account, 80+ models">
-    <div class="mbar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="mname">FactChat</span><span class="mwhen">renamed Oct 2026</span></div>
+  <div class="mwin" aria-label={W.aria}>
+    <div class="mbar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="mname">FactChat</span><span class="mwhen">{W.when}</span></div>
     <div class="mbody">
-      <div class="mside"><b>Chats</b><span>Lecture notes</span><span>Grant draft</span><span>Code review</span><span>Reading list</span></div>
+      <div class="mside"><b>{W.chats}</b>{W.side.map((c) => <span>{c}</span>)}</div>
       <div class="mmain">
-        <div class="mpick"><button class="mbtn" aria-haspopup="listbox" aria-expanded="false" data-ff="Pick a model">GPT-6 Astra ▾</button>
-          <ul class="mmenu" hidden><li class="mh">80+ models, one account</li>{MODELS.map((m, i) => <li><button aria-current={i === 0 ? 'true' : undefined}>{m}</button></li>)}<li class="mh">…and more</li></ul>
+        <div class="mpick"><button class="mbtn" aria-haspopup="listbox" aria-expanded="false" data-ff={W.pick}>GPT-6 Astra ▾</button>
+          <ul class="mmenu" hidden><li class="mh">{W.head}</li>{MODELS.map((m, i) => <li><button aria-current={i === 0 ? 'true' : undefined}>{m}</button></li>)}<li class="mh">{W.more}</li></ul>
         </div>
-        <div class="mmsg u">Summarize this week's lecture in five bullets.</div>
-        <div class="mmsg a"><small class="who">GPT-6 Astra</small>Here are the five points from Tuesday's lecture…</div>
-        <div class="minput">Ask anything</div>
+        <div class="mmsg u">{W.u}</div>
+        <div class="mmsg a"><small class="who">GPT-6 Astra</small>{W.a}</div>
+        <div class="minput">{W.ask}</div>
       </div>
     </div>
   </div>
-  <div class="mctl"><button class="replay" data-ff="Play the rename again">Replay the rename</button><span class="faint">A schematic, not a screenshot. Real screens to come.</span></div>
+  <div class="mctl"><button class="replay" data-ff={W.replayFF}>{W.replay}</button><span class="faint">{W.note}</span></div>
 </div>
 
 <script>

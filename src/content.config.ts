@@ -23,4 +23,18 @@ const writing = defineCollection({
   }),
 });
 
-export const collections = { writing };
+// The Korean version of each piece (/ko/writing/<slug>/): same file name as the English one, words only.
+// Order, project, specimen and dates come from the English file. A piece with no Korean file shows in English.
+const writingKo = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/writing-ko' }),
+  schema: z.object({
+    title: z.string(),
+    dek: z.string(),
+    lens: z.string(),
+    status: z.string().default('초고'),
+    tldr: z.string().optional(),
+    keywords: z.array(z.string()).default([]),
+  }),
+});
+
+export const collections = { writing, writingKo };

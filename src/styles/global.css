@@ -3,7 +3,7 @@
    press = small feedback, move = things changing place, reveal = whole-view changes */
 :root{--ease-out:cubic-bezier(.23,1,.32,1);--t-press:150ms;--t-move:280ms;--t-reveal:420ms;
   --r-shot:3px;--r-phone:14px;
-  --font:'Newsreader',Georgia,'Apple SD Gothic Neo','Noto Serif KR',serif;--rail:232px;--top:72px;--gut:max(0px,(100vw - 1232px) / 2)}
+  --font:'Newsreader',Georgia,'Noto Serif KR','Apple SD Gothic Neo',serif;--rail:232px;--top:72px;--gut:max(0px,(100vw - 1232px) / 2)}
 [data-theme=light]{--bg:#eeeadf;--fg:#1b1a17;--soft:#57534a;--faint:#6b665c;--rule:rgba(27,26,23,.14);--frame:#e4dfd2;--hatch:rgba(27,26,23,.07);--moon-dark:#d4cebf;--inv:#12110f;--inv-moon:#2b2925;--shade:27,26,23;--blend:multiply;--grain-filter:invert(1);--tint:rgba(27,26,23,.04);--flash:rgba(27,26,23,.1)}
 [data-theme=dark]{--bg:#12110f;--fg:#e9e3d4;--soft:#a8a295;--faint:#888376;--rule:rgba(233,227,212,.13);--frame:#1b1a17;--hatch:rgba(233,227,212,.05);--moon-dark:#2b2925;--inv:#eeeadf;--inv-moon:#d4cebf;--shade:0,0,0;--blend:screen;--grain-filter:none;--tint:rgba(233,227,212,.04);--flash:rgba(233,227,212,.1)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -33,6 +33,13 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .moon circle{fill:var(--moon-dark)}.moon path{fill:var(--fg)}
 .copy{color:var(--soft);text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:.22em;text-align:left}
 .copy[data-done]{color:var(--fg)}
+/* 한 / EN: quiet, like the email above it. The language you're in is ink; the other is a faint link */
+.lang{display:flex;align-items:baseline;gap:6px;font-size:14px;line-height:1;color:var(--faint)}
+.lang i{font-style:normal;opacity:.6}
+.lang span{color:var(--fg)}
+.lang a{color:var(--faint);text-decoration:none;padding:6px 2px;margin:-6px -2px;transition:color var(--t-press) var(--ease-out)}
+@media (hover:hover) and (pointer:fine){.lang a:hover{color:var(--fg)}}
+.lang [lang=en],.lang span:last-child{letter-spacing:.04em}
 /* "where you are": the label rolls instead of snapping */
 .rail .where{margin-top:10px;padding-left:32px;height:9em;position:relative;overflow:hidden}
 .rail .where .w{position:absolute;left:0;top:0;right:28px;display:flex;flex-direction:column;gap:6px;transition:translate var(--t-move) var(--ease-out),opacity var(--t-move) var(--ease-out)}
@@ -404,6 +411,21 @@ html.theming::view-transition-old(root),html.theming::view-transition-new(root){
   .system .in{grid-template-columns:1fr 1fr}.system .cell:nth-child(3){border-left:0}.system .cell:nth-child(n+3){border-top:1px solid var(--rule)}
   .takes{grid-template-columns:1fr}.takes .side{position:static;padding-top:0;margin-bottom:20px}
 }
+/* ── 한국어. Hangul sets in Noto Serif KR beside Newsreader. Lines break between words, never inside one; Hangul needs
+   a little more leading than Latin; and there's no Korean italic, so italics stay upright instead of slanting fake */
+:lang(ko){word-break:keep-all;font-synthesis-style:none}
+html:lang(ko){line-height:1.65}
+:lang(ko) .lede{line-height:1.5}
+:lang(ko) .lede p.more{line-height:1.7}
+:lang(ko) .lt,:lang(ko) .cs h1,:lang(ko) .nextp b{letter-spacing:-.025em}
+:lang(ko) .livel .lt{line-height:1.3}
+:lang(ko) .ptitle{line-height:1.25}
+:lang(ko) .prose{line-height:1.8}
+:lang(ko) .cs .body p{line-height:1.75}
+:lang(ko) .post .dek,:lang(ko) .cs .dek,:lang(ko) .xd{line-height:1.55}
+:lang(ko) .mo.end{margin-left:.12em}
+[lang=en] :is(.lt,.ptitle){letter-spacing:-.015em}
+
 @media (prefers-reduced-motion:reduce){*{transition-duration:0ms!important;animation:none!important}
   ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}
 /* the preview gate: the page stays hidden until the gate script lets it through */

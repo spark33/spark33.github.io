@@ -1,0 +1,69 @@
+---
+// Home: a short hello, the writing (the main thing), where I've worked, what I'm working on now, about.
+// One template for both languages (src/pages/index.astro, src/pages/ko/index.astro).
+// Under construction: Base.astro hides this behind the preview gate (see src/data/site.ts).
+import Base from '../layouts/Base.astro';
+import LivingTitles from '../components/LivingTitles.astro';
+import BazeMock from '../components/BazeMock.astro';
+import { LINKS, EMAIL, forLang, isPh } from '../data/site';
+import { homeLd } from '../lib/seo';
+import { getPosts } from '../lib/posts';
+import { UI, loc, type Lang } from '../i18n';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = UI[lang], { EXPERIENCE, EDUCATION, BAZE } = forLang(lang);
+const posts = await getPosts(lang);
+const ext = 'target="_blank" rel="noopener"';
+const fill = (s: string, v: Record<string, string>) => s.replace(/\{(\w+)\}/g, (_, k) => v[k]);
+// the time fills in before first paint (inline script below), so the line doesn't rewrap once site.ts runs
+const hi = fill(t.hi, { ml: `<a href="${LINKS.mindlogic}" ${ext} data-card="mindlogic">${t.mindlogic}</a>`, now: '<span class="now num" data-seoul-now></span>' });
+const more1 = fill(t.more1, { baze: `<a href="${LINKS.baze}" ${ext} data-card="baze">Baze</a>` });
+const more2 = t.more2('<a href="#writing" data-card="writing">', '<a href="#work" data-card="work">', `<button class="copy" data-copy="${EMAIL}" data-card="email">`);
+---
+<Base lang={lang} page="home" type="profile" jsonLd={homeLd(posts, lang)}>
+  <h1 class="sr-only">{t.h1}</h1>
+  <section class="lede-wrap">
+    <div class="lede">
+      <p set:html={hi} /><script is:inline>document.querySelectorAll('[data-seoul-now]').forEach(function(e){var k=document.documentElement.lang==='ko';e.textContent=new Intl.DateTimeFormat(k?'ko-KR':'en-US',{timeZone:'Asia/Seoul',hour:'numeric',minute:'2-digit'}).format(new Date());if(!k)e.textContent=e.textContent.toLowerCase()})</script>
+      <p class="more" set:html={more1} />
+      <p class="more" set:html={more2} />
+    </div>
+  </section>
+
+  <section class="takes" id="writing">
+    <h2 class="sec" data-where={t.writing[0]} data-desc={t.writing[1]}>{t.writing[0]}</h2>
+    <LivingTitles lang={lang} />
+  </section>
+
+  <h2 class="sec" id="work" data-where={t.worked[0]} data-desc={t.worked[1]}>{t.worked[0]}</h2>
+  <table class="index num">
+    <thead><tr>{t.th.map((h) => <th>{h}</th>)}</tr></thead>
+    <tbody>
+      {EXPERIENCE.map((e) => (
+        <tr>
+          <td><a href={e.url} target="_blank" rel="noopener" data-card={e.card}>{e.company}</a> <span class="faint">{e.where}</span></td>
+          <td class={isPh(e.role) ? 'ph' : ''}>{e.role}</td>
+          <td class="outcome" set:html={e.did} />
+          <td class={isPh(e.years) ? 'ph' : ''}>{e.years}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  <h2 class="sec" id="now" data-where={t.now[0]} data-desc={t.now[1]}>{t.now[0]}</h2>
+  <div class="work">
+    <article class="proj">
+      <div class="head"><b><a href={loc('/work/baze/', lang)} data-card="case">{BAZE.title}</a></b><p>{BAZE.blurb}</p><a href={loc('/work/baze/', lang)} data-card="case">{t.caseStudy}</a></div>
+      <BazeMock lang={lang} />
+    </article>
+  </div>
+
+  <section class="about" id="about">
+    <h2 class="sec" data-where={t.about[0]} data-desc={t.about[1]}>{t.about[0]}</h2>
+    <div>
+      <p class="ph">{t.aboutPh}</p>
+      <p>{EDUCATION}</p>
+      <p>{t.songs}</p>
+    </div>
+  </section>
+</Base>
