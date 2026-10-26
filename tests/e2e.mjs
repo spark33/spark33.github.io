@@ -419,8 +419,8 @@ for (const [w, h, mobile] of [[1440, 900, false], [1024, 768, false], [768, 1024
     ['/', { referer: 'http://www.linkedin.com/' }, "Hi, and welcome over from LinkedIn. I'm Sean."],
     ['/', { referer: 'http://app.greenhouse.io/people/1' }, "Hi, thanks for reading past the résumé. I'm Sean."],
     ['/', { referer: 'http://www.google.com/' }, "Hi, I'm Sean."],
-    ['/ko/?for=토스', {}, '토스 팀, 안녕하세요. 상현이에요.'],
-    ['/ko/', {}, '안녕하세요, 상현이에요.'],
+    ['/ko/?for=토스', {}, '토스 팀 여러분, 안녕하세요. 박상현이에요.'],
+    ['/ko/', {}, '안녕하세요, 박상현이에요.'],
   ];
   for (const [url, opts, want] of cases) {
     const p = await mk(); const r = await greet(p, url, opts);
