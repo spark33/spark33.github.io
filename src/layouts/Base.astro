@@ -75,6 +75,24 @@ const built = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).forma
   <script is:inline>(function(){var d=document.documentElement,q=new URLSearchParams(location.search).get('intro');
     if(q==='0'||matchMedia('(prefers-reduced-motion: reduce)').matches||(q!=='1'&&sessionStorage.getItem('sp-intro')))return;
     d.classList.add('intro');setTimeout(function(){if(!d.classList.contains('inked'))d.classList.remove('intro')},3000)})();</script>
+  {/* Greeting POC (UI.*.greet in i18n.ts): note where the visit came from (?for=, ?src=, the referrer) on each full load,
+      keep it for the session, drop the params from the address bar, and fill [data-greet] before paint and on every swap.
+      ?src=linkedin|hiring|github fakes a source for testing. Runs before the gate, which strips the query too. */}
+  <script is:inline define:vars={{ G: { en: UI.en.greet, ko: UI.ko.greet } }}>
+    (function(){var K='sp-src',u=new URL(location.href),q=u.searchParams,s=null,f=q.get('for'),t=q.get('src'),r='';
+      if(f){f=f.replace(/[-_]+/g,' ').replace(/[^\p{L}\p{N} &.']/gu,'').replace(/\s+/g,' ').trim().slice(0,32);
+        if(f&&f===f.toLowerCase())f=f.replace(/(^|\s)\S/g,function(c){return c.toUpperCase()});if(f)s={k:'for',name:f}}
+      else if(t&&G.en[t]&&t!=='default'&&t!=='for')s={k:t};
+      else{try{r=new URL(document.referrer).hostname}catch(e){}
+        if(/(^|\.)(linkedin\.com|lnkd\.in)$/.test(r)||/LinkedInApp/.test(navigator.userAgent))s={k:'linkedin'};
+        else if(/(^|\.)(greenhouse\.io|lever\.co|myworkdayjobs\.com|workday\.com|ashbyhq\.com|smartrecruiters\.com)$/.test(r))s={k:'hiring'};
+        else if(/(^|\.)github\.com$/.test(r))s={k:'github'}}
+      try{if(s)sessionStorage.setItem(K,JSON.stringify(s))}catch(e){}
+      if(q.has('for')||q.has('src')){q.delete('for');q.delete('src');history.replaceState(history.state,'',u.pathname+(q.size?'?'+q:'')+u.hash)}
+      window.spGreet=function(){var v,g=G[document.documentElement.lang]||G.en;try{v=JSON.parse(sessionStorage.getItem(K)||'null')}catch(e){}
+        if(v&&g[v.k])document.querySelectorAll('[data-greet]').forEach(function(e){e.textContent=g[v.k].replace('{name}',v.name||'')})};
+      document.addEventListener('astro:page-load',spGreet)})();
+  </script>
   {UNDER_CONSTRUCTION && (
     <>
       {/* Preview gate: without Sean's key, every page sends you to /under-construction/. */}

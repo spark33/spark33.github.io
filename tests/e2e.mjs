@@ -402,6 +402,51 @@ for (const [w, h, mobile] of [[1440, 900, false], [1024, 768, false], [768, 1024
   await ph.close(); await p.close();
 }
 
+// ── greeting POC: the first sentence follows ?for=, ?src= or the referrer, and remembers it for the session.
+// Referers are http:// because Chrome sends none on an https → http://localhost step down.
+{
+  phase = 'greeting';
+  const G = () => document.querySelector('[data-greet]').textContent;
+  const greet = async (p, url, opts = {}) => { await p.goto(B + url, { waitUntil: 'networkidle0', ...opts }); return p.evaluate(() => ({ g: document.querySelector('[data-greet]').textContent, url: location.pathname + location.search, tag: !!document.querySelector('.lede b') })); };
+  const cases = [
+    ['/', {}, "Hi, I'm Sean."],
+    ['/?for=stripe', {}, "Hi, Stripe team. I'm Sean."],
+    ['/?for=open-ai', {}, "Hi, Open Ai team. I'm Sean."],
+    ['/?for=McKinsey%20%26%20Co', {}, "Hi, McKinsey & Co team. I'm Sean."],
+    ['/?for=%3Cb%3Ex%3C%2Fb%3E', {}, "Hi, Bxb team. I'm Sean."],
+    ['/?src=github', {}, "Hi, and welcome over from GitHub. I'm Sean."],
+    ['/?src=bogus', {}, "Hi, I'm Sean."],
+    ['/', { referer: 'http://www.linkedin.com/' }, "Hi, and welcome over from LinkedIn. I'm Sean."],
+    ['/', { referer: 'http://app.greenhouse.io/people/1' }, "Hi, thanks for reading past the résumé. I'm Sean."],
+    ['/', { referer: 'http://www.google.com/' }, "Hi, I'm Sean."],
+    ['/ko/?for=토스', {}, '토스 팀, 안녕하세요. 상현이에요.'],
+    ['/ko/', {}, '안녕하세요, 상현이에요.'],
+  ];
+  for (const [url, opts, want] of cases) {
+    const p = await mk(); const r = await greet(p, url, opts);
+    ok(`greeting ${url} ${opts.referer || ''}`, r.g === want && !/[?&](for|src)=/.test(r.url) && !r.tag, JSON.stringify(r));
+    await p.close();
+  }
+  const p = await mk();
+  await greet(p, '/?for=stripe&intro=0#work');
+  ok('greeting: other params and hash survive', await p.evaluate(() => location.search === '?intro=0' && location.hash === '#work'));
+  const again = await greet(p, '/');
+  ok('greeting: kept for the session', again.g === "Hi, Stripe team. I'm Sean.", JSON.stringify(again));
+  await p.evaluate(() => document.querySelector('.livel a[href="/writing/sola/"]').click()); await sleep(900);
+  await p.evaluate(() => document.querySelector('.rail .me').click()); await sleep(900);
+  ok('greeting: survives soft nav back home', (await p.evaluate(G)) === "Hi, Stripe team. I'm Sean.", await p.evaluate(G));
+  await p.goto(B + '/writing/sola/?for=figma', { waitUntil: 'networkidle0' });
+  await p.evaluate(() => document.querySelector('.rail .me').click()); await sleep(900);
+  ok('greeting: a ?for= on a post page carries to home', (await p.evaluate(G)) === "Hi, Figma team. I'm Sean." && !(await p.evaluate(() => location.search)), await p.evaluate(G));
+  const re = await greet(p, '/?for=notion');
+  ok('greeting: a new ?for= replaces the old one', re.g === "Hi, Notion team. I'm Sean.", JSON.stringify(re));
+  await p.screenshot({ path: '../out/shots/greeting-1440.png' });
+  await p.close();
+  const m = await mk({ w: 390, h: 844, mobile: true }); await greet(m, '/?for=mckinsey-and-company');
+  await m.screenshot({ path: '../out/shots/greeting-390.png' }); const a = await m.evaluate(audit);
+  ok('greeting 390: long company name, no overflow', a.sw <= a.W + 1 && a.n === 0, a.over.join(' | ')); await m.close();
+}
+
 ok('no JS errors anywhere', errors.length === 0, [...new Set(errors)].slice(0, 15).join('\n   '));
 console.log(`\n${fails} failing`);
 await browser.close();

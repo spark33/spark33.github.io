@@ -16,7 +16,7 @@ const posts = await getPosts(lang);
 const ext = 'target="_blank" rel="noopener"';
 const fill = (s: string, v: Record<string, string>) => s.replace(/\{(\w+)\}/g, (_, k) => v[k]);
 // the time fills in before first paint (inline script below), so the line doesn't rewrap once site.ts runs
-const hi = fill(t.hi, { ml: `<a href="${LINKS.mindlogic}" ${ext} data-card="mindlogic">${t.mindlogic}</a>`, now: '<span class="now num" data-seoul-now></span>' });
+const hi = fill(t.hi, { greet: `<span data-greet>${t.greet.default}</span><script>window.spGreet&&spGreet()</script>`, ml: `<a href="${LINKS.mindlogic}" ${ext} data-card="mindlogic">${t.mindlogic}</a>`, now: '<span class="now num" data-seoul-now></span>' });
 const more1 = fill(t.more1, { baze: `<a href="${LINKS.baze}" ${ext} data-card="baze">Baze</a>` });
 const more2 = t.more2('<a href="#writing" data-card="writing">', '<a href="#work" data-card="work">', `<button class="copy" data-copy="${EMAIL}" data-card="email">`);
 ---

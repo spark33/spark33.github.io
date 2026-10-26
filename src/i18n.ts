@@ -28,7 +28,10 @@ export const UI = {
     switchTo: 'Read in English', // feedforward on the EN link (shown on Korean pages)
     built: (d: string) => `Built by hand in Seoul. Last updated ${d}.`,
     // home
-    hi: 'Hi, I\'m Sean. I lead product at {ml} in Seoul, where it\'s {now}.',
+    hi: '{greet} I lead product at {ml} in Seoul, where it\'s {now}.',
+    // Greeting POC: the first sentence follows where the visit came from (Base.astro). {name} is from ?for=.
+    greet: { default: "Hi, I'm Sean.", for: "Hi, {name} team. I'm Sean.", linkedin: "Hi, and welcome over from LinkedIn. I'm Sean.",
+      hiring: "Hi, thanks for reading past the résumé. I'm Sean.", github: "Hi, and welcome over from GitHub. I'm Sean." },
     more1: 'I work on {baze}: one account for 80+ AI models, used at more than 100 universities. I own the UX and the direction, and still write a lot of the frontend.',
     more2: (a: string, b: string, c: string) => `I write about what I keep noticing. ${a}Start there</a>, see ${b}where I've worked</a>, or ${c}grab my email</button>.`,
     writing: ['Writing', 'What I keep noticing about building AI products. Six drafts so far.'],
@@ -70,7 +73,9 @@ export const UI = {
     toTop: '맨 위로', theme: '테마 바꾸기', langNav: '언어',
     switchTo: '한국어로 보기', // feedforward on the 한 link (shown on English pages)
     built: (d: string) => `서울에서 직접 만들었어요. 마지막 업데이트 ${d}.`,
-    hi: '안녕하세요, 상현이에요. 서울에 있는 {ml}에서 프로덕트를 이끌고 있어요. 여기는 지금 {now}예요.',
+    hi: '{greet} 서울에 있는 {ml}에서 프로덕트를 이끌고 있어요. 여기는 지금 {now}예요.',
+    greet: { default: '안녕하세요, 상현이에요.', for: '{name} 팀, 안녕하세요. 상현이에요.', linkedin: '안녕하세요, 링크드인에서 오셨네요. 상현이에요.',
+      hiring: '이력서 너머까지 봐 주셔서 고마워요. 상현이에요.', github: '안녕하세요, 깃허브에서 오셨네요. 상현이에요.' },
     more1: '지금은 {baze}를 만들고 있어요. 계정 하나로 AI 모델 80여 개를 쓰는 서비스로, 100곳이 넘는 대학에서 쓰고 있어요. UX와 제품 방향을 맡고 있고, 프론트엔드 코드도 아직 많이 직접 써요.',
     more2: (a: string, b: string, c: string) => `일하면서 자꾸 눈에 들어오는 것들을 글로 써요. ${a}여기서부터</a> 읽어도 좋고, ${b}일해 온 곳</a>을 봐도 좋고, ${c}이메일 주소</button>를 가져가셔도 돼요.`,
     writing: ['글', 'AI 제품을 만들며 계속 눈에 들어오는 것들. 아직은 초고 여섯 편.'],
