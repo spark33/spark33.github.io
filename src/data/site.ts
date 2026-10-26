@@ -14,7 +14,7 @@ export const CF_ANALYTICS_TOKEN = '9d066244898a47d5a697eb2073c60951';
 // Google Analytics 4 measurement ID, e.g. 'G-XXXXXXXXXX'.
 export const GA_ID = '';
 
-export const EMAIL = 'hello@example.com'; // TODO(Sean): real address
+export const EMAIL = 'seanpark1107@gmail.com';
 const EMAIL_IS_REAL = !EMAIL.endsWith('@example.com');
 
 // Who this site is about, for search engines and AI answer engines (JSON-LD, llms.txt, feeds).
