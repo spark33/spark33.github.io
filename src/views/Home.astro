@@ -4,8 +4,7 @@
 // Under construction: Base.astro hides this behind the preview gate (see src/data/site.ts).
 import Base from '../layouts/Base.astro';
 import LivingTitles from '../components/LivingTitles.astro';
-import BazeMock from '../components/BazeMock.astro';
-import { LINKS, EMAIL, forLang, isPh } from '../data/site';
+import { LINKS, EMAIL, PHOTO, forLang, isPh } from '../data/site';
 import { homeLd } from '../lib/seo';
 import { getPosts } from '../lib/posts';
 import { UI, loc, type Lang } from '../i18n';
@@ -54,16 +53,21 @@ const more2 = t.more2('<a href="#writing" data-card="writing">', '<a href="#work
   <div class="work">
     <article class="proj">
       <div class="head"><b><a href={loc('/work/baze/', lang)} data-card="case">{BAZE.title}</a></b><p>{BAZE.blurb}</p><a href={loc('/work/baze/', lang)} data-card="case">{t.caseStudy}</a></div>
-      <BazeMock lang={lang} />
+      <a class="shot" href={loc('/work/baze/', lang)} data-card="case"><img src="/work/baze/picker.webp" width="1658" height="960" alt={t.shot.picker[1]} loading="lazy" decoding="async" /></a>
     </article>
   </div>
 
   <section class="about" id="about">
     <h2 class="sec" data-where={t.about[0]} data-desc={t.about[1]}>{t.about[0]}</h2>
-    <div>
-      <p class="ph">{t.aboutPh}</p>
-      <p>{EDUCATION}</p>
-      <p>{t.songs}</p>
+    <div class="aboutin">
+      <figure class="portrait">{PHOTO.src
+        ? <img src={PHOTO.src} width={PHOTO.width} height={PHOTO.height} alt={t.name} loading="lazy" decoding="async" />
+        : <div class="noimg" role="img" aria-label={t.photo}><span>{t.photo}</span></div>}</figure>
+      <div>
+        <p class="ph">{t.aboutPh}</p>
+        <p>{EDUCATION}</p>
+        <p>{t.songs}</p>
+      </div>
     </div>
   </section>
 </Base>

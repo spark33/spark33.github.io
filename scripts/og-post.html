@@ -1,0 +1,23 @@
+<!doctype html><html lang="{{lang}}"><head><meta charset="utf-8">
+<!-- A piece's share card (1200×630). scripts/og.mjs fills in {{lang}} {{name}} {{title}} {{dek}} {{tag}} and screenshots it. -->
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500&family=Noto+Serif+KR:wght@400;500&display=block" rel="stylesheet">
+<style>
+*{margin:0;box-sizing:border-box}
+html,body{width:1200px;height:630px;overflow:hidden}
+body{background:#eeeadf;color:#1b1a17;font-family:'Newsreader','Noto Serif KR',Georgia,serif;font-optical-sizing:auto;position:relative;padding:80px 104px 0}
+:lang(ko) body{word-break:keep-all}
+.grain{position:absolute;inset:0;width:100%;height:100%;opacity:.025;mix-blend-mode:multiply}
+.me{display:flex;align-items:center;gap:14px;font-size:30px;font-weight:500}
+.me svg{width:34px;height:34px}
+h1{font-weight:500;font-size:84px;line-height:1.06;letter-spacing:-.02em;margin-top:52px;max-width:960px;text-wrap:balance}
+:lang(ko) h1{letter-spacing:-.03em;line-height:1.18}
+p{font-size:30px;line-height:1.35;color:#57534a;margin-top:24px;max-width:900px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+:lang(ko) p{line-height:1.5}
+.foot{position:absolute;left:104px;right:104px;bottom:60px;display:flex;justify-content:space-between;font-size:26px;color:#6b665c;border-top:1px solid rgba(27,26,23,.14);padding-top:20px}
+</style></head><body>
+<svg class="grain"><filter id="h"><feTurbulence type="fractalNoise" baseFrequency="0.005 0.14" numOctaves="3" seed="7"/><feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1.2 1"/></filter><rect width="100%" height="100%" filter="url(#h)"/></svg>
+<div class="me"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="#d4cebf" stroke="#8c877b" stroke-width=".6"/><path fill="#f6f2e8" d="M16 2a14 14 0 0 1 0 28a8 14 0 0 0 0-28z"/></svg>{{name}}</div>
+<h1>{{title}}</h1>
+<p>{{dek}}</p>
+<div class="foot"><span>seanpark.page</span><span>{{tag}}</span></div>
+</body></html>

@@ -53,6 +53,10 @@ export const EXPERIENCE = [
     line: 'Front-end architect and lead developer on client builds. Mentored six developers.' },
 ];
 
+// The photo in About. Drop the file in public/ (e.g. public/sean.jpg, ~4:5, at least 600px wide) and set src;
+// until then About shows an empty frame where it goes.
+export const PHOTO = { src: '', width: 600, height: 750 };
+
 // Education, for the About section.
 export const EDUCATION = 'I studied Information Systems and Human-Computer Interaction at Carnegie Mellon (2019), and TA’d programming courses there.';
 

@@ -114,7 +114,7 @@ export function initSite() {
     // footer: tonight's moon, and the time in Seoul and New York
     const p = Math.min(Math.max(phaseNow(), .001), .999);
     const L = client();
-    $('#dmoon')!.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="var(--moon-dark)" stroke="var(--rule)"/><path fill="var(--fg)" d="${moonPath(p, 6, 7)}"/></svg>${L.phases[Math.floor(phaseNow() * 8 + .5) % 8]}`;
+    $('#dmoon')!.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="var(--moon-dark)" stroke="var(--rule)"/><path fill="var(--moon-lit)" d="${moonPath(p, 6, 7)}"/></svg>${L.phases[Math.floor(phaseNow() * 8 + .5) % 8]}`;
     const fmt = (tz: string) => new Intl.DateTimeFormat(L.locale, { timeZone: tz, hour: 'numeric', minute: '2-digit' }).format(new Date());
     const clocks = [() => ($('#clock')!.textContent = L.clock(fmt('Asia/Seoul'), fmt('America/New_York'))),
       ...$$('[data-seoul-now]').map((el) => () => (el.textContent = L.locale === 'en-US' ? fmt('Asia/Seoul').toLowerCase() : fmt('Asia/Seoul')))];

@@ -9,6 +9,9 @@ import { UI, loc, type Lang } from '../i18n';
 export const SITE = 'https://seanpark.page';
 export const abs = (path: string) => new URL(path, SITE).href;
 export const OG_IMAGE = { url: abs('/og.png'), width: 1200, height: 630, alt: 'Sean Park: product lead at Mindlogic, Seoul. Writing about building AI products.' };
+/** Each piece's own share image (public/og/, made by scripts/og.mjs): its title on the site's paper. A piece not
+ *  translated yet uses the English card on /ko/ too. */
+export const postOg = (id: string, lang: Lang, fallback = false) => abs(`/og/${lang === 'ko' && !fallback ? 'ko/' : ''}${id}.jpg`);
 
 export const ID = { sean: abs('/#sean'), site: abs('/#website'), mindlogic: abs('/#mindlogic'), baze: abs('/#baze') };
 
@@ -68,7 +71,7 @@ export const postLd = (p: Piece, words: number, mins: number, lang: Lang = 'en')
     articleSection: d.lens, keywords: d.keywords, wordCount: words, timeRequired: `PT${mins}M`, inLanguage: p.fallback ? 'en' : lang,
     creativeWorkStatus: d.published ? 'Published' : 'Draft',
     ...(d.published && { datePublished: iso(d.published) }), ...((d.updated || d.published) && { dateModified: iso(d.updated || d.published) }),
-    author: { '@id': ID.sean }, publisher: { '@id': ID.sean }, isPartOf: { '@id': ID.site }, image: OG_IMAGE.url,
+    author: { '@id': ID.sean }, publisher: { '@id': ID.sean }, isPartOf: { '@id': ID.site }, image: postOg(p.id, lang, p.fallback),
     ...(d.project === 'baze' && { about: { '@id': ID.baze } }),
   }, ...(d.project === 'baze' ? [baze] : []), crumbs([[UI[lang].name, loc('/', lang)], [UI[lang].writing[0], loc('/#writing', lang)], [d.title, loc(`/writing/${p.id}/`, lang)]]));
 };

@@ -30,11 +30,18 @@ const relatedHtml = related.map((p) => '<a href="' + loc('/writing/' + p.id + '/
     </dl>
     <div class="body">
       <p class="tldr"><b>TL;DR</b><span class="ph">{BAZE.tldr}</span></p>
+      <figure class="fig shot"><img src="/work/baze/picker.webp" width="1658" height="960" alt={t.shot.picker[1]} decoding="async" /><figcaption>{t.shot.picker[0]}</figcaption></figure>
       <h2 data-where={t.bet} data-desc={t.caseStudy}>{t.bet}</h2><p class={ph(BAZE.bet)}>{BAZE.bet}</p>
       {related.length > 0 && <p class="argued" set:html={t.moreIn(relatedHtml)} />}
-      <figure class="fig"><BazeMock lang={lang} /><figcaption>{t.figcap}</figcaption></figure>
+      <figure class="fig shot two">
+        <img src={'/work/baze/one-request-' + lang + '.webp'} width="1056" height="740" alt={t.shot.oneRequest} loading="lazy" decoding="async" />
+        <img src={'/work/baze/one-ask-' + lang + '.webp'} width="1056" height="740" alt={t.shot.oneAsk} loading="lazy" decoding="async" />
+        <figcaption>{t.shot.agent[0]}</figcaption>
+      </figure>
       <h2 data-where={t.call} data-desc={t.caseStudy}>{t.call}</h2><p class={ph(BAZE.call)}>{BAZE.call}</p>
+      <figure class="fig"><BazeMock lang={lang} /><figcaption>{t.figcap}</figcaption></figure>
       <h2 data-where={t.result} data-desc={t.caseStudy}>{t.result}</h2><p class={ph(BAZE.result)}>{BAZE.result} <span class="faint">{t.sources}</span></p>
+      <figure class="fig shot bleed"><img src="/work/baze/decks.webp" width="1900" height="573" alt={t.shot.decks[1]} loading="lazy" decoding="async" /><figcaption>{t.shot.decks[0]}</figcaption></figure>
       <a class="nextp" href={loc('/#writing', lang)}><small>{t.next}</small><b>{t.theWriting}<Fragment set:html={arrow} /></b></a>
     </div>
   </article>

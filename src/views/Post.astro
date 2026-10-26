@@ -9,7 +9,7 @@ import SparkleDoors from '../components/SparkleDoors.astro';
 import AgentDay from '../components/AgentDay.astro';
 import SiteSystem from '../components/SiteSystem.astro';
 import { render } from 'astro:content';
-import { postLd, isPublished } from '../lib/seo';
+import { postLd, postOg, isPublished } from '../lib/seo';
 import { liveTitle } from '../lib/living';
 import { EMAIL, isPh } from '../data/site';
 import type { Piece } from '../lib/posts';
@@ -30,7 +30,8 @@ const iso = (x: Date) => x.toISOString().slice(0, 10);
 const textLang = post.fallback ? 'en' : undefined; // a piece not translated yet stays English, and says so
 ---
 <Base lang={lang} page="post" type="article" title={`${d.title} · ${t.name}`} description={d.dek} section={d.lens} keywords={d.keywords}
-  published={d.published} updated={d.updated} noindex={!isPublished(post.en)} jsonLd={postLd(post, words, mins, lang)}>
+  published={d.published} updated={d.updated} noindex={!isPublished(post.en)} jsonLd={postLd(post, words, mins, lang)}
+  image={{ url: postOg(post.id, lang, post.fallback), alt: `${d.title}: ${d.dek}` }}>
   <article class="post">
     <header class="phead" data-where={t.writing[0]} data-desc={t.piece(n, of, mins)}>
       <a class="back" href={loc('/#writing', lang)} data-back data-ff={t.backWFF}>{t.backW}</a>

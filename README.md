@@ -35,3 +35,7 @@ To publish: set `UNDER_CONSTRUCTION = false`.
 - While `UNDER_CONSTRUCTION` is true every page is noindex except `/under-construction/`, which carries
   the Person entity so a search for Sean already finds the right one. At launch it flips to noindex.
 - `public/og.png` (1200×630 share image) is a Chrome screenshot of `scripts/og.html`.
+- Each piece has its own share card, `public/og/<slug>.jpg` and `public/og/ko/<slug>.jpg`: its title and dek on the
+  paper, made by `node scripts/og.mjs` (template `scripts/og-post.html`; run it on CI). Rerun it when a title or dek
+  changes or a piece is added; the e2e suite fails if a piece has no card.
+- `public/work/baze/`: real Baze screens, captured from baze.co's own app stills (Oct 2026).

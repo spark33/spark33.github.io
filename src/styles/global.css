@@ -4,8 +4,8 @@
 :root{--ease-out:cubic-bezier(.23,1,.32,1);--t-press:150ms;--t-move:280ms;--t-reveal:420ms;
   --r-shot:3px;--r-phone:14px;
   --font:'Newsreader',Georgia,'Noto Serif KR','Apple SD Gothic Neo',serif;--rail:232px;--top:72px;--gut:max(0px,(100vw - 1232px) / 2)}
-[data-theme=light]{--bg:#eeeadf;--fg:#1b1a17;--soft:#57534a;--faint:#6b665c;--rule:rgba(27,26,23,.14);--frame:#e4dfd2;--hatch:rgba(27,26,23,.07);--moon-dark:#d4cebf;--inv:#12110f;--inv-moon:#2b2925;--shade:27,26,23;--blend:multiply;--grain-filter:invert(1);--tint:rgba(27,26,23,.04);--flash:rgba(27,26,23,.1)}
-[data-theme=dark]{--bg:#12110f;--fg:#e9e3d4;--soft:#a8a295;--faint:#888376;--rule:rgba(233,227,212,.13);--frame:#1b1a17;--hatch:rgba(233,227,212,.05);--moon-dark:#2b2925;--inv:#eeeadf;--inv-moon:#d4cebf;--shade:0,0,0;--blend:screen;--grain-filter:none;--tint:rgba(233,227,212,.04);--flash:rgba(233,227,212,.1)}
+[data-theme=light]{--bg:#eeeadf;--fg:#1b1a17;--soft:#57534a;--faint:#6b665c;--rule:rgba(27,26,23,.14);--frame:#e4dfd2;--hatch:rgba(27,26,23,.07);--moon-dark:#d4cebf;--moon-lit:#faf7f0;--inv:#12110f;--inv-moon:#2b2925;--shade:27,26,23;--blend:multiply;--grain-filter:invert(1);--tint:rgba(27,26,23,.04);--flash:rgba(27,26,23,.1)}
+[data-theme=dark]{--bg:#12110f;--fg:#e9e3d4;--soft:#a8a295;--faint:#888376;--rule:rgba(233,227,212,.13);--frame:#1b1a17;--hatch:rgba(233,227,212,.05);--moon-dark:#2b2925;--moon-lit:#e9e3d4;--inv:#eeeadf;--inv-moon:#d4cebf;--shade:0,0,0;--blend:screen;--grain-filter:none;--tint:rgba(233,227,212,.04);--flash:rgba(233,227,212,.1)}
 *{box-sizing:border-box;margin:0;padding:0}
 html{background:var(--bg);color:var(--fg);font:400 18px/1.55 var(--font);font-optical-sizing:auto;-webkit-font-smoothing:antialiased;scrollbar-color:var(--faint) var(--bg);caret-color:var(--fg)}
 ::selection{background:var(--fg);color:var(--bg)}
@@ -30,7 +30,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .moonrow{display:flex;align-items:center;gap:10px;color:var(--faint);font-size:15px}
 .moon{width:30px;height:30px;margin-left:-6px;display:grid;place-items:center;border-radius:50%;transition:scale var(--t-press) var(--ease-out)}
 .moon:active{scale:.94}
-.moon circle{fill:var(--moon-dark)}.moon path{fill:var(--fg)}
+/* every moon draws its lit side light and its dark side dim (a full moon is a bright disc, never a black one), with a
+   thin outline so the pale states still read on the paper */
+.moon circle{fill:var(--moon-dark);stroke:var(--faint);stroke-width:.7}.moon path{fill:var(--moon-lit)}
 .copy{color:var(--soft);text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:.22em;text-align:left}
 .copy[data-done]{color:var(--fg)}
 /* 한 / EN: quiet, like the email above it. The language you're in is ink; the other is a faint link */
@@ -120,7 +122,13 @@ main{margin-left:calc(var(--gut) + var(--rail));padding-right:48px;max-width:100
 .takes{padding:8px 0 0;margin-bottom:120px}
 .takes .tl,.takes .budget{max-width:640px}
 #index{margin-top:0}
-.about{display:block!important;max-width:640px}
+.about{display:block!important;max-width:824px}
+/* About: a photo beside the words (an empty frame until PHOTO.src is set in data/site.ts) */
+.aboutin{display:grid;grid-template-columns:152px minmax(0,640px);gap:0 32px;align-items:start}
+.portrait{margin:0}
+.portrait img,.portrait .noimg{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:var(--r-shot)}
+.portrait .noimg{background:var(--frame);background-image:repeating-linear-gradient(135deg,var(--hatch) 0 1px,transparent 1px 11px);display:grid;place-items:center;padding:12px;text-align:center;font-size:14px;line-height:1.35;color:var(--faint)}
+@media (max-width:640px){.aboutin{grid-template-columns:minmax(0,1fr)}.portrait{width:120px;margin-bottom:20px}.fig.shot.two{grid-template-columns:minmax(0,1fr)}}
 .takes h2{font-size:18px;font-weight:500;color:var(--fg)}
 .tmeta{font-size:15px;color:var(--faint)}
 .tmeta a{color:var(--soft)}
@@ -247,13 +255,19 @@ main{margin-left:calc(var(--gut) + var(--rail));padding-right:48px;max-width:100
 .summary div{padding:12px 16px 14px 0}
 .summary dt{color:var(--faint)}
 .summary dd{margin-top:2px;overflow-wrap:anywhere}
-.cs .body{display:grid;grid-template-columns:200px minmax(0,640px);gap:0 48px}
-.cs .body>*{grid-column:2}
+.cs .body{display:grid;grid-template-columns:minmax(0,640px) minmax(0,1fr);gap:0 48px}
+.cs .body>*{grid-column:1}
 .cs .body p{font-size:19px;line-height:1.62;margin-bottom:1.1em}
 .cs .body h2{font-size:22px;font-weight:500;margin:2em 0 .5em}
 .cs .body h2:first-of-type{margin-top:0}
 .cs .body .fig{grid-column:1 / -1;margin:40px 0}
-.cs .body .fig.narrow{grid-column:2}
+.cs .body .fig.narrow{grid-column:1}
+/* real screens from baze.co (public/work/baze/) */
+.shot img{display:block;width:100%;height:auto;border:1px solid var(--rule);border-radius:6px}
+[data-theme=dark] .shot img{filter:brightness(.86)}
+.fig.shot.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.fig.shot.two figcaption{grid-column:1 / -1;margin-top:0}
+.proj .shot{display:block}
 .cs .body figcaption{font-size:15px;color:var(--faint);margin-top:8px}
 .cs .tldr{border-top:1px solid var(--fg);border-bottom:1px solid var(--rule);padding:12px 0 14px;margin-bottom:40px;font-size:19px}
 .cs .tldr b{font-weight:500;margin-right:8px}
@@ -328,7 +342,7 @@ main{margin-left:calc(var(--gut) + var(--rail));padding-right:48px;max-width:100
 .post .tried{color:var(--soft)}
 /* the end: tonight's moon closes the last line, then a way to write back */
 .endmark{display:inline-block;width:.6em;height:.6em;margin-left:.4em;vertical-align:-.02em}
-.endmark circle{fill:var(--moon-dark)}.endmark path{fill:var(--fg)}
+.endmark circle,#dmoon circle{fill:var(--moon-dark);stroke:var(--faint);stroke-width:.7}.endmark path,#dmoon path{fill:var(--moon-lit)}
 .pend{margin-top:64px;padding-top:18px;border-top:1px solid var(--rule);font-size:17px;color:var(--soft);display:flex;flex-direction:column;gap:10px}
 .pend .acts{display:flex;gap:20px;font-size:15px}
 .pend .acts a,.pend .acts .copy{color:var(--soft);text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:.22em}

@@ -447,6 +447,56 @@ for (const [w, h, mobile] of [[1440, 900, false], [1024, 768, false], [768, 1024
   ok('greeting 390: long company name, no overflow', a.sw <= a.W + 1 && a.n === 0, a.over.join(' | ')); await m.close();
 }
 
+// ── 15. real Baze screens, the About photo frame, the case study's alignment, tonight's moon, share cards per piece
+{ phase = 'screens';
+  for (const lang of ['', '/ko']) {
+    const p = await mk();
+    await p.goto(B + lang + '/', { waitUntil: 'networkidle0' });
+    await p.evaluate(() => document.querySelector('.proj .shot img').scrollIntoView({ block: 'center', behavior: 'instant' })); await sleep(700);
+    const home = await p.evaluate(() => { const i = document.querySelector('.proj .shot img'); return { w: i.naturalWidth, alt: i.alt.length, href: i.closest('a').pathname, mock: !!document.querySelector('.proj .mock') }; });
+    ok(`screens ${lang || '/'}: home shows the real model picker, linked to the case study`, home.w > 1000 && home.alt > 20 && home.href.endsWith('/work/baze/') && !home.mock, JSON.stringify(home));
+    const ph = await p.evaluate(() => { const f = document.querySelector('.about .portrait'), t = document.querySelector('.about .aboutin > div p'); const r = f.getBoundingClientRect(); return { w: Math.round(r.width), h: Math.round(r.height), side: f.getBoundingClientRect().right < t.getBoundingClientRect().left, label: f.querySelector('[role=img]')?.getAttribute('aria-label') }; });
+    ok(`screens ${lang || '/'}: About has a 4:5 photo frame beside the words`, ph.w === 152 && Math.abs(ph.h - 190) <= 1 && ph.side && !!ph.label, JSON.stringify(ph));
+    await p.goto(B + lang + '/work/baze/', { waitUntil: 'networkidle0' });
+    const cs = await p.evaluate(async () => {
+      const imgs = [...document.querySelectorAll('.cs .shot img')];
+      for (const i of imgs) { i.scrollIntoView({ block: 'center', behavior: 'instant' }); await new Promise((r) => setTimeout(r, 250)); }
+      const L = (s) => Math.round(document.querySelector(s).getBoundingClientRect().left);
+      return { n: imgs.length, loaded: imgs.every((i) => i.complete && i.naturalWidth > 0), srcs: imgs.map((i) => i.getAttribute('src')), h1: L('.cs h1'), dek: L('.cs .dek'), tldr: L('.cs .tldr'), h2: L('.cs .body h2'), p: L('.cs .body p:not(.tldr)'), fig: L('.cs .body .fig') };
+    });
+    ok(`screens ${lang || '/'}: the case study has 4 real screens, all loaded, in its language`, cs.n === 4 && cs.loaded && cs.srcs.filter((s) => /-(en|ko)\.webp$/.test(s)).every((s) => s.endsWith((lang ? 'ko' : 'en') + '.webp')), JSON.stringify(cs));
+    ok(`screens ${lang || '/'}: case study body lines up with the title`, [cs.dek, cs.tldr, cs.h2, cs.p, cs.fig].every((x) => Math.abs(x - cs.h1) <= 2), JSON.stringify(cs));
+    await p.close();
+  }
+  // the footer's moon: the lit side is the light colour in both themes
+  for (const theme of ['light', 'dark']) {
+    const p = await mk({ theme });
+    await p.goto(B + '/', { waitUntil: 'networkidle0' });
+    const m = await p.evaluate(() => { const c = document.querySelector('#dmoon circle'), pth = document.querySelector('#dmoon path'); const lum = (s) => { const [r, g, b] = s.match(/\d+/g).map(Number); return 0.2126 * r + 0.7152 * g + 0.0722 * b; }; return { lit: getComputedStyle(pth).fill, dark: getComputedStyle(c).fill, brighter: lum(getComputedStyle(pth).fill) > lum(getComputedStyle(c).fill) }; });
+    ok(`moon ${theme}: footer moon's lit side is brighter than its dark side`, m.brighter, JSON.stringify(m));
+    await p.close();
+  }
+  // every piece has its own share card, in its language, and the file is there
+  const p = await mk();
+  for (const path of [...EN, ...KO].filter((x) => x.includes('/writing/'))) {
+    await p.goto(B + path, { waitUntil: 'networkidle0' });
+    const og = await p.evaluate(() => ({ img: document.querySelector('meta[property="og:image"]').content, tw: document.querySelector('meta[name="twitter:image"]').content, alt: document.querySelector('meta[property="og:image:alt"]').content, ld: JSON.parse(document.querySelector('script[type="application/ld+json"]').textContent)['@graph'].find((n) => n['@type'] === 'BlogPosting')?.image }));
+    const slug = path.split('/').filter(Boolean).pop(), want = `/og/${path.startsWith('/ko/') ? 'ko/' : ''}${slug}.jpg`;
+    const r = await fetch(B + want), bytes = r.ok ? (await r.arrayBuffer()).byteLength : 0;
+    ok(`share card ${path}: its own image, file present`, new URL(og.img).pathname === want && og.tw === og.img && og.ld === og.img && og.alt.length > 10 && r.status === 200 && /jpeg/.test(r.headers.get('content-type') || '') && bytes > 10000, JSON.stringify({ ...og, status: r.status, bytes }));
+  }
+  await p.goto(B + '/', { waitUntil: 'networkidle0' });
+  ok('share card: home keeps the site card', (await p.evaluate(() => document.querySelector('meta[property="og:image"]').content)).endsWith('/og.png'));
+  await p.close();
+  for (const [w, h, mobile] of [[1440, 900, false], [390, 844, true]]) {
+    const s = await mk({ w, h, mobile });
+    await s.goto(B + '/work/baze/', { waitUntil: 'networkidle0' });
+    await s.evaluate(async () => { for (const i of document.querySelectorAll('.cs .shot img')) { i.scrollIntoView({ block: 'center', behavior: 'instant' }); await new Promise((r) => setTimeout(r, 200)); } scrollTo(0, 0); }); await sleep(400);
+    const a = await s.evaluate(audit); ok(`screens ${w}: case study has no overflow`, a.sw <= a.W + 1 && a.n === 0, a.over.join(' | '));
+    await s.close();
+  }
+}
+
 ok('no JS errors anywhere', errors.length === 0, [...new Set(errors)].slice(0, 15).join('\n   '));
 console.log(`\n${fails} failing`);
 await browser.close();
