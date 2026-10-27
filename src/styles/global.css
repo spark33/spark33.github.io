@@ -327,6 +327,24 @@ main{margin-left:calc(var(--gut) + var(--rail));padding-right:48px;max-width:100
 .prose table{width:100%;border-collapse:collapse;font-size:16px;font-variant-numeric:tabular-nums lining-nums}
 .prose th{text-align:left;font-weight:400;color:var(--faint);padding:0 16px 8px 0;border-bottom:1px solid var(--rule)}
 .prose td{padding:9px 16px 9px 0;border-bottom:1px solid var(--rule);vertical-align:baseline}
+.prose figure.split{width:100%}
+.prose .flow ol{display:flex;flex-wrap:wrap;gap:10px 26px;font-size:16px;line-height:1.3}
+.prose .flow li{padding:5px 11px;border:1px dashed var(--rule);border-radius:3px;margin:0}
+.prose .flow li.gh{border:1px solid var(--fg)}
+.prose .flow li::before{content:none}
+.prose .flow li:not(:last-child)::after{content:"→";position:absolute;right:-20px;top:5px;color:var(--faint)}
+.prose .flow small{display:block;font-size:13px;color:var(--faint)}
+.prose .flow .loop{font-size:15px;color:var(--soft);margin-top:12px}
+.prose .split .bar{display:flex;gap:2px;height:22px}
+.prose .split i{flex:0 0 calc(var(--w) - 2px);background:var(--fg);border-radius:2px}
+.prose .split i:nth-child(2){opacity:.45}.prose .split i:nth-child(3){opacity:.2}
+.prose .split .key{display:flex;flex-wrap:wrap;gap:4px 22px;font-size:15px;color:var(--soft);margin-top:10px}
+.prose .split .key span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:2px;background:var(--fg);margin-right:7px}
+.prose .split .key span:nth-child(2)::before{opacity:.45}.prose .split .key span:nth-child(3)::before{opacity:.2}
+.prose figure.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.prose figure.two figcaption{grid-column:1 / -1;margin-top:0}
+.prose .sws{display:flex;flex-wrap:wrap;gap:10px 22px;font-size:15px;color:var(--soft);font-variant-numeric:tabular-nums lining-nums}
+.prose .sw{display:inline-flex;align-items:center;gap:8px}
+.prose .sw::before{content:"";width:20px;height:20px;border-radius:3px;background:var(--c);box-shadow:inset 0 0 0 1px var(--rule)}
 /* section links: a # beside the heading copies a link to it */
 .prose h2 .anc{position:absolute;left:-26px;top:.05em;color:var(--faint);opacity:0;font-weight:400;transition:opacity var(--t-press) var(--ease-out),color var(--t-press) var(--ease-out)}
 .prose h2:hover .anc,.prose h2 .anc:focus-visible{opacity:1}

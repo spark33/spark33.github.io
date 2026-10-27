@@ -22,7 +22,7 @@ async function mk({ w = 1440, h = 900, mobile = false, theme = null, reduced = f
   }, { H, theme, key, intro });
   return p;
 }
-const EN = ['/', '/work/baze/', '/writing/attention/', '/writing/sparkle/', '/writing/data-model/', '/writing/chemistry/', '/writing/sola/', '/writing/this-site/'];
+const EN = ['/', '/work/baze/', '/writing/the-sheet/', '/writing/palette/', '/writing/attention/', '/writing/sparkle/', '/writing/data-model/', '/writing/chemistry/', '/writing/sola/', '/writing/this-site/'];
 const KO = EN.map((p) => '/ko' + p);
 const PAGES = [...EN, ...KO, '/404.html'];
 const audit = () => {

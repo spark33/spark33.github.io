@@ -2,7 +2,7 @@
 title: Team chemistry is something you can design
 dek: Deloitte's Business Chemistry, and how the mix came together on the team I lead.
 lens: Teams
-order: 4
+order: 6
 keywords: ["Deloitte Business Chemistry", "product team composition", "Pioneers Drivers Integrators Guardians"]
 project: baze
 ---
