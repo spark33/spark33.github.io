@@ -15,11 +15,13 @@ interface Props {
   type?: 'website' | 'profile' | 'article'; noindex?: boolean; jsonLd?: object;
   published?: Date; updated?: Date; section?: string; keywords?: string[]; lang?: Lang;
   image?: { url: string; alt: string }; // the share card; the site-wide one unless a page has its own (posts do)
+  hangul?: string; // Hangul an English page shows besides 한지 (a post quoting Korean), so its glyphs load too
 }
 const { lang = 'en' } = Astro.props;
 const t = UI[lang];
 const { title = t.title, description = SITE_DESCRIPTION, page = 'home',
-  type = 'website', noindex = false, jsonLd, published, updated, section, keywords = [] } = Astro.props;
+  type = 'website', noindex = false, jsonLd, published, updated, section, keywords = [], hangul = '' } = Astro.props;
+const hanText = encodeURIComponent([...new Set('한지' + hangul)].join(''));
 const og = { ...OG_IMAGE, ...Astro.props.image };
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 // the same page in each language (hreflang), and the 한/EN switch in the rail
@@ -119,8 +121,9 @@ const built = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).forma
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet" />
   {/* Hangul: Noto Serif KR beside Newsreader. Korean pages load all of it (Google serves it in slices, so only the
-      characters on the page download); English pages only need the 한 of the switch and the 한지 in the site piece. */}
-  <link href={lang === 'ko' ? 'https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500&display=swap' : 'https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500&text=%ED%95%9C%EC%A7%80&display=swap'} rel="stylesheet" />
+      characters on the page download); English pages only need the 한 of the switch, the 한지 in the site piece, and any
+      Hangul a post quotes. */}
+  <link href={lang === 'ko' ? 'https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500&display=swap' : `https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500&text=${hanText}&display=swap`} rel="stylesheet" />
 </head>
 <body data-page={page} data-intro={page === 'home' ? t.intro(`<a href="${LINKS.mindlogic}" target="_blank" rel="noopener" data-card="mindlogic">${t.mindlogic}</a>`) : ''}>
   <svg class="grain" aria-hidden="true"><filter id="hanji"><feTurbulence type="fractalNoise" baseFrequency="0.005 0.14" numOctaves="3" seed="7"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 -1.2 1"/></filter><filter id="fine"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 -1.5 1"/></filter><rect width="100%" height="100%" filter="url(#hanji)"/><rect width="100%" height="100%" filter="url(#fine)" opacity=".5"/></svg>

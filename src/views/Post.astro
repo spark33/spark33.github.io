@@ -31,7 +31,8 @@ const textLang = post.fallback ? 'en' : undefined; // a piece not translated yet
 ---
 <Base lang={lang} page="post" type="article" title={`${d.title} · ${t.name}`} description={d.dek} section={d.lens} keywords={d.keywords}
   published={d.published} updated={d.updated} noindex={!isPublished(post.en)} jsonLd={postLd(post, words, mins, lang)}
-  image={{ url: postOg(post.id, lang, post.fallback), alt: `${d.title}: ${d.dek}` }}>
+  image={{ url: postOg(post.id, lang, post.fallback), alt: `${d.title}: ${d.dek}` }}
+  hangul={lang === 'en' || post.fallback ? (body.match(/[\u3000-\u303f\uac00-\ud7a3]/g) ?? []).join('') : ''}>
   <article class="post">
     <header class="phead" data-where={t.writing[0]} data-desc={t.piece(n, of, mins)}>
       <a class="back" href={loc('/#writing', lang)} data-back data-ff={t.backWFF}>{t.backW}</a>
