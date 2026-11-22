@@ -6,18 +6,18 @@ order: 6
 stage: essay
 updated: 2026-11-22
 keywords: ["designing with an engineering mindset", "use cases from an entity relationship diagram", "product design from the data model", "CRUD for product design", "object-oriented UX"]
-tldr: "Draw the product's entities and the relationships between them, then ask Create, Read list, Read details, Update and Delete of each one. Every feature lands in a cell. The loved ones are mostly on relationships, and the empty cells are where the next ones are."
+tldr: "Draw the product's entities and the relationships between them, then ask Create, Read list, Read details, Update and Delete of each one. Almost every feature lands in a cell. The loved ones are mostly on relationships, and the empty cells are where the next ones are."
 ---
 
 In early December, millions of people will post a screenshot of a database query. Spotify Wrapped is a year of your plays, grouped by song and artist and sorted by count. It's one read on one entity, and it's the best marketing Spotify does all year.
 
-I find most of my use cases that way. Before I write a user story or draw a journey map, I draw the product's nouns and the lines between them. Then I go through the drawing one box and one line at a time and ask what someone could do with it.
+Most of my use cases come from the same place. Before I write a user story or draw a journey map, I draw the product's nouns and the lines between them. Then I go through the drawing one box and one line at a time and ask what someone could do with it.
 
 ## Entities, not tables
 
-The drawing isn't a database diagram. There are no columns, types or foreign keys. An entity is a thing the product is about, in the words people use for it: a song, a playlist, a person. A relationship is a line between two things, and I write on the line what it is: likes, follows, edits.
+The drawing has no columns, types or foreign keys. An entity is a thing the product is about, in the words people use for it: a song, a playlist, a person. A relationship is a line between two things, and I write on the line what it is: likes, follows, edits.
 
-Engineers will recognize an ER diagram with the engineering taken out. That's the point. Once it's columns and keys it describes storage, and I want it to describe the product.
+Engineers will recognize an ER diagram with the engineering taken out, on purpose. Once it's columns and keys it describes storage, and I want it to describe the product.
 
 ## Five questions
 
@@ -29,17 +29,17 @@ For every entity and every relationship, I ask CRRUD:
 - Update: can they change it?
 - Delete: can they get rid of it?
 
-CRRUD is CRUD with the read split in two. I came up with the split myself, because on screen those are two different things. (Some people call a version of it CRUDL.) A list answers "which ones?" and a detail page answers "tell me about this one." They're different screens, and they're often different features. Engineers already split it this way: in Rails routes it's `index` and `show`. The design side mostly doesn't.
+CRRUD is CRUD with the read split in two. I came up with the split myself. (Some people call a version of it CRUDL.) A list answers "which ones?" and a detail page answers "tell me about this one." On screen they're different pages, and they're often different features. Engineers already split it this way: in Rails routes it's `index` and `show`. The design side mostly doesn't.
 
 Every cell in that grid is a possible use case. Most will be boring or impossible, and some will already exist. A few will be things nobody has built.
 
-## Spotify, modelled
+## Modeling Spotify
 
-Here's the method on an app everyone knows. Spotify's schema isn't public, so this is my model of the product, not their database.
+Take an app everyone knows. Spotify's schema isn't public, so this is my model of the product, not their database.
 
 I start with two lenses. The business lens asks what pays. That's Premium plans (Individual, Duo, Family, Student), ads on the free tier, and artists and labels on the other side of the market. The user lens asks what people come to do: listen, find something new, share it.
 
-Then the nouns. User, Artist, Album, Track, Playlist, Device, Plan. And one that's easy to miss: the **Play**. A play is a user, a track and a moment. It's created every time someone presses play, and it ends up being the most valuable thing in the model.
+Then the nouns. User, Artist, Album, Track, Playlist, Device, Plan. And one that's easy to miss, the Play. A play is a user, a track and a moment. Every press of the play button makes one, and it ends up the most valuable thing in the model.
 
 Then the lines. A user *likes* a track. A user *follows* an artist, and another user. A user *edits* a playlist they don't own. A device *has downloaded* a track. A user *is in* a listening session. A plan *covers* several users.
 
@@ -73,37 +73,35 @@ First, almost every feature you can name is in a cell. Search is a read list on 
 
 Second, look at where the features people talk about live. Liked Songs, Friend Activity, collaborative playlists, Jam, Blend, Family Mix: all on the relationship rows. Wrapped and daylist sit on plays, and a play is a relationship too, a person and a song at a moment in time. The entity rows are mostly the furniture: make a playlist, open a playlist, delete a playlist.
 
-**The features people love are verbs on a relationship.**
+The features people love are verbs on a relationship, and that's the main reason I draw lines and not just boxes. A list of objects gives you the screens. The lines give you the reasons to open them.
 
-That's the main reason I draw lines and not just boxes. A list of objects gives you the screens. The lines give you the reasons to open them.
-
-Third, the Update column is nearly empty on the relationship rows. Relationships are born and they end, but they rarely change. You like a song or you don't. When I see an Update cell filled on a relationship, it's usually a sign the line should have been an entity with its own page.
+Third, the Update column is empty on every relationship row. Relationships are born and they end, but they rarely change. You like a song or you don't. When I see an Update cell filled on a relationship, it's usually a sign the line should have been an entity with its own page.
 
 ## The empty cells
 
 The grid is most useful where it's blank. Every dot is a question: is this empty because it makes no sense, or because nobody's built it?
 
-Take *User likes Track*, Read details. Spotify knows when I first played a song, how many times I've played it, and which year it was my most-played. Wrapped and the weekly listening stats only show rankings: my top songs for the year or the week. I haven't found a screen that shows it for any one song, any day: when this song came into my life and what it was doing there. That's a feature, and it came from looking at an empty box on a line, not from interviewing anyone.
+Take *User likes Track*, Read details. Spotify knows when I first played a song, how many times I've played it, and which year it was my most-played. Wrapped and the weekly listening stats only show rankings: my top songs for the year or the week. I haven't found a screen that shows it for any one song, any day: when this song came into my life and what it was doing there. That's a feature, and I found it by looking at an empty box on a line.
 
-Interviews come next. The grid hands you candidates, and the user lens decides which are worth building. That's the second half of the method.
+Interviews come after that. The grid hands you candidates, and the user lens decides which are worth building.
 
 ## Both ways
 
 Using the data model to find use cases is an engineering habit applied to design. It works better when it runs the other way too, with the user's real problem changing the data.
 
-Here's an example from a feature I'm working on: an AI app builder. I've changed the details, since it isn't out yet.
+My example is a feature I'm working on, an AI app builder. It isn't out yet, so I've changed the details.
 
 You describe an app, and the agent writes it. Before you see a preview, there's a wait of a minute or two while it works. The first version filled that wait with a spinner and a scrolling log: `write_file`, `install`, `run`, `write_file`. It was accurate, and it meant nothing to anyone who doesn't write code. People got frustrated, and some of them refreshed and lost the run.
 
-So we started from the data, which is the engineering-to-design direction. We pulled the tool calls from a set of real runs and sorted them into entities: pages, files, packages, commands, errors, and the preview itself. Then we drew the relationships. A page is made of files. A file needs packages. A command builds files, and an error belongs to a file. With CRRUD on those, the log turned into something you could look at: pages appearing one by one with their files filling in under them, and an error shown on the page it broke, not as a red line in a stream.
+We started from the data, the engineering-to-design direction. We pulled the tool calls from a set of real runs and sorted them into entities: pages, files, packages, commands, errors, and the preview itself. Then we drew the relationships. A page is made of files. A file needs packages. A command builds files, and an error belongs to a file. With CRRUD on those, the log turned into something you could look at: pages appearing one by one with their files filling in under them, and an error shown on the page it broke, not as a red line in a stream.
 
-That made the wait legible, but it didn't make it shorter or calmer. So we went the other way, from design back to data. We asked what people are actually waiting for during that minute. It isn't files. It's "is it building what I asked for?" and "is it almost done?" The tool calls couldn't answer either question, because they didn't carry that information. So we added it. Each tool call now says which part of the person's request it serves ("the sign-up page," "the booking form"), and the agent sends its plan at the start.
+That made the wait legible, but it didn't make it shorter or calmer. So we went the other way, from design back to data, and asked what people want to know while they wait. It came down to two questions: "is it building what I asked for?" and "is it almost done?" The tool calls didn't carry that information, so we added it. Each tool call now says which part of the person's request it serves ("the sign-up page," "the booking form"), and the agent sends its plan at the start.
 
 The wait screen now shows your own request as a checklist, ticking off in your words, with the files underneath for anyone who wants them.
 
 ## Who else thinks this
 
-While I was writing this post I found [Object-Oriented UX](https://alistapart.com/article/ooux-a-foundation-for-interaction-design/), Sophia Prater's method from 2015. Its ORCA process goes objects, relationships, calls-to-action, attributes. It's very close, and I wish I'd known it sooner. Where I'd differ: OOUX hangs the actions on objects and uses relationships mostly to decide what appears inside what. I put the verbs on the relationships themselves, because that's where the grid above found the interesting features. OOUX also starts from the nouns in users' heads, found through research. I start from what the system records, including data nobody looks at, like the tool-call logs, and check it against users afterwards.
+While I was writing this post I found [Object-Oriented UX](https://alistapart.com/article/ooux-a-foundation-for-interaction-design/), Sophia Prater's method from 2015. Its ORCA process goes objects, relationships, calls-to-action, attributes. It's close to what I do, and I wish I'd known it sooner. Where I'd differ: OOUX hangs the actions on objects and uses relationships mostly to decide what appears inside what. I put the verbs on the relationships themselves, because that's where the grid above found the interesting features. OOUX also starts from the nouns in users' heads, found through research. I start from what the system records, including data nobody looks at, like the tool-call logs, and check it against users afterwards.
 
 Older still is the [CRUD matrix](https://condor.depaul.edu/jbernste/is315_CRUDmatrix.htm) from information engineering, which crosses entities with business processes. It's used as a completeness check: every entity should be created, read, updated and deleted somewhere. I use the same grid to find the gaps on purpose.
 
@@ -115,7 +113,7 @@ Some relationships aren't stored anywhere. Discover Weekly, radio and DJ run on 
 
 And the grid doesn't have taste. It hands you fifty candidates and can't tell you which three matter. A cell earns a build when one look at it makes someone want it. The grid only makes sure you looked at all of them.
 
-The rule I'd keep: if a feature someone asks for won't fit in any cell, don't force it. Look for the entity you haven't drawn yet. That's what the parts of the request were, until we drew them.
+The rule I'd keep: if a feature someone asks for won't fit in any cell, don't force it. Look for the entity you haven't drawn yet. In the app builder, that was the person's request, split into parts.
 
 What's the empty cell in your product?
 

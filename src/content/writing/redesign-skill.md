@@ -11,17 +11,17 @@ tldr: "An agent asked for a redesign will happily reshuffle the same parts. Peop
 
 At 10:52 on a Tuesday in October, I posted in our frontend channel that the admin screens wasted space. The calendar spent 287 pixels on a title, a month picker and a legend before it showed a single day.
 
-Our team runs an internal Slack agent. It's Claude-based, and it can read our repos, run a headless browser and publish internal pages. I could have asked it for a redesign and gotten one in minutes. That was the problem. Ask an agent for a better layout and it moves the same parts around until something looks fresh.
+Our team runs an internal Slack agent. It's Claude-based, and it can read our repos, run a headless browser and publish internal pages. I could have asked it for a redesign and gotten one in minutes, and that was the problem. Ask an agent for a better layout and it moves the same parts around until something looks fresh.
 
-Fresh isn't what you want from an admin tool. Jakob Nielsen wrote it down in 2000: users spend most of their time on other sites, so they expect yours to work the way those do. Familiar patterns are easier to use. So the job wasn't to invent a calendar. It was to find out which calendars already work, and why, and build ours on that.
+Fresh isn't what you want from an admin tool. Jakob Nielsen wrote it down in 2000: users spend most of their time on other sites, so they expect yours to work the way those do. Familiar patterns are easier to use. So the job was to find out which calendars already work, and why, and build ours on that.
 
-That took two days and three rules. Here's how.
+Getting the agent to work that way took two days and three rules.
 
 ## Every variant had to name what it copies
 
 My message asked for three things: variants instead of one answer, references from comparable products instead of taste, and priority. Is the main thing on the page actually the main thing?
 
-The agent captured the real app first and measured the problem. The calendar grid started 287px from the top. The lesson builder's content started at about 640px.
+The agent captured the real app first and measured the problem: the calendar grid started 287px from the top, and the lesson builder's content at about 640px.
 
 <figure class="pxs">
 <div class="pxrow">
@@ -37,16 +37,16 @@ Only then did it fan out parallel sub-agents. Each variant had to name a real pr
 
 The foundation is why twenty prototypes from parallel agents looked like one design system and not twenty opinions. And 287 → 104 meant nobody had to argue about whether it "felt cleaner."
 
-## Red-teaming against people, not pixels
+## Red-teaming against the user stories
 
 Looking good is the easy part. I asked for a second pass against the use cases and user stories.
 
-It pulled the five personas from the product's own planning docs, walked each variant through the end-to-end flow, and reran everything at 1280×800, the laptop someone actually carries to an on-site training. It found ten gaps that polish never would have:
+It pulled the five personas from the product's own planning docs, walked each variant through the end-to-end flow, and reran everything at 1280×800, the laptop someone actually carries to an on-site training. It found ten gaps that no amount of visual polish would have fixed, among them:
 
 - No calendar showed which trainings still needed a lesson plan.
 - The QR code for the day was behind a hover-only icon. That fails on a touch screen at the venue.
 - Billing happens per training and per month, but the tables were per organisation, so you had to open each one to find the work.
-- The shared sidebar had quietly dropped logout, theme and font size. Nobody notices those until they're gone.
+- The shared sidebar had dropped logout, theme and font size. Nobody notices those until they're gone.
 
 It built a fourth variant for the pages that needed one, mostly by combining the best parts of the others, then gave one recommendation per page and a build order. The whole thing, both passes, took about 35 minutes and $22.
 
@@ -84,11 +84,11 @@ The third rule is Jakob's Law, made into a step an agent can't skip. It's also h
 
 The research decides what a page should be. The design system decides what it's made of.
 
-Ours has rules an agent can check, not just components. The theme fixes the sizes: a 56px header, 32px controls, a 220px sidebar, a type scale of 12, 13, 14, 16 and 20, and corner radii of 6 and 8. The admin has its own short skill that says what was asked for and how to check it, and a decision log where every product decision links back to the conversation that made it.
+Ours has components, plus rules an agent can check. The theme fixes the sizes: a 56px header, 32px controls, a 220px sidebar, a type scale of 12, 13, 14, 16 and 20, and corner radii of 6 and 8. The admin has its own short skill that says what was asked for and how to check it, and a decision log that links each product decision to the Slack message behind it.
 
-So when the redesign was picked, there was very little left to decide. A teammate built the chosen variants with the agent that same afternoon. Seven pull requests, the first opened at 13:43, all merged by 18:25. Plus 11.4k lines, minus 3.0k. The prototypes were built on the same tokens the code uses, so most of the build was translation.
+When the redesign was picked, there was little left to decide. A teammate built the chosen variants with the agent that same afternoon. Seven pull requests, the first opened at 13:43, all merged by 18:25. Plus 11.4k lines, minus 3.0k. The prototypes used the same tokens as the code, so most of the build was translation.
 
-One gap: the spacing steps and the 44px row height were deferred in the first pull request and never made it into the theme. Rules that only live in a prototype don't survive.
+One gap: the spacing steps and the 44px row height were deferred in the first pull request and never made it into the theme.
 
 ## What survived two days of real users
 
@@ -110,11 +110,9 @@ Then people started using it, and about half of it changed within 48 hours.
 <figcaption>The training admin, 48 hours after the redesign merged.</figcaption>
 </figure>
 
-Most of the changes went the same way: less. The foundation held. What changed was how much sat on top of it.
+Three of the four reworks cut things back. The foundation held; what changed was how much sat on top of it.
 
-**Research tells you how a page should work. Only the people using it can tell you how much of it they need.**
-
-The red team had personas, but personas don't push back.
+The red team had five personas, but personas don't push back. The research told us how each page should work. Only the people using it could tell us how much of it they needed.
 
 [Sean: what you'd do differently next time, now that you know half of it got cut back.]
 

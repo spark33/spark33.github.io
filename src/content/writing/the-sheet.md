@@ -20,7 +20,7 @@ I don't have a name for what comes after, and I'm wary of anyone who does. But I
 
 Until this September we planned in one Google Sheet. We're about ten people and we ship almost every week. Each person had a row and each week a column, and a task was a merged cell stretched across the weeks it took. Two rows at the top held the week's key dates and the release stage. You could see who was doing what, and when, at a glance.
 
-What the sheet couldn't hold was state. Whether a task was in progress or on staging lived in Jira, and the only link between the two was a ticket key somebody pasted into a cell. The frontend and backend halves of one feature sat in two people's rows, and Jira's timeline had no subtasks, so when one half slipped the other didn't know. Moving a feature to the next release meant fixing it in both places. In the end neither one really knew what had shipped.
+What the sheet couldn't hold was state. Whether a task was in progress or on staging lived in Jira, and the only link between the two was a ticket key somebody pasted into a cell. The frontend and backend halves of one feature sat in two people's rows, and Jira's timeline had no subtasks, so when one half slipped the other didn't know. Moving a feature to the next release meant fixing it in both places. In the end neither one knew what had shipped.
 
 Nobody was being lazy. The team planned in one tool and reported in another, and keeping them in sync was a second job on top of the real one. Moving to Linear or Monday would have kept that second job and added a new board to learn. So I built the grid.
 
@@ -28,9 +28,9 @@ Nobody was being lazy. The team planned in one tool and reported in another, and
 
 The W3C's [HTML design principles](https://www.w3.org/TR/html-design-principles/#pave-the-cowpaths) include one called "pave the cowpaths": "When a practice is already widespread among authors, consider adopting it rather than forbidding it or inventing something new." Our team's widespread practice was a spreadsheet.
 
-The famous objection is older. In 1990 Michael Hammer wrote "Reengineering Work: Don't Automate, Obliterate" for the Harvard Business Review, with the line "It is time to stop paving the cow paths." Put software over an old process and you get the old process, faster. He's right, so it's worth asking what was actually broken. The grid wasn't. People planned in it every day. The broken part was the second system next to it. Pave the path people walk, and obliterate the detour.
+The famous objection is older. In 1990 Michael Hammer wrote "Reengineering Work: Don't Automate, Obliterate" for the Harvard Business Review, with the line "It is time to stop paving the cow paths." Put software over an old process and you get the old process, faster. He's right, but the grid wasn't what was broken. People planned in it every day. The broken part was the second system next to it.
 
-I started by moving over the parts of the sheet and Jira that already worked: the timeline, and the side drawer where you read a task's details. Then I fixed the parts that hurt. Dragging work from one release to the next. Going back and forth between Jira and the timeline to update a release date. Editing the FE and BE halves of a feature as two separate things. The first version took me a week and a half, and a teammate helped me move it from a standalone app to behind Cloudflare Access.
+I started by moving over the parts of the sheet and Jira that already worked: the timeline, and the side drawer where you read a task's details. Then I fixed the parts that hurt: dragging work from one release to the next, going back and forth between Jira and the timeline to update a release date, and editing the FE and BE halves of a feature as two separate things. The first version took me a week and a half, and a teammate helped me move it from a standalone app to behind Cloudflare Access.
 
 Underneath, every block on the grid became a task with an owner, a status and a release. On top of the grid I only added what the sheet couldn't do:
 
@@ -55,23 +55,21 @@ Nobody needed onboarding. The rows and columns were the sheet everyone had looke
 
 ## The record falls out of the work
 
-None of the integrations started from a rulebook about what to write where. They work because the tool uses the words the work already produces.
+None of the integrations needed a rulebook about what to write where, because the tool uses the words the work already produces.
 
 - GitHub. The task key goes in the branch name (`feat/<task-key>`). Opening the PR moves the task to 진행 중, merging to dev moves it to dev 머지, reaching main moves it to 완료, and the PR link sticks to the task.
 - The calendar. Leave and public holidays come in every morning and show up on the timeline, so work scheduled on someone's day off gets a warning.
 - Slack, through our company agent. Anyone can ask it in a thread to turn the thread into tasks, and it makes them with their FE and BE parts. Every weekday evening it reads the day's team channels and meeting notes, applies what's clearly settled (a decision, a release that moved, a merged PR) and asks the owner about anything that needs judgment.
 
-The agent reads the same screen, in the same words, as everyone else, so there was very little to explain to it. I think that part carries over to any team. An agent is one more user, and it needs the same short distance between the tool's words and the team's words that people do. If your data model needs a long prompt to explain it to the agent, it'll need a training doc for the humans too.
+The agent reads the same screen, in the same words, as everyone else, so there was very little to explain to it. I think this carries over to any team: an agent is one more user, and it needs the same short distance between the tool's words and the team's words that people do. If your data model needs a long prompt to explain it to the agent, it'll need a training doc for the humans too.
 
 The same wiring is how the tool kept growing. Once I agreed a feature was needed, anyone on the team could add it or change it, with the agent's help. One backend engineer wanted a status filter on "My tasks," so they opened a pull request and added it.
 
 ## What the meetings are for now
 
-This is the part I care about most.
-
 Once the board kept itself, the way we build features changed with it. We run each feature as a [double diamond](https://www.designcouncil.org.uk/our-resources/the-double-diamond/), the Design Council's model of opening up to explore and closing down to decide, done twice: once on the problem, once on the solution. Between people, the work moves the way Dan Mall and Brad Frost describe in [the hot potato process](https://danmall.com/posts/hot-potato-process): small, frequent passes back and forth instead of one big handoff.
 
-The AI works on the opening halves, with each engineer on their own. By the time a feature reaches its first meeting, the Slack discussion and the business reasons behind it are already in the task, because the agent put them there. The engineer has had a day with the problem to think about how it should be solved.
+In the opening halves, each engineer works on their own with the AI. By the time a feature reaches its first meeting, the Slack discussion and the business reasons behind it are already in the task, because the agent put them there. The engineer has had a day with the problem to think about how it should be solved.
 
 So we only meet where the diamonds close. I proposed these meetings and I run them:
 
@@ -79,7 +77,7 @@ So we only meet where the diamonds close. I proposed these meetings and I run th
 - Whether the architecture scales from a business standpoint.
 - Internal user testing, before anything goes out.
 
-Our feature meetings used to open with the business context: why this feature, who needs it, what problem it solves. Now everyone walks in on the same page, so we go straight to the ERD and the wireframes or prototype and ask one question. Does what we've architected solve the business problem?
+Our feature meetings used to open with the business context and why we needed the feature at all. Now everyone walks in on the same page, so we go straight to the ERD and the wireframes or prototype and ask whether what we've architected solves the business problem.
 
 <figure class="dd">
 <svg viewBox="-6 0 412 120" role="img" aria-label="A double diamond. The two opening halves are shaded for AI work with each engineer; a dot marks a meeting at each point where a diamond closes.">
@@ -96,18 +94,16 @@ Our feature meetings used to open with the business context: why this feature, w
 <figcaption>AI works with each engineer where the diamonds open. People meet where they close.</figcaption>
 </figure>
 
-**Status shouldn't need a meeting. Decisions do.**
-
 ## Everyone can see what ships
 
-The plan used to be readable only by the people who kept it. Someone in sales who wanted to know whether a feature was going out on Thursday had to check a spreadsheet and a Jira they'd never learned. Now anyone in the company can open the releases page or ask the agent, and the answer is current, because nobody had to type it in.
+The plan used to be readable only by the people who kept it. Someone in sales who wanted to know when a feature was going out had to check a spreadsheet and a Jira they'd never learned. Now anyone in the company can open the releases page or ask the agent, and the answer is current, because nobody had to type it in.
 
 ## What's still open
 
 The first version was rough. It needed a lot more to feel truly intuitive, starting with hotkeys and notifications.
 
-And this is a team of about ten that planned in a spreadsheet. A big org with compliance requirements has a different problem, and I wouldn't hand them this tool as it is.
+And this is a team of about ten that planned in a spreadsheet. A big org with compliance requirements has a different problem.
 
-The tool was never the important part. What I'd bring anywhere is the habit behind it: find the chokepoint in how the team works, build the fix with the team, and treat the agent as one more teammate. I still haven't written the "how we use the tool" page.
+The project itself was never that important. What I'd bring anywhere is the habit behind it: find where the team's process chokes and build the fix together with the team, agent included. I still haven't written the "how we use the tool" page.
 
 *Drafted with my agent from my own draft and an interview; edited by me.*
