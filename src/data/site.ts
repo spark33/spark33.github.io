@@ -76,13 +76,11 @@ export const BAZE = {
   result: 'From 28 universities in October 2025 to more than 100 a year later, and 600+ institutions in all. 750,000 people have used it. In September 2026 they ran about 48 times as many tokens as a year before, and every university that rolled it out campus-wide renewed.',
 };
 
-// sola's illustrative day (the agent piece). Replace with a real, redacted one before publishing.
+// sola's day: a real one (Fri 20 Nov 2026, from Slack), with names and two lines taken out.
 export const SOLA_DAY = [
-  { t: '07:43', who: 'sola · inbox', m: 'Archived 23 promos, labelled 41. Two recruiter emails worth answering. Drafts are ready; nothing sent.' },
-  { t: '09:17', who: 'sola · morning', m: "Clear until 4, rain after. Tonight's one task: a 20-minute call. Have your card ready." },
-  { t: '13:02', who: 'me', m: "split last month's shared expenses", me: true },
-  { t: '13:03', who: 'sola', m: "Logged 38 rows to the shared sheet. Two merchants I didn't recognise; I asked about them in the sheet." },
-  { t: '19:53', who: 'sola · weekly', m: "Next week looks heavy: Thursday has six meetings. I'd keep it to two personal tasks." },
+  { t: '07:46', who: 'sola · inbox', m: "Archived 44 promos, newsletters and notices. An old side project's database still lets anyone read it, and the alert came again. I can draft locked-down rules for you to review." },
+  { t: '09:17', who: 'sola · morning', m: "Two friends fly home today. Nothing planned with you. Overdue: Wednesday's bookings block. Done, or move to Sat 09:30? Tomorrow 3pm: grandma's birthday lunch. Venue still TBD. Where should I put it on the calendar?" },
+  { t: '20:43', who: 'sola · family', m: "Friday night, a quick call to your parents in Jeju would be nice. Even a short one counts. If they know about Grandma's birthday lunch tomorrow, it's an easy thing to bring up." },
 ];
 
 // ── 한국어 (/ko/). The same facts, said in Korean. Names of roles and products stay as they are.
@@ -110,11 +108,9 @@ const BAZE_KO = {
   result: '2025년 10월 28곳이던 대학이 1년 만에 100곳을 넘었어요. 기관 전체로는 600곳이 넘어요. 지금까지 75만 명이 썼어요. 2026년 9월 토큰 사용량은 1년 전의 약 48배였고 캠퍼스 전체에 도입한 대학은 한 곳도 빠짐없이 재계약했어요.',
 };
 const SOLA_DAY_KO = [
-  { t: '07:43', who: 'sola · inbox', m: '프로모션 23통 보관, 41통 라벨 정리. 답장할 만한 리크루터 메일이 2통 있어요. 초안만 써 두고 보내진 않았어요.' },
-  { t: '09:17', who: 'sola · morning', m: '4시까지 맑다가 그 뒤로 비. 오늘 밤 할 일은 20분짜리 통화 하나예요. 카드 챙겨 두세요.' },
-  { t: '13:02', who: '나', m: '지난달 같이 쓴 돈 나눠 줘', me: true },
-  { t: '13:03', who: 'sola', m: '공유 시트에 38건 기록했어요. 모르는 가맹점 두 곳은 시트에 질문으로 남겨 뒀어요.' },
-  { t: '19:53', who: 'sola · weekly', m: '다음 주는 빡빡해 보여요. 목요일에만 회의가 여섯 개예요. 개인 일은 두 개까지만 잡는 게 좋겠어요.' },
+  { t: '07:46', who: 'sola · 메일함', m: '프로모션, 뉴스레터, 공지 44통 보관했어요. 예전 사이드 프로젝트 DB가 아직 아무나 읽을 수 있게 열려 있다는 알림이 또 왔어요. 잠근 규칙을 초안으로 써 둘 테니 검토해 주세요.' },
+  { t: '09:17', who: 'sola · 아침', m: '친구 둘이 오늘 귀국해요. 같이 잡힌 일정은 없어요. 밀린 일: 수요일 예약 블록. 끝났어요, 아니면 토요일 9시 30분으로 옮길까요? 내일 오후 3시 할머니 생신 점심, 장소는 아직 미정이에요. 캘린더에 어디로 적을까요?' },
+  { t: '20:43', who: 'sola · 가족', m: '금요일 밤이니 제주 부모님께 잠깐 전화해 보면 좋겠어요. 짧아도 괜찮아요. 내일 할머니 생신 점심 얘기를 꺼내면 자연스러울 거예요.' },
 ];
 
 /** Everything above that changes with the language. */

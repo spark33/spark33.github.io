@@ -13,7 +13,7 @@ const LIVE: Record<Lang, Record<string, string>> = {
     sparkle: `The ${spark} icon was a shrug`,
     'data-model': `The <span class="ent" data-e="a">use cases</span> are in the <span class="ent" data-e="b">data model</span>`,
     chemistry: `Team ${chem('chemistry')} is something you can design`,
-    sola: `I built an AI chief-of-staff that talks <span class="once">once a day<span class="bub"></span></span>`,
+    sola: `My AI chief-of-staff gets <span class="once">one reminder a day<span class="bub"></span></span>`,
     'this-site': `Paper, grain and a m<span class="mo" data-moon></span><span class="mo" data-moon></span>n`,
   },
   ko: {
@@ -21,7 +21,7 @@ const LIVE: Record<Lang, Record<string, string>> = {
     sparkle: `${spark} 아이콘은 사실 ‘글쎄요’였다`,
     'data-model': `<span class="ent" data-e="a">유스케이스</span>는 <span class="ent" data-e="b">데이터 모델</span> 안에 있다`,
     chemistry: `팀 ${chem('케미스트리')}도 설계할 수 있다`,
-    sola: `하루에 <span class="once">딱 한 번<span class="bub"></span></span> 말을 거는 AI 비서를 만들었다`,
+    sola: `내 AI 비서의 잔소리는 <span class="once">하루 한 번<span class="bub"></span></span>이다`,
     // no o's to fill in Korean: tonight's moon follows 달 instead
     'this-site': `한지, 결, 그리고 달<span class="mo end" data-moon></span>`,
   },
