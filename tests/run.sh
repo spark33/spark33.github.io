@@ -4,6 +4,7 @@ mkdir -p out/shots
 TESTHASH=$(printf testkey | sha256sum | cut -d' ' -f1)
 sed -i "s/PREVIEW_HASH = '[0-9a-f]*'/PREVIEW_HASH = '$TESTHASH'/" site/src/data/site.ts
 cd site && npm install --no-audit --no-fund >../out/npm.txt 2>&1 && npx astro build >../out/build.txt 2>&1; echo "build=$?" >> ../out/summary.txt
+(cd site && node tests/tokens.mjs > ../out/tokens.txt 2>&1; echo "tokens=$?" >> ../out/summary.txt)
 (npm i -D --no-audit --no-fund @astrojs/check typescript >/dev/null 2>&1 && npx astro check >../out/check.txt 2>&1) || true
 cd ..
 (cd site/dist && python3 -m http.server 4321 >/dev/null 2>&1 &)

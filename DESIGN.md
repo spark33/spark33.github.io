@@ -60,3 +60,17 @@ Sean: the home page "feels very text dense, and there doesn't seem to be a clean
 - Type: the hello is the one statement (32px regular; 27px on phones), the writing titles are a list (21–24px medium; 21px on phones). Keep them at least 1.25× apart so they never read as the same level.
 - Sections are 120px apart. Each heading sits 14px above a hairline, and the list starts under it.
 - New things on the home page go on these lines. If something doesn't fit them, change the grid here first.
+
+## Tokens (2026-11-23)
+
+Sean asked whether the site runs on a strict system. It didn't: there were 27 font sizes, 19 line heights, ~35 spacing values and 10 radii. Now everything comes from the tokens at the top of `src/styles/global.css`, and `node tests/tokens.mjs` (run by `tests/run.sh`) fails on anything else.
+
+| Kind | Tokens |
+| --- | --- |
+| Type | `--t-xs` 13 · `sm` 15 · `md` 17 · `lg` 19 · `xl` 24 · `2xl` 32 · `3xl` 48 · `4xl` 64. Phones: xl 21, 2xl 27, 3xl 36 |
+| What each is for | xs labels inside figures · sm meta, captions, UI · md body and UI text · lg reading prose · xl titles, deks, h2 · 2xl the hello, next piece · 3xl page titles · 4xl the "Aa" specimen |
+| Line height | `--lh-solid` 1 · `display` 1.15 · `heading` 1.3 · `ui` 1.5 · `read` 1.65. Korean redefines them (1.25 / 1.4 / 1.6 / 1.8) |
+| Spacing | `--s-4` `8` `12` `16` `20` `24` `32` `48` `72` `120` `160` (margins, paddings, gaps, scroll margins) |
+| Radius | `--r-sm` 3 (screens, boxes) · `md` 6 (windows) · `lg` 10 (bubbles) · `pill`; 50% for circles |
+
+Allowed raw values: em (sup, code, list markers scale with their text), 0, 1–3px optical nudges in spacing, pt in print. A new size or step means adding a token here first, never a one-off.

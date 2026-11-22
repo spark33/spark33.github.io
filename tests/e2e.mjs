@@ -104,7 +104,7 @@ for (const [w, h, mobile] of [[1440, 900, false], [1024, 768, false], [768, 1024
   const p = await mk();
   await p.goto(B + '/writing/sola/', { waitUntil: 'networkidle0' });
   const m = await p.$eval('.medium', (e) => getComputedStyle(e).paddingTop);
-  ok('specimen frame (.medium) is styled', m === '22px', m);
+  ok('specimen frame (.medium) is styled', m === '24px', m); // --s-24 since the spacing tokens (2026-11-23)
   await p.close();
 }
 
