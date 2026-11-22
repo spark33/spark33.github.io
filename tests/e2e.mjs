@@ -173,7 +173,7 @@ for (const [w, h, mobile] of [[1440, 900, false], [1024, 768, false], [768, 1024
   const p = await mk();
   const ctx = browser.defaultBrowserContext(); await ctx.overridePermissions(B, ['clipboard-read', 'clipboard-write', 'clipboard-sanitized-write']);
   await p.goto(B + '/', { waitUntil: 'networkidle0' }); await sleep(300);
-  const btn = '.lede button.copy';
+  const btn = '.rail button.copy';
   const label = await p.$eval(btn, (e) => e.textContent);
   await p.click(btn); await sleep(200); await p.click(btn); await sleep(1800);
   ok('copy: label comes back after a double click', (await p.$eval(btn, (e) => e.textContent)) === label, await p.$eval(btn, (e) => e.textContent));

@@ -4,7 +4,7 @@
 // Under construction: Base.astro hides this behind the preview gate (see src/data/site.ts).
 import Base from '../layouts/Base.astro';
 import LivingTitles from '../components/LivingTitles.astro';
-import { LINKS, EMAIL, PHOTO, forLang, isPh } from '../data/site';
+import { LINKS, PHOTO, forLang, isPh } from '../data/site';
 import { homeLd } from '../lib/seo';
 import { getPosts } from '../lib/posts';
 import { assertReady } from '../lib/launch';
@@ -19,15 +19,14 @@ const fill = (s: string, v: Record<string, string>) => s.replace(/\{(\w+)\}/g, (
 // the time fills in before first paint (inline script below), so the line doesn't rewrap once site.ts runs
 const hi = fill(t.hi, { greet: `<span data-greet>${t.greet.default}</span><script>window.spGreet&&spGreet()</script>`, ml: `<a href="${LINKS.mindlogic}" ${ext} data-card="mindlogic">${t.mindlogic}</a>`, now: '<span class="now num" data-seoul-now></span>' });
 const more1 = fill(t.more1, { baze: `<a href="${LINKS.baze}" ${ext} data-card="baze">Baze</a>` });
-const more2 = t.more2('<a href="#writing" data-card="writing">', '<a href="#work" data-card="work">', `<button class="copy" data-copy="${EMAIL}" data-card="email">`);
+const more2 = t.more2('<a href="#writing" data-card="writing">');
 ---
 <Base lang={lang} page="home" type="profile" jsonLd={homeLd(posts, lang)}>
   <h1 class="sr-only">{t.h1}</h1>
   <section class="lede-wrap">
     <div class="lede">
       <p set:html={hi} /><script is:inline>document.querySelectorAll('[data-seoul-now]').forEach(function(e){var k=document.documentElement.lang==='ko';e.textContent=new Intl.DateTimeFormat(k?'ko-KR':'en-US',{timeZone:'Asia/Seoul',hour:'numeric',minute:'2-digit'}).format(new Date());if(!k)e.textContent=e.textContent.toLowerCase()})</script>
-      <p class="more" set:html={more1} />
-      <p class="more" set:html={more2} />
+      <p class="more" set:html={more1 + ' ' + more2} />
     </div>
   </section>
 
@@ -38,12 +37,12 @@ const more2 = t.more2('<a href="#writing" data-card="writing">', '<a href="#work
 
   <h2 class="sec" id="work" data-where={t.worked[0]} data-desc={t.worked[1]}>{t.worked[0]}</h2>
   <table class="index num">
-    <thead><tr>{t.th.map((h) => <th>{h}</th>)}</tr></thead>
+    <colgroup><col class="c1" /><col class="c2" /><col /></colgroup>
+    <thead><tr><th>{t.th[0]}</th><th>{t.th[2]}</th><th>{t.th[3]}</th></tr></thead>
     <tbody>
       {EXPERIENCE.map((e) => (
         <tr>
-          <td><a href={e.url} target="_blank" rel="noopener" data-card={e.card}>{e.company}</a> <span class="faint">{e.where}</span></td>
-          <td class={isPh(e.role) ? 'ph' : ''}>{e.role}</td>
+          <td><a href={e.url} target="_blank" rel="noopener" data-card={e.card}>{e.company}</a> <span class="faint">{e.where}</span><span class={isPh(e.role) ? 'role ph' : 'role'}>{e.role}</span></td>
           <td class="outcome" set:html={e.did} />
           <td class={isPh(e.years) ? 'ph' : ''}>{e.years}</td>
         </tr>

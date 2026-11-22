@@ -7,6 +7,8 @@ export type Lang = 'en' | 'ko';
 export const LANGS: Lang[] = ['en', 'ko'];
 export const other = (l: Lang): Lang => (l === 'ko' ? 'en' : 'ko');
 /** Which language a path is in. */
+// keeps each city's time on one line, so the footer clock wraps only at the dot
+const nb = (x: string) => x.replace(/ /g, '\u00a0');
 export const langOf = (path: string): Lang => (/^\/ko(\/|$)/.test(path) ? 'ko' : 'en');
 /** The path without its language prefix: /ko/work/baze/ → /work/baze/ */
 export const strip = (path: string) => path.replace(/^\/ko(?=\/|$)/, '') || '/';
@@ -32,8 +34,8 @@ export const UI = {
     // Greeting POC: the first sentence follows where the visit came from (Base.astro). {name} is from ?for=.
     greet: { default: "Hi, I'm Sean.", for: "Hi, {name} team. I'm Sean.", linkedin: "Hi, and welcome over from LinkedIn. I'm Sean.",
       hiring: "Hi, thanks for reading past the résumé. I'm Sean.", github: "Hi, and welcome over from GitHub. I'm Sean." },
-    more1: 'I work on {baze}: one account for 80+ AI models, used at more than 100 universities. I own the UX and the direction, and still write a lot of the frontend.',
-    more2: (a: string, b: string, c: string) => `I think AI products now have two users, the person and the agent working for them, and I write about designing for both. ${a}Start with the writing</a>, see ${b}where I've worked</a>, or ${c}grab my email</button>.`,
+    more1: 'I work on {baze}: one account for 80+ AI models, used at more than 100 universities. I still write a lot of its frontend.',
+    more2: (a: string) => `I think AI products now have two users, the person and the agent working for them, and ${a}I write about designing for both</a>.`,
     writing: ['Writing', 'What I keep noticing about building AI products. Six drafts so far.'],
     worked: ['Where I\'ve worked', 'Newest first: Seoul, New York, Chicago.'],
     th: ['Company', 'Role', 'What I did', 'Years'],
@@ -86,8 +88,8 @@ export const UI = {
     hi: '{greet} 서울 {ml}에서 프로덕트 리드로 일해요. 여기는 지금 {now}예요.',
     greet: { default: '안녕하세요, 박상현이에요.', for: '{name} 팀 여러분, 안녕하세요. 박상현이에요.', linkedin: '안녕하세요, 링크드인 보고 오셨군요. 박상현이에요.',
       hiring: '이력서만 보지 않고 여기까지 와 주셔서 고마워요. 박상현이에요.', github: '안녕하세요, 깃허브 보고 오셨군요. 박상현이에요.' },
-    more1: '{baze}를 만들어요. 계정 하나로 AI 모델 80여 개를 쓰는 서비스인데 100곳 넘는 대학에서 써요. UX와 제품 방향을 맡고 있고 프론트엔드 코드도 아직 많이 직접 짜요.',
-    more2: (a: string, b: string, c: string) => `요즘 AI 제품에는 사용자가 둘이라고 생각해요. 사람, 그리고 그 사람을 대신해 일하는 에이전트요. 둘 다를 위한 설계에 대해 글을 써요. ${a}글부터</a> 읽으셔도 되고 ${b}일해 온 곳</a>을 먼저 보셔도 돼요. ${c}이메일 주소</button>도 바로 복사할 수 있어요.`,
+    more1: '{baze}를 만들어요. 계정 하나로 AI 모델 80여 개를 쓰는 서비스인데 100곳 넘는 대학에서 써요. 프론트엔드 코드도 아직 많이 직접 짜요.',
+    more2: (a: string) => `요즘 AI 제품에는 사용자가 둘이라고 생각해요. 사람, 그리고 그 사람을 대신해 일하는 에이전트요. ${a}둘 다를 위한 설계에 대해 글을 써요</a>.`,
     writing: ['글', 'AI 제품을 만들면서 눈에 걸린 것들. 아직은 초고 여섯 편.'],
     worked: ['일해 온 곳', '최근 순. 서울, 뉴욕, 시카고.'],
     th: ['회사', '역할', '한 일', '기간'],
@@ -132,7 +134,7 @@ export const CLIENT = {
     locale: 'en-US',
     phases: ['new moon', 'waxing crescent', 'first quarter', 'waxing gibbous', 'full moon', 'waning gibbous', 'last quarter', 'waning crescent'],
     read: (n: number) => `${n}% read`, finished: 'Finished',
-    clock: (s: string, ny: string) => `Seoul ${s} · New York ${ny}`,
+    clock: (s: string, ny: string) => nb(`Seoul ${s}`) + ' · ' + nb(`New York ${ny}`),
     copied: 'Copied', pressC: 'Press ⌘C', copy: 'Copy', copyCode: 'Copy the code',
     copySection: 'Copy a link to this section', copySectionAria: (t: string) => `Copy a link to “${t}”`,
     themeTo: (dark: boolean) => `Switch to ${dark ? 'dark' : 'light'} mode`,
@@ -159,7 +161,7 @@ export const CLIENT = {
     locale: 'ko-KR',
     phases: ['삭', '초승달', '상현달', '차오르는 달', '보름달', '기우는 달', '하현달', '그믐달'],
     read: (n: number) => `${n}% 읽음`, finished: '다 읽음',
-    clock: (s: string, ny: string) => `서울 ${s} · 뉴욕 ${ny}`,
+    clock: (s: string, ny: string) => nb(`서울 ${s}`) + ' · ' + nb(`뉴욕 ${ny}`),
     copied: '복사됨', pressC: '⌘C를 누르세요', copy: '복사', copyCode: '코드 복사',
     copySection: '이 섹션의 링크 복사', copySectionAria: (t: string) => `“${t}” 섹션의 링크 복사`,
     themeTo: (dark: boolean) => `${dark ? '다크' : '라이트'} 모드로 바꾸기`,
