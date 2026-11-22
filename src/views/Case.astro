@@ -13,7 +13,7 @@ const related = (await getPosts(lang)).filter((p) => p.data.project === 'baze');
 const arrow = '<svg viewBox="0 0 22 22" aria-hidden="true"><path d="M4 11h13M12 6l5 5-5 5"/></svg>';
 const ph = (s: string) => (isPh(s) ? 'ph' : '');
 // (no template literal inside another here: Astro's frontmatter parser chokes on them)
-const relatedHtml = related.map((p) => '<a href="' + loc('/writing/' + p.id + '/', lang) + '">' + p.data.title + '</a>').join(t.and);
+const relatedHtml = related.map((p) => '<a href="' + loc('/writing/' + p.id + '/', lang) + '">' + p.data.title.replace(/[.。]$/, '') + '</a>').join(t.and);
 ---
 <Base lang={lang} page="case" type="article" section="Work" title={t.caseTitle} description={BAZE.blurb} jsonLd={caseLd(lang)}>
   <article class="cs">
