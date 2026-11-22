@@ -22,7 +22,7 @@ async function mk({ w = 1440, h = 900, mobile = false, theme = null, reduced = f
   }, { H, theme, key, intro });
   return p;
 }
-const EN = ['/', '/work/baze/', '/writing/the-sheet/', '/writing/palette/', '/writing/attention/', '/writing/sparkle/', '/writing/data-model/', '/writing/chemistry/', '/writing/sola/', '/writing/this-site/'];
+const EN = ['/', '/work/baze/', '/writing/the-sheet/', '/writing/palette/', '/writing/redesign-skill/', '/writing/attention/', '/writing/sparkle/', '/writing/data-model/', '/writing/chemistry/', '/writing/sola/', '/writing/this-site/'];
 const KO = EN.map((p) => '/ko' + p);
 const PAGES = [...EN, ...KO, '/404.html'];
 const audit = () => {
@@ -137,7 +137,7 @@ for (const [w, h, mobile] of [[1440, 900, false], [1024, 768, false], [768, 1024
   const y1 = await p.evaluate(() => scrollY);
   ok('"← Writing" after home→post restores scroll', new URL(p.url()).pathname === '/' && Math.abs(y1 - y0) < 60, `y0=${y0} y1=${y1}`);
   // in-post toc link: same-page hash
-  await p.evaluate(() => document.querySelector('.livel a[href="/writing/attention/"]').click()); await sleep(900);
+  await p.evaluate(() => document.querySelector('.livel a[href="/writing/the-sheet/"]').click()); await sleep(900);
   await p.evaluate(() => document.querySelectorAll('#outline a')[1].click()); await sleep(1200);
   const tocY = await p.evaluate(() => Math.round(document.getElementById(decodeURIComponent(location.hash.slice(1))).getBoundingClientRect().top));
   ok('toc link scrolls to its heading', tocY >= 0 && tocY < 140, 'top=' + tocY);
@@ -253,7 +253,7 @@ for (const [w, h, mobile] of [[1440, 900, false], [1024, 768, false], [768, 1024
   ok('mock: page did not scroll by itself', Math.abs((await p.evaluate(() => scrollY)) - y) < 5);
   // sola day replay
   await p.goto(B + '/writing/sola/', { waitUntil: 'networkidle0' });
-  await p.evaluate(() => document.querySelector('.medium.agent').scrollIntoView({ block: 'center', behavior: 'instant' })); await sleep(6000);
+  await p.evaluate(() => document.querySelector('.prose figure.split').scrollIntoView({ block: 'center', behavior: 'instant' })); await sleep(6000);
   const n = await p.$$eval('.log li', (l) => l.length), on = await p.$$eval('.log li.on', (l) => l.length);
   ok('sola day plays to the end', on === n, `${on}/${n}`);
   await p.click('.medium.agent .replay'); await sleep(300);
@@ -348,9 +348,9 @@ for (const [w, h, mobile] of [[1440, 900, false], [1024, 768, false], [768, 1024
   }
   // after soft nav, head matches the new page
   await p.goto(B + '/', { waitUntil: 'networkidle0' });
-  await p.evaluate(() => document.querySelector('.livel a[href="/writing/sola/"]').click()); await sleep(900);
+  await p.evaluate(() => document.querySelector('.livel a[href="/writing/the-sheet/"]').click()); await sleep(900);
   const hm = await p.evaluate(() => ({ t: document.title, c: document.querySelector('link[rel=canonical]')?.href, ld: document.querySelectorAll('script[type="application/ld+json"]').length, desc: document.querySelector('meta[name=description]').content }));
-  ok('soft nav swaps title/canonical/JSON-LD', /chief-of-staff|sola/i.test(hm.t) && hm.c.endsWith('/writing/sola/') && hm.ld === 1, JSON.stringify(hm));
+  ok('soft nav swaps title/canonical/JSON-LD', /spreadsheet/i.test(hm.t) && hm.c.endsWith('/writing/the-sheet/') && hm.ld === 1, JSON.stringify(hm));
   await p.close();
 }
 
@@ -375,14 +375,14 @@ for (const [w, h, mobile] of [[1440, 900, false], [1024, 768, false], [768, 1024
   // English pages point 한 at their Korean twin, and keep it current across soft navigation (the rail persists)
   await p.goto(B + '/', { waitUntil: 'networkidle0' });
   ok('en home: 한 → /ko/', (await p.$eval('.rail .lang a', (a) => a.getAttribute('href'))) === '/ko/');
-  await p.evaluate(() => document.querySelector('.livel a[href="/writing/sola/"]').click()); await sleep(900);
-  ok('after soft nav, 한 → the Korean twin of this page', (await p.$eval('.rail .lang a', (a) => a.getAttribute('href'))) === '/ko/writing/sola/');
+  await p.evaluate(() => document.querySelector('.livel a[href="/writing/the-sheet/"]').click()); await sleep(900);
+  ok('after soft nav, 한 → the Korean twin of this page', (await p.$eval('.rail .lang a', (a) => a.getAttribute('href'))) === '/ko/writing/the-sheet/');
   // switch mid-page: land on the same block, at about the same height
-  await p.evaluate(() => document.querySelector('.medium.agent').scrollIntoView({ block: 'start', behavior: 'instant' })); await sleep(400);
-  const before = await p.evaluate(() => Math.round(document.querySelector('.medium.agent').getBoundingClientRect().top));
+  await p.evaluate(() => document.querySelector('.prose figure.split').scrollIntoView({ block: 'start', behavior: 'instant' })); await sleep(400);
+  const before = await p.evaluate(() => Math.round(document.querySelector('.prose figure.split').getBoundingClientRect().top));
   await Promise.all([p.waitForNavigation({ waitUntil: 'networkidle0' }), p.click('.rail .lang a')]); await sleep(900);
-  const after = await p.evaluate(() => ({ path: location.pathname, lang: document.documentElement.lang, top: Math.round(document.querySelector('.medium.agent').getBoundingClientRect().top), intro: document.documentElement.classList.contains('intro') }));
-  ok('한 switches to /ko/ (lang ko, no moonrise)', after.path === '/ko/writing/sola/' && after.lang === 'ko' && !after.intro, JSON.stringify(after));
+  const after = await p.evaluate(() => ({ path: location.pathname, lang: document.documentElement.lang, top: Math.round(document.querySelector('.prose figure.split').getBoundingClientRect().top), intro: document.documentElement.classList.contains('intro') }));
+  ok('한 switches to /ko/ (lang ko, no moonrise)', after.path === '/ko/writing/the-sheet/' && after.lang === 'ko' && !after.intro, JSON.stringify(after));
   ok('switching keeps your place on the page', Math.abs(after.top - before) < 120, `before=${before} after=${after.top}`);
   // Korean pages navigate softly among themselves, cards and labels in Korean
   await p.evaluate(() => document.querySelector('a.back').click()); await sleep(1200);
@@ -432,7 +432,7 @@ for (const [w, h, mobile] of [[1440, 900, false], [1024, 768, false], [768, 1024
   ok('greeting: other params and hash survive', await p.evaluate(() => location.search === '?intro=0' && location.hash === '#work'));
   const again = await greet(p, '/');
   ok('greeting: kept for the session', again.g === "Hi, Stripe team. I'm Sean.", JSON.stringify(again));
-  await p.evaluate(() => document.querySelector('.livel a[href="/writing/sola/"]').click()); await sleep(900);
+  await p.evaluate(() => document.querySelector('.livel a[href="/writing/the-sheet/"]').click()); await sleep(900);
   await p.evaluate(() => document.querySelector('.rail .me').click()); await sleep(900);
   ok('greeting: survives soft nav back home', (await p.evaluate(G)) === "Hi, Stripe team. I'm Sean.", await p.evaluate(G));
   await p.goto(B + '/writing/sola/?for=figma', { waitUntil: 'networkidle0' });
@@ -455,17 +455,18 @@ for (const [w, h, mobile] of [[1440, 900, false], [1024, 768, false], [768, 1024
     await p.evaluate(() => document.querySelector('.proj .shot img').scrollIntoView({ block: 'center', behavior: 'instant' })); await sleep(700);
     const home = await p.evaluate(() => { const i = document.querySelector('.proj .shot img'); return { w: i.naturalWidth, alt: i.alt.length, href: i.closest('a').pathname, mock: !!document.querySelector('.proj .mock') }; });
     ok(`screens ${lang || '/'}: home shows the real model picker, linked to the case study`, home.w > 1000 && home.alt > 20 && home.href.endsWith('/work/baze/') && !home.mock, JSON.stringify(home));
-    const ph = await p.evaluate(() => { const f = document.querySelector('.about .portrait'), t = document.querySelector('.about .aboutin > div p'); const r = f.getBoundingClientRect(); return { w: Math.round(r.width), h: Math.round(r.height), side: f.getBoundingClientRect().right < t.getBoundingClientRect().left, label: f.querySelector('[role=img]')?.getAttribute('aria-label') }; });
-    ok(`screens ${lang || '/'}: About has a 4:5 photo frame beside the words`, ph.w === 152 && Math.abs(ph.h - 190) <= 1 && ph.side && !!ph.label, JSON.stringify(ph));
+    // no photo yet: no empty frame, no placeholder line (both come back once they're real)
+    const ab = await p.evaluate(() => ({ frame: !!document.querySelector('.about .portrait'), ph: !!document.querySelector('.about .ph'), text: Math.round(document.querySelector('.about .aboutin > div').getBoundingClientRect().left - document.querySelector('.about h2').getBoundingClientRect().left) }));
+    ok(`screens ${lang || '/'}: About shows no empty photo frame or placeholder, words line up with the heading`, !ab.frame && !ab.ph && Math.abs(ab.text) <= 2, JSON.stringify(ab));
     await p.goto(B + lang + '/work/baze/', { waitUntil: 'networkidle0' });
     const cs = await p.evaluate(async () => {
       const imgs = [...document.querySelectorAll('.cs .shot img')];
       for (const i of imgs) { i.scrollIntoView({ block: 'center', behavior: 'instant' }); await new Promise((r) => setTimeout(r, 250)); }
-      const L = (s) => Math.round(document.querySelector(s).getBoundingClientRect().left);
+      const L = (s) => { const e = document.querySelector(s); return e ? Math.round(e.getBoundingClientRect().left) : null; };
       return { n: imgs.length, loaded: imgs.every((i) => i.complete && i.naturalWidth > 0), srcs: imgs.map((i) => i.getAttribute('src')), h1: L('.cs h1'), dek: L('.cs .dek'), tldr: L('.cs .tldr'), h2: L('.cs .body h2'), p: L('.cs .body p:not(.tldr)'), fig: L('.cs .body .fig') };
     });
     ok(`screens ${lang || '/'}: the case study has 4 real screens, all loaded, in its language`, cs.n === 4 && cs.loaded && cs.srcs.filter((s) => /-(en|ko)\.webp$/.test(s)).every((s) => s.endsWith((lang ? 'ko' : 'en') + '.webp')), JSON.stringify(cs));
-    ok(`screens ${lang || '/'}: case study body lines up with the title`, [cs.dek, cs.tldr, cs.h2, cs.p, cs.fig].every((x) => Math.abs(x - cs.h1) <= 2), JSON.stringify(cs));
+    ok(`screens ${lang || '/'}: case study body lines up with the title`, [cs.dek, cs.tldr, cs.h2, cs.p, cs.fig].filter((x) => x !== null).every((x) => Math.abs(x - cs.h1) <= 2), JSON.stringify(cs));
     await p.close();
   }
   // the footer's moon: the lit side is the light colour in both themes
