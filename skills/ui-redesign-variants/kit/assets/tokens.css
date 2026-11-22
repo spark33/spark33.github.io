@@ -1,0 +1,112 @@
+/* Shared foundation for every variant. Variant agents read this and never edit it.
+   1. Palette: paste the app's own colours verbatim (from the repo's theme or the
+      live page's computed CSS vars). Don't invent a new palette.
+   2. Scale: fixed. Variants use these vars only, no ad-hoc px values.
+   3. Font: swap the import for the app's own font if it isn't Pretendard. */
+
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
+
+:root {
+  /* ── Palette (REPLACE with the app's real values) ── */
+  --c-bg: #ffffff;
+  --c-surface: #f7f7f8;
+  --c-border: #e4e4e7;
+  --c-text: #18181b;
+  --c-text-2: #52525b;
+  --c-text-3: #a1a1aa;
+  --c-accent: #2563eb;
+  --c-accent-text: #ffffff;
+  /* Status colours carry meaning only (Apple's rule: yellow = still happening, red = you must act) */
+  --c-ok: #16a34a;
+  --c-wait: #ca8a04;
+  --c-act: #dc2626;
+
+  /* ── Spacing ── */
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px; --s-6: 32px; --s-7: 48px;
+
+  /* ── Type ── */
+  --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", sans-serif;
+  --font-scale: 1;
+  --t-xs: calc(12px * var(--font-scale));
+  --t-sm: calc(13px * var(--font-scale));
+  --t-md: calc(14px * var(--font-scale));
+  --t-lg: calc(16px * var(--font-scale));
+  --t-xl: calc(20px * var(--font-scale));
+
+  /* ── Sizes ── */
+  --control-h: 32px;
+  --row-h: 44px;
+  --header-h: 56px;
+  --toolbar-h: 48px;
+  --nav-w: 232px;
+  --nav-w-collapsed: 64px;
+  --r-sm: 6px;
+  --r-md: 8px;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+[data-theme="dark"] {
+  /* REPLACE with the app's dark palette if it has one */
+  --c-bg: #111113;
+  --c-surface: #1a1a1d;
+  --c-border: #2c2c31;
+  --c-text: #f4f4f5;
+  --c-text-2: #a1a1aa;
+  --c-text-3: #71717a;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  font: var(--t-md)/1.5 var(--font);
+  color: var(--c-text);
+  background: var(--c-bg);
+  word-break: keep-all;        /* no Korean mid-word breaks */
+  overflow-wrap: anywhere;
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+
+/* ── Layout: the primary module fills what's left of the viewport and scrolls inside ── */
+.app { display: flex; height: 100vh; overflow: hidden; }
+.app-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.page-header {
+  height: var(--header-h); flex: none; display: flex; align-items: center; gap: var(--s-3);
+  padding: 0 var(--s-5); border-bottom: 1px solid var(--c-border);
+}
+.page-header h1 { font-size: var(--t-xl); font-weight: 600; margin: 0; }
+.page-header .actions { margin-left: auto; display: flex; gap: var(--s-2); }
+.toolbar {
+  height: var(--toolbar-h); flex: none; display: flex; align-items: center; gap: var(--s-2);
+  padding: 0 var(--s-5); border-bottom: 1px solid var(--c-border);
+}
+[data-primary] { flex: 1; min-height: 0; overflow: auto; }
+
+/* ── Controls ── */
+.btn {
+  height: var(--control-h); padding: 0 var(--s-3); border-radius: var(--r-sm);
+  border: 1px solid var(--c-border); background: var(--c-bg); cursor: pointer;
+  display: inline-flex; align-items: center; gap: var(--s-2); font-size: var(--t-sm); font-weight: 500;
+  transition: background-color 120ms var(--ease-out), transform 120ms var(--ease-out);
+}
+.btn:hover { background: var(--c-surface); }
+.btn:active { transform: scale(0.98); }
+.btn-primary { background: var(--c-accent); border-color: var(--c-accent); color: var(--c-accent-text); }
+.btn-primary:hover { background: var(--c-accent); filter: brightness(1.06); }
+.btn-ghost { border-color: transparent; background: transparent; }
+.input {
+  height: var(--control-h); padding: 0 var(--s-3); border-radius: var(--r-sm);
+  border: 1px solid var(--c-border); background: var(--c-bg); font-size: var(--t-sm);
+}
+.chip {
+  height: 24px; padding: 0 var(--s-2); border-radius: 999px; background: var(--c-surface);
+  border: 1px solid var(--c-border); font-size: var(--t-xs); display: inline-flex; align-items: center; gap: var(--s-1);
+}
+.chip[aria-pressed="true"] { border-color: var(--c-text); }
+.row { height: var(--row-h); display: flex; align-items: center; gap: var(--s-3); padding: 0 var(--s-5); border-bottom: 1px solid var(--c-border); }
+.muted { color: var(--c-text-2); }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration: 0ms !important; animation-duration: 0ms !important; }
+}

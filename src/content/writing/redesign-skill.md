@@ -105,3 +105,13 @@ Research by information architecture, not by industry. A chatbot list has more t
 A skill gets better from its failures. The first version wrote down what went right. The second wrote down what went wrong.
 
 And make the agent say what it didn't do. The most valuable line in any of these replies was "Only partly." I'll take that over a confident summary of a shortcut.
+
+## Use it
+
+The skill is public, rewritten without anything specific to our tools. It works with Claude Code, Codex, Cursor and the other agents the `skills` CLI supports:
+
+```sh
+npx skills add spark33/spark33.github.io --skill ui-redesign-variants
+```
+
+The source, with the kit (tokens, shell, the capture and probe scripts, the index builder), is [on GitHub](https://github.com/spark33/spark33.github.io/tree/main/skills/ui-redesign-variants).
