@@ -363,6 +363,13 @@ main{margin-left:calc(var(--gut) + var(--rail));padding-right:48px;max-width:100
 .prose .px i span{position:absolute;inset:0 0 auto;height:calc(var(--h) / 5);background:var(--bg);border-bottom:1px solid var(--fg);font-size:13px;font-style:normal;color:var(--faint);padding:3px 8px;font-variant-numeric:tabular-nums lining-nums}
 .prose .px b{font-weight:400;color:var(--fg)}
 @media (max-width:640px){.prose .px i{width:140px;height:180px}}
+/* redesign-skill: what survived the first 48 hours of real use, beside what got reworked */
+.prose figure.kept{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px 28px;font-size:16px}
+.prose .kept b{display:block;font-weight:400;color:var(--fg);border-bottom:1px solid var(--fg);padding-bottom:4px;margin-bottom:8px}
+.prose .kept div:last-of-type b{border-bottom-style:dashed;color:var(--soft)}
+.prose .kept ul{margin:0}
+.prose .kept figcaption{grid-column:1 / -1;margin-top:0}
+@media (max-width:640px){.prose figure.kept{grid-template-columns:1fr}}
 /* "[Sean: …]" in a draft: what's still to write, shown in place (src/lib/todo.mjs) */
 .prose p.todo{border:1px dashed var(--rule);border-radius:3px;padding:10px 14px;font-size:16px;color:var(--soft)}
 .prose p.todo::before{content:"To write";display:block;font-size:13px;letter-spacing:.04em;color:var(--faint);margin-bottom:2px}
