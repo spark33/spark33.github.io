@@ -37,3 +37,13 @@ Things that were tried and cut, and the rule each one broke:
 - A "start there" suggestion after 40 seconds: a suggestion that appeared on a timer (rules 3 and 4).
 
 **The test:** if it says something new, it goes in the page. If it says where the reader is, it can go in the rail.
+
+## Nothing unfinished shows (2026-11-22)
+
+The site goes live only when everything on it is real (Sean: "I want all the real content to be completed before the site is live").
+
+- A piece is listed only once it has a body: `stage: essay` (a full piece) or `stage: note` (150–300 words). An `idea` keeps its page for the preview but stays off the home list, Keep reading, the hover cards and the case study.
+- Copy that isn't written yet isn't shown: the case study's TL;DR / bet / call sections and About's "how I work" line appear once they're no longer placeholders, and About has no photo frame until there's a photo.
+- Inside a draft, a paragraph that starts with `[Sean:` is a note about what's still to write. The preview shows it as a dashed "To write" box (`src/lib/todo.mjs`).
+- `src/lib/launch.ts` fails the build if `UNDER_CONSTRUCTION` is false while any of the above is left.
+- Every listed piece shows its month: "Draft · Oct 2026" until it's published, then the publish date.
