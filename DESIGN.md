@@ -54,7 +54,8 @@ Sean: the home page "feels very text dense, and there doesn't seem to be a clean
 
 - 12 columns, 24px gutters, over main's width (952px at full size). Phones (≤900px) are one column.
 - **Text** runs in columns 1–8: the intro, the writing titles, About, the footer line.
-- **Meta** starts at column 10: a piece's lens and date, a job's years, "Case study", the footer clocks. It's left-aligned, so all of it starts on the same line. Under 1232px it starts at column 9.
+- **Meta** starts at column 10: a piece's lens and date, a job's years, "Case study", the footer clocks. It's left-aligned, so all of it starts on the same line. Under 1272px it starts at column 9.
+- The rail is 272px wide, so its longest line (the email) clears the page by ~55px, more than two gutters. The section line keeps its old 168px measure (right:68px). It was 232px and the email sat ~14px from the text.
 - **Names and what's said about them:** a company or project name takes 1–3, its text 4 up to the meta column.
 - Sections are 120px apart. Each heading sits 14px above a hairline, and the list starts under it.
 - New things on the home page go on these lines. If something doesn't fit them, change the grid here first.

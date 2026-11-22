@@ -3,7 +3,7 @@
    press = small feedback, move = things changing place, reveal = whole-view changes */
 :root{--ease-out:cubic-bezier(.23,1,.32,1);--t-press:150ms;--t-move:280ms;--t-reveal:420ms;
   --r-shot:3px;--r-phone:14px;
-  --font:'Newsreader',Georgia,'Noto Serif KR','Apple SD Gothic Neo',serif;--rail:232px;--top:72px;--gut:max(0px,(100vw - 1232px) / 2)}
+  --font:'Newsreader',Georgia,'Noto Serif KR','Apple SD Gothic Neo',serif;--rail:272px;--top:72px;--gut:max(0px,(100vw - 1272px) / 2)}
 [data-theme=light]{--bg:#eeeadf;--fg:#1b1a17;--soft:#57534a;--faint:#6b665c;--rule:rgba(27,26,23,.14);--frame:#e4dfd2;--hatch:rgba(27,26,23,.07);--moon-dark:#d4cebf;--moon-lit:#faf7f0;--inv:#12110f;--inv-moon:#2b2925;--shade:27,26,23;--blend:multiply;--grain-filter:invert(1);--tint:rgba(27,26,23,.04);--flash:rgba(27,26,23,.1)}
 [data-theme=dark]{--bg:#12110f;--fg:#e9e3d4;--soft:#a8a295;--faint:#888376;--rule:rgba(233,227,212,.13);--frame:#1b1a17;--hatch:rgba(233,227,212,.05);--moon-dark:#2b2925;--moon-lit:#e9e3d4;--inv:#eeeadf;--inv-moon:#d4cebf;--shade:0,0,0;--blend:screen;--grain-filter:none;--tint:rgba(233,227,212,.04);--flash:rgba(233,227,212,.1)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -44,13 +44,13 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .lang [lang=en],.lang span:last-child{letter-spacing:.04em}
 /* "where you are": the label rolls instead of snapping */
 .rail .where{margin-top:10px;padding-left:32px;height:9em;position:relative;overflow:hidden}
-.rail .where .w{position:absolute;left:0;top:0;right:28px;display:flex;flex-direction:column;gap:6px;transition:translate var(--t-move) var(--ease-out),opacity var(--t-move) var(--ease-out)}
+.rail .where .w{position:absolute;left:0;top:0;right:68px;display:flex;flex-direction:column;gap:6px;transition:translate var(--t-move) var(--ease-out),opacity var(--t-move) var(--ease-out)}
 .rail .where b{font-weight:400;font-size:16px;color:var(--fg)}
 .rail .where span{font-size:14.5px;line-height:1.45;color:var(--faint)}
 .rail .where .w.from-below{translate:0 40%;opacity:0}
 .rail .where .w.to-above{translate:0 -40%;opacity:0}
 
-main{margin-left:calc(var(--gut) + var(--rail));padding-right:48px;max-width:1000px} /* ~950px of content; past 1232px the rail + content sit centred (--gut each side) */
+main{margin-left:calc(var(--gut) + var(--rail));padding-right:48px;max-width:1000px} /* ~950px of content; past 1272px the rail + content sit centred (--gut each side) */
 
 /* project media: each project shows proof in its own medium */
 .medium{background:var(--frame);border-radius:var(--r-shot);background-image:repeating-linear-gradient(135deg,var(--hatch) 0 1px,transparent 1px 11px);padding:22px 24px}
@@ -413,7 +413,7 @@ main{margin-left:calc(var(--gut) + var(--rail));padding-right:48px;max-width:100
 .outline .tick{position:absolute;left:-14px;top:0;width:1px;height:0;background:var(--fg);opacity:0;transition:translate var(--t-move) var(--ease-out),height var(--t-move) var(--ease-out),opacity var(--t-press) var(--ease-out)}
 .outline .tick.on{opacity:1}
 [data-page=post] .rail .where{height:8em}
-@media (max-width:1240px){
+@media (max-width:1280px){
   .post{--margin:0px}
   .snref{cursor:pointer}.snref sup{color:var(--fg);text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:.15em}
   .sn{display:none;float:none;width:auto;margin:.5em 0 .7em;padding-left:12px;border-left:1px solid var(--rule)}
@@ -552,8 +552,8 @@ html.intro.inked :is(.rail .mast,.rail .where,.rail .bottom,.lede>p,main>:not(.l
    Names (a company, a project) take 1–3 and what's said about them 4–9. Every section is 120px from the last,
    its heading 14px above a hairline. Phones (≤900px) keep the single column. */
 :root{--cols:repeat(12,minmax(0,1fr));--gap:24px;--mc:10}
-/* under 1232px the columns get narrow, so the meta column starts one column earlier (9–12) */
-@media (max-width:1231px){:root{--mc:9}}
+/* under 1272px the columns get narrow, so the meta column starts one column earlier (9–12) */
+@media (max-width:1271px){:root{--mc:9}}
 .index .role{display:block;color:var(--faint);font-size:15px;margin-top:2px}
 .index thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
 .index tbody tr:first-child td{border-top:1px solid var(--rule)}
@@ -590,7 +590,7 @@ html.intro.inked :is(.rail .mast,.rail .where,.rail .bottom,.lede>p,main>:not(.l
   .colophon p{grid-column:1/9}
   .colophon .dm{grid-column:var(--mc)/13;align-items:flex-start;text-align:left}
 }
-@media (min-width:901px) and (max-width:1231px){.index .c1{width:25.8%}.index .c2{width:43%}}
+@media (min-width:901px) and (max-width:1271px){.index .c1{width:25.8%}.index .c2{width:43%}}
 /* phones: each job is one block (name and role with the years beside them, what I did below), and the Baze
    blurb goes under its name instead of squeezing between the name and the link */
 @media (max-width:900px){
