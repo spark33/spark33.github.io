@@ -1,38 +1,42 @@
 ---
-title: The spreadsheet was the spec
-dek: I replaced our Jira with a tool shaped like the Google Sheet the team really planned in. Nobody needed onboarding, and four weeks in, most of the edits aren't typed by a person.
+title: Nobody updates the board anymore
+dek: I replaced our Jira with a tool shaped like the spreadsheet the team really planned in, then wired it to Slack, GitHub and our agent. The record comes out of the work now, and our meetings are only for the calls a person has to make.
 lens: Building
 order: 1
 stage: essay
-updated: 2026-10-27
+updated: 2026-11-22
 project: baze
-keywords: ["replacing Jira with an internal tool", "internal tool adoption without onboarding", "AI agent project management", "pave the cowpaths"]
-tldr: "Copy the shape the team already trusts and name things the way they already talk. Then integrations stop needing rules. Of 4,307 changes in four weeks, 78% weren't typed by a person."
+keywords: ["what comes after agile", "AI agent project management", "double diamond for engineering teams", "replacing Jira with an internal tool", "pave the cowpaths"]
+tldr: "Under agile, keeping the board true was a ritual people performed. Build the tool in the team's own shape and words, wire it to where the work already happens, and the board keeps itself. Then meetings can skip the status and the why, and go straight to the decisions."
 ---
 
-Three weeks after the first commit, we closed Jira. There was no kickoff and no training session, and there's still no "how we use the tool" page.
+Nobody on our team updates the board anymore. It updates itself from the work, and that changed what our meetings are for.
 
-The tool is a copy of a Google Sheet.
+Waterfall kept the plan in a document someone wrote up front. Agile moved the plan onto a board and made keeping that board true a team ritual: the standup, the grooming session, the ticket you're supposed to drag to the next column. Most of that ritual exists because the board can't see the work, so somebody has to tell it.
 
-## Where the plan really lived
+I don't have a name for what comes after, and I'm wary of anyone who does. But I've watched one small version of it happen on the team that builds Baze, and it started with a spreadsheet.
 
-Until September, the team that builds Baze planned in one Google Sheet. It's about ten people, and a release goes out almost every week. Every month got a new tab. Each person had a color band, each task was a merged cell across the weeks it took, and two rows at the top held the week's key dates and release stage (something like "R24 QA + deploy; R25 dev"). You could see who was doing what, and when, at a glance.
+## The plan lived in a spreadsheet
 
-What the sheet couldn't hold was state. Whether a task was in progress or on staging lived in Jira, and the only link between the two was a ticket key someone pasted into a cell. The frontend and backend halves of one feature sat in two different people's rows, so when one slipped, the other didn't know. Moving a task by a day meant unmerging cells and merging them again. By September the file had 26 tabs.
+Until this September we planned in one Google Sheet. We're about ten people and we ship almost every week. Each person had a row and each week a column, and a task was a merged cell stretched across the weeks it took. Two rows at the top held the week's key dates and the release stage. You could see who was doing what, and when, at a glance.
 
-We did have Jira, but in practice it was a backlog archive. In September we lined the two up. 52 of the 135 tasks planned on the sheet had no ticket, and 44 open tickets weren't anywhere on the sheet. 83 of the 100 open tickets were still in the state they were created in. Of the 318 pull requests people merged between September 1 and 18, 21 carried a ticket key. That's seven percent. Neither system knew what had shipped.
+What the sheet couldn't hold was state. Whether a task was in progress or on staging lived in Jira, and the only link between the two was a ticket key somebody pasted into a cell. The frontend and backend halves of one feature sat in two people's rows, and Jira's timeline had no subtasks, so when one half slipped the other didn't know. Moving a feature to the next release meant fixing it in both places. In the end neither one really knew what had shipped.
 
-That isn't a discipline problem, and Jira wasn't missing features. The team planned in a person-by-week grid and tracked status somewhere else, so keeping the two in sync was always one more job on top of the real one, and it rarely got done. Moving to Linear or Monday wouldn't have changed that, since we'd still be fitting the team to someone else's board. So I built the grid.
+Nobody was being lazy. The team planned in one tool and reported in another, and keeping them in sync was a second job on top of the real one. Moving to Linear or Monday would have kept that second job and added a new board to learn. So I built the grid.
 
-The W3C's 2007 [HTML design principles](https://www.w3.org/TR/html-design-principles/#pave-the-cowpaths) include one called "pave the cowpaths": "When a practice is already widespread among authors, consider adopting it rather than forbidding it or inventing something new." Our team's widespread practice was a spreadsheet.
+## Pave the path, obliterate the detour
 
-The famous objection is older than the W3C's line. In 1990 Michael Hammer wrote in the Harvard Business Review, "It is time to stop paving the cow paths." His point was that software laid over an old process just runs the old process faster. He's right, and it's worth asking what was broken here. The grid wasn't. People planned in it every day. What was broken was the second system next to it, and that's the part we got rid of. Pave the path people walk, and obliterate the detour.
+The W3C's [HTML design principles](https://www.w3.org/TR/html-design-principles/#pave-the-cowpaths) include one called "pave the cowpaths": "When a practice is already widespread among authors, consider adopting it rather than forbidding it or inventing something new." Our team's widespread practice was a spreadsheet.
 
-So the tool has the same rows, the same week columns and the same release row on top. You can drag a task, stretch it, or paste cells copied straight out of the old sheet. The difference is that every block is now a task with an owner, a status and a release. I only added what the sheet couldn't do:
+The famous objection is older. In 1990 Michael Hammer wrote "Reengineering Work: Don't Automate, Obliterate" for the Harvard Business Review, with the line "It is time to stop paving the cow paths." Put software over an old process and you get the old process, faster. He's right, so it's worth asking what was actually broken. The grid wasn't. People planned in it every day. The broken part was the second system next to it. Pave the path people walk, and obliterate the detour.
 
-- One spec for both halves of a feature. Requirements and decisions live in one place, and the FE and BE parts each keep their own owner, dates and status. When one slips, it's right next to the other.
-- Status names from our deploy pipeline, in the words we already used, half Korean and half English. A generic tool would have called most of them "In Progress."
-- A release view that lists every feature's BE and FE side by side and warns when the plan doesn't add up. That means backend finishing after frontend, a task that isn't on the timeline yet, a date past the release, or work scheduled on someone's day off.
+I started by moving over the parts of the sheet and Jira that already worked: the timeline, and the side drawer where you read a task's details. Then I fixed the parts that hurt. Dragging work from one release to the next. Going back and forth between Jira and the timeline to update a release date. Editing the FE and BE halves of a feature as two separate things. The first version took me a week and a half, and a teammate helped me move it from a standalone app to behind Cloudflare Access.
+
+Underneath, every block on the grid became a task with an owner, a status and a release. On top of the grid I only added what the sheet couldn't do:
+
+- One spec for both halves of a feature. Requirements and decisions live in one place, and the FE and BE parts keep their own owner, dates and status, side by side.
+- Status names taken from our deploy pipeline, in the words we already used, half Korean and half English.
+- A release view that lists every feature's BE and FE together and warns when the plan doesn't add up: backend finishing after frontend, a date past the release, work scheduled on someone's day off.
 
 <figure class="flow">
 <ol>
@@ -47,42 +51,63 @@ So the tool has the same rows, the same week columns and the same release row on
 <figcaption>The statuses are the deploy pipeline. GitHub moves a task through the outlined ones by itself.</figcaption>
 </figure>
 
-## Why nobody needed onboarding
+Nobody needed onboarding. The rows and columns were the sheet everyone had looked at every day, and the status and release names were the words we already said in meetings. There was no training session, and there's still no "how we use the tool" page.
 
-The first commit was September 27. Six people were using the tool in the first week of October, ten were editing in it by the third week, and on October 16 we closed Jira.
+## The record falls out of the work
 
-There wasn't much to teach. The rows and columns were the sheet everyone had looked at every day. The status names and release names (R26, R27) were the words we already said in meetings. The one new idea, the shared spec, was something FE and BE owners already did by hand in Slack threads, moved onto the screen.
+None of the integrations started from a rulebook about what to write where. They work because the tool uses the words the work already produces.
 
-One feature request came as code. A backend engineer wanted a status filter on "My tasks," so they opened a pull request and added it. Most other requests were one line in Slack and shipped the same day.
+- GitHub. The task key goes in the branch name (`feat/<task-key>`). Opening the PR moves the task to 진행 중, merging to dev moves it to dev 머지, reaching main moves it to 완료, and the PR link sticks to the task.
+- The calendar. Leave and public holidays come in every morning and show up on the timeline, so work scheduled on someone's day off gets a warning.
+- Slack, through our company agent. Anyone can ask it in a thread to turn the thread into tasks, and it makes them with their FE and BE parts. Every weekday evening it reads the day's team channels and meeting notes, applies what's clearly settled (a decision, a release that moved, a merged PR) and asks the owner about anything that needs judgment.
 
-Onboarding is the tax you pay for the distance between a tool's words and your team's words. Get the distance to zero and there's nothing to pay.
+The agent reads the same screen, in the same words, as everyone else, so there was very little to explain to it. I think that part carries over to any team. An agent is one more user, and it needs the same short distance between the tool's words and the team's words that people do. If your data model needs a long prompt to explain it to the agent, it'll need a training doc for the humans too.
 
-## Automation without a rulebook
+The same wiring is how the tool kept growing. Once I agreed a feature was needed, anyone on the team could add it or change it, with the agent's help. One backend engineer wanted a status filter on "My tasks," so they opened a pull request and added it.
 
-The bigger change is who's typing. In its first four weeks the tool logged 4,307 changes across 358 tasks and six releases. Eleven people made 947 of them, GitHub 185, and our AI agent 3,175.
+## What the meetings are for now
 
-<figure class="split">
-<div class="bar" role="img" aria-label="Of 4,307 changes: AI agent 3,175, people 947, GitHub 185">
-<i style="--w:73.7%"></i><i style="--w:22%"></i><i style="--w:4.3%"></i>
-</div>
-<p class="key num"><span>AI agent · 3,175</span><span>11 people · 947</span><span>GitHub · 185</span></p>
-<figcaption>Who changed a task, September 27 to October 26. 78% of the changes weren't typed by a person.</figcaption>
+This is the part I care about most.
+
+Once the board kept itself, the way we build features changed with it. We run each feature as a [double diamond](https://www.designcouncil.org.uk/our-resources/the-double-diamond/), the Design Council's model of opening up to explore and closing down to decide, done twice: once on the problem, once on the solution. Between people, the work moves the way Dan Mall and Brad Frost describe in [the hot potato process](https://danmall.com/posts/hot-potato-process): small, frequent passes back and forth instead of one big handoff.
+
+The AI works on the opening halves, with each engineer on their own. By the time a feature reaches its first meeting, the Slack discussion and the business reasons behind it are already in the task, because the agent put them there. The engineer has had a day with the problem to think about how it should be solved.
+
+So we only meet where the diamonds close. I proposed these meetings and I run them:
+
+- Full-stack coordination, where the frontend and backend pieces have to meet.
+- Whether the architecture scales from a business standpoint.
+- Internal user testing, before anything goes out.
+
+Our feature meetings used to open with the business context: why this feature, who needs it, what problem it solves. Now everyone walks in on the same page, so we go straight to the ERD and the wireframes or prototype and ask one question. Does what we've architected solve the business problem?
+
+<figure class="dd">
+<svg viewBox="-6 0 412 120" role="img" aria-label="A double diamond. The two opening halves are shaded for AI work with each engineer; a dot marks a meeting at each point where a diamond closes.">
+<polygon class="op" points="0,60 100,4 100,116"/><polygon class="cl" points="100,4 200,60 100,116"/>
+<polygon class="op" points="200,60 300,4 300,116"/><polygon class="cl" points="300,4 400,60 300,116"/>
+<circle cx="200" cy="60" r="6"/><circle cx="400" cy="60" r="6"/>
+</svg>
+<ol>
+<li>Discover<small>engineer + AI</small></li>
+<li>Define<small>meeting: ERD + prototype</small></li>
+<li>Develop<small>engineer + AI</small></li>
+<li>Deliver<small>meeting: user testing</small></li>
+</ol>
+<figcaption>AI works with each engineer where the diamonds open. People meet where they close.</figcaption>
 </figure>
 
-- GitHub: put the task key in the branch name (`feat/bz-12`), and the PR moves the task to 진행 중 when it opens, to dev 머지 when it merges to dev, and to 완료 when it reaches main. The PR link sticks to the task as its source.
-- The calendar: leave and public holidays come in every morning and show up on the timeline. A task scheduled over someone's day off gets a warning.
-- The agent: in a Slack thread, someone can ask it to make tasks from the thread, and it creates them with their FE and BE parts. Every weekday evening it reads that day's team channels and meeting notes. It applies the changes that are clearly settled, like a decision, a release that moved or a merged PR, and asks the owner about anything that needs judgment.
+**Status shouldn't need a meeting. Decisions do.**
 
-None of this started from a rulebook about what to write where. The status names are the deploy steps and the task key is the branch name, so doing the work leaves the record behind. The agent works from the same screen, in the same words, as everyone else, so there was very little to explain to it either.
+## Everyone can see what ships
 
-I think that's the part that carries over. An agent is one more user, and it needs the same zero-distance vocabulary people do. If your data model needs a long prompt to explain it to the agent, it'll need a training doc for the humans too.
+The plan used to be readable only by the people who kept it. Someone in sales who wanted to know whether a feature was going out on Thursday had to check a spreadsheet and a Jira they'd never learned. Now anyone in the company can open the releases page or ask the agent, and the answer is current, because nobody had to type it in.
 
-Once the plan was accurate, other work started reading from it. When a customer question comes in, the agent checks whether the person it's about to tag is on leave today. Release test docs are generated from the release view's feature list. The weekly product meeting stopped opening the sheet and opens the release view instead.
+## What's still open
 
-This is a story about a team of ten that planned in a spreadsheet. A big org with compliance requirements has a different problem.
+The first version was rough. It needed a lot more to feel truly intuitive, starting with hotkeys and notifications.
 
-## How I built it in three weeks
+And this is a team of about ten that planned in a spreadsheet. A big org with compliance requirements has a different problem, and I wouldn't hand them this tool as it is.
 
-[Sean: how you built it so fast. Claude Code, prototype first, the spec from the kickoff interview on 9/27. Which choices you'd make again, and one thing that didn't work and what it cost. If you have them: how many agent changes did a person later edit or undo, and how long is the agent's description of the tool?]
+The tool was never the important part. What I'd bring anywhere is the habit behind it: find the chokepoint in how the team works, build the fix with the team, and treat the agent as one more teammate. I still haven't written the "how we use the tool" page.
 
-The tool knows more than the sheet ever did, and the team types less. I still haven't written the "how we use the tool" page.
+*Drafted with my agent from my own draft and an interview; edited by me.*

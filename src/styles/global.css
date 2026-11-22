@@ -336,6 +336,15 @@ main{margin-left:calc(var(--gut) + var(--rail));padding-right:48px;max-width:100
 .prose .flow li:not(:last-child)::after{content:"→";position:absolute;right:-20px;top:5px;color:var(--faint)}
 .prose .flow small{display:block;font-size:13px;color:var(--faint)}
 .prose .flow .loop{font-size:15px;color:var(--soft);margin-top:12px}
+/* the-sheet: a double diamond, the opening halves shaded (AI with each engineer), a dot where each one closes (a meeting) */
+.prose figure.dd{width:100%}
+.prose .dd svg{display:block;width:100%;height:auto;overflow:visible}
+.prose .dd polygon{stroke:var(--fg);stroke-width:1;vector-effect:non-scaling-stroke;stroke-linejoin:round}
+.prose .dd .op{fill:var(--fg);fill-opacity:.12}.prose .dd .cl{fill:none}
+.prose .dd circle{fill:var(--fg)}
+.prose .dd ol{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0 10px;margin-top:10px;font-size:15px;line-height:1.3}
+.prose .dd li{padding:0;margin:0}.prose .dd li::before{content:none}
+.prose .dd small{display:block;font-size:13px;color:var(--faint);margin-top:2px}
 .prose .split .bar{display:flex;gap:2px;height:22px}
 .prose .split i{flex:0 0 calc(var(--w) - 2px);background:var(--fg);border-radius:2px}
 .prose .split i:nth-child(2){opacity:.45}.prose .split i:nth-child(3){opacity:.2}

@@ -350,7 +350,7 @@ for (const [w, h, mobile] of [[1440, 900, false], [1024, 768, false], [768, 1024
   await p.goto(B + '/', { waitUntil: 'networkidle0' });
   await p.evaluate(() => document.querySelector('.livel a[href="/writing/the-sheet/"]').click()); await sleep(900);
   const hm = await p.evaluate(() => ({ t: document.title, c: document.querySelector('link[rel=canonical]')?.href, ld: document.querySelectorAll('script[type="application/ld+json"]').length, desc: document.querySelector('meta[name=description]').content }));
-  ok('soft nav swaps title/canonical/JSON-LD', /spreadsheet/i.test(hm.t) && hm.c.endsWith('/writing/the-sheet/') && hm.ld === 1, JSON.stringify(hm));
+  ok('soft nav swaps title/canonical/JSON-LD', /board/i.test(hm.t) && hm.c.endsWith('/writing/the-sheet/') && hm.ld === 1, JSON.stringify(hm));
   await p.close();
 }
 
@@ -378,10 +378,10 @@ for (const [w, h, mobile] of [[1440, 900, false], [1024, 768, false], [768, 1024
   await p.evaluate(() => document.querySelector('.livel a[href="/writing/the-sheet/"]').click()); await sleep(900);
   ok('after soft nav, 한 → the Korean twin of this page', (await p.$eval('.rail .lang a', (a) => a.getAttribute('href'))) === '/ko/writing/the-sheet/');
   // switch mid-page: land on the same block, at about the same height
-  await p.evaluate(() => document.querySelector('.prose figure.split').scrollIntoView({ block: 'start', behavior: 'instant' })); await sleep(400);
-  const before = await p.evaluate(() => Math.round(document.querySelector('.prose figure.split').getBoundingClientRect().top));
+  await p.evaluate(() => document.querySelector('.prose figure.dd').scrollIntoView({ block: 'start', behavior: 'instant' })); await sleep(400);
+  const before = await p.evaluate(() => Math.round(document.querySelector('.prose figure.dd').getBoundingClientRect().top));
   await Promise.all([p.waitForNavigation({ waitUntil: 'networkidle0' }), p.click('.rail .lang a')]); await sleep(900);
-  const after = await p.evaluate(() => ({ path: location.pathname, lang: document.documentElement.lang, top: Math.round(document.querySelector('.prose figure.split').getBoundingClientRect().top), intro: document.documentElement.classList.contains('intro') }));
+  const after = await p.evaluate(() => ({ path: location.pathname, lang: document.documentElement.lang, top: Math.round(document.querySelector('.prose figure.dd').getBoundingClientRect().top), intro: document.documentElement.classList.contains('intro') }));
   ok('한 switches to /ko/ (lang ko, no moonrise)', after.path === '/ko/writing/the-sheet/' && after.lang === 'ko' && !after.intro, JSON.stringify(after));
   ok('switching keeps your place on the page', Math.abs(after.top - before) < 120, `before=${before} after=${after.top}`);
   // Korean pages navigate softly among themselves, cards and labels in Korean
