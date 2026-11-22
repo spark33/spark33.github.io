@@ -253,7 +253,7 @@ function initCards() {
   const open = (el: HTMLElement) => {
     const c = content(el); if (!c) return;
     owner = el; card.className = 'card' + (c.rich ? ' rich' : ''); card.innerHTML = c.html; place(el);
-    requestAnimationFrame(() => card.classList.add('on')); el.setAttribute('aria-describedby', 'card'); animate();
+    requestAnimationFrame(() => { if (owner === el) card.classList.add('on'); }); // a scroll can close it before this frame (tabbing to a link below the fold) el.setAttribute('aria-describedby', 'card'); animate();
   };
   const close = () => { clearTimeout(openT); clearTimeout(closeT); clearInterval(loop); if (owner) { owner.removeAttribute('aria-describedby'); warm = performance.now() + 300; } owner = null; card.classList.remove('on'); };
   const skip = (el: HTMLElement | null) => !el || !!el.closest('.livel,.card,.mmenu,[data-nocard]');
