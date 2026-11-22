@@ -125,6 +125,7 @@ main{margin-left:calc(var(--gut) + var(--rail));padding-right:48px;max-width:100
 .about{display:block!important;max-width:824px}
 /* About: a photo beside the words (an empty frame until PHOTO.src is set in data/site.ts) */
 .aboutin{display:grid;grid-template-columns:152px minmax(0,640px);gap:0 32px;align-items:start}
+.aboutin.nophoto{grid-template-columns:minmax(0,640px)}
 .portrait{margin:0}
 .portrait img,.portrait .noimg{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:var(--r-shot)}
 .portrait .noimg{background:var(--frame);background-image:repeating-linear-gradient(135deg,var(--hatch) 0 1px,transparent 1px 11px);display:grid;place-items:center;padding:12px;text-align:center;font-size:14px;line-height:1.35;color:var(--faint)}
@@ -353,6 +354,10 @@ main{margin-left:calc(var(--gut) + var(--rail));padding-right:48px;max-width:100
 .prose .px i span{position:absolute;inset:0 0 auto;height:calc(var(--h) / 5);background:var(--bg);border-bottom:1px solid var(--fg);font-size:13px;font-style:normal;color:var(--faint);padding:3px 8px;font-variant-numeric:tabular-nums lining-nums}
 .prose .px b{font-weight:400;color:var(--fg)}
 @media (max-width:640px){.prose .px i{width:140px;height:180px}}
+/* "[Sean: …]" in a draft: what's still to write, shown in place (src/lib/todo.mjs) */
+.prose p.todo{border:1px dashed var(--rule);border-radius:3px;padding:10px 14px;font-size:16px;color:var(--soft)}
+.prose p.todo::before{content:"To write";display:block;font-size:13px;letter-spacing:.04em;color:var(--faint);margin-bottom:2px}
+:lang(ko) .prose p.todo::before{content:"쓸 것"}
 /* section links: a # beside the heading copies a link to it */
 .prose h2 .anc{position:absolute;left:-26px;top:.05em;color:var(--faint);opacity:0;font-weight:400;transition:opacity var(--t-press) var(--ease-out),color var(--t-press) var(--ease-out)}
 .prose h2:hover .anc,.prose h2 .anc:focus-visible{opacity:1}

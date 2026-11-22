@@ -7,11 +7,13 @@ import LivingTitles from '../components/LivingTitles.astro';
 import { LINKS, EMAIL, PHOTO, forLang, isPh } from '../data/site';
 import { homeLd } from '../lib/seo';
 import { getPosts } from '../lib/posts';
+import { assertReady } from '../lib/launch';
 import { UI, loc, type Lang } from '../i18n';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = UI[lang], { EXPERIENCE, EDUCATION, BAZE } = forLang(lang);
 const posts = await getPosts(lang);
+await assertReady(); // going live fails while anything shown is still a placeholder
 const ext = 'target="_blank" rel="noopener"';
 const fill = (s: string, v: Record<string, string>) => s.replace(/\{(\w+)\}/g, (_, k) => v[k]);
 // the time fills in before first paint (inline script below), so the line doesn't rewrap once site.ts runs
@@ -59,12 +61,11 @@ const more2 = t.more2('<a href="#writing" data-card="writing">', '<a href="#work
 
   <section class="about" id="about">
     <h2 class="sec" data-where={t.about[0]} data-desc={t.about[1]}>{t.about[0]}</h2>
-    <div class="aboutin">
-      <figure class="portrait">{PHOTO.src
-        ? <img src={PHOTO.src} width={PHOTO.width} height={PHOTO.height} alt={t.name} loading="lazy" decoding="async" />
-        : <div class="noimg" role="img" aria-label={t.photo}><span>{t.photo}</span></div>}</figure>
+    {/* no photo yet: no frame; the "how I work" line shows once it's written */}
+    <div class={PHOTO.src ? 'aboutin' : 'aboutin nophoto'}>
+      {PHOTO.src && <figure class="portrait"><img src={PHOTO.src} width={PHOTO.width} height={PHOTO.height} alt={t.name} loading="lazy" decoding="async" /></figure>}
       <div>
-        <p class="ph">{t.aboutPh}</p>
+        {!isPh(t.aboutPh) && <p>{t.aboutPh}</p>}
         <p>{EDUCATION}</p>
         <p>{t.songs}</p>
       </div>
