@@ -355,6 +355,14 @@ main{margin-left:calc(var(--gut) + var(--rail));padding-right:48px;max-width:100
 .prose .sws{display:flex;flex-wrap:wrap;gap:10px 22px;font-size:15px;color:var(--soft);font-variant-numeric:tabular-nums lining-nums}
 .prose .sw{display:inline-flex;align-items:center;gap:8px}
 .prose .sw::before{content:"";width:20px;height:20px;border-radius:3px;background:var(--c);box-shadow:inset 0 0 0 1px var(--rule)}
+/* data-model: the CRRUD grid; row heads are entities and relationships, a dot is an empty cell, .gap is the one to build */
+.prose figure.crrud{width:100%;overflow-x:auto}
+.prose .crrud table{font-size:15px;min-width:640px}
+.prose .crrud tbody th{text-align:left;font-weight:400;color:var(--fg);padding:9px 16px 9px 0;border-bottom:1px solid var(--rule);white-space:nowrap}
+.prose .crrud tr.grp th{color:var(--faint);font-size:13px;letter-spacing:.04em;padding-top:18px}
+.prose .crrud td{color:var(--soft)}
+.prose .crrud td b{font-weight:400;color:var(--fg)}
+.prose .crrud td.gap{color:var(--fg);outline:1px dashed var(--fg);outline-offset:-4px;text-align:center}
 /* redesign-skill: a 900px-tall screen drawn at 1:5, the header band to scale, the rest is the page's main module */
 .prose figure.pxs{width:100%}
 .prose .pxrow{display:flex;gap:28px;flex-wrap:wrap}
