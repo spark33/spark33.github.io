@@ -520,4 +520,4 @@ html.intro .loader svg{animation:moonin var(--t-reveal) var(--ease-out)}
 html.intro.landed .loader{display:none}
 html.intro :is(.rail .mast,.rail .where,.rail .bottom,.lede>p,main>:not(.lede-wrap)){opacity:0;translate:0 6px;filter:blur(3px)}
 html.intro.inked :is(.rail .mast,.rail .where,.rail .bottom,.lede>p,main>:not(.lede-wrap)){opacity:1;translate:0 0;filter:blur(0);
-  transition:opacity var(--t-reveal) var(--ease-out),translate var(--t-reveal) var(--ease-out),filter var(--t-reveal) var(--ease-out);transition-delay:calc(var(--i,0) * 60ms)}
+  transition:opacity var(--t-reveal) var(--ease-out),translate var(--t-reveal) var(--ease-out),filter var(--t-reveal) var(--ease-out);transition-delay:calc(var(--i,0) * 40ms)}

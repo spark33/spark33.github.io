@@ -129,7 +129,8 @@ export function initSite() {
 // the page, and the page inks in behind it, top to bottom. Any click, key or scroll skips straight to the page.
 function moonrise() {
   const h = document.documentElement, svg = $('#loader svg')!, path = $('#loader path')!, fill = $('#loader .fill')!;
-  const WAX = 600, MAXWAIT = 1100, FULL = 260, GROW = 640, STEP = 60, MAXI = 6;
+  // kept short (~0.8 s to the page): the visitor has about ten seconds to get what the site is about (2026-11-22)
+  const WAX = 300, MAXWAIT = 450, FULL = 140, GROW = 360, STEP = 40, MAXI = 6;
   const tonight = Math.min(Math.max(phaseNow(), .001), .999), out3 = (t: number) => 1 - Math.pow(1 - t, 3);
   const toFull = ((.5 - tonight + 1.5) % 1) - .5; // the short way round to a full moon
   const draw = (p: number) => path.setAttribute('d', moonPath((p % 1 + 1) % 1 || .001, 7.5, 9));
