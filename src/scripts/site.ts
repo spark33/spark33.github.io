@@ -222,7 +222,7 @@ function initCards() {
     writing: () => C.writing(D.posts.length) + `<ul class="cl">${D.posts.map((p: any) => `<li><a href="${D.base}/writing/${p.s}/">${p.t}</a></li>`).join('')}</ul>`,
     work: () => C.work + `<ul class="cl">${D.jobs.map((j: any) => `<li>${j.company}, ${j.where} · ${j.years}</li>`).join('')}</ul>`,
   };
-  const postCard = (slug: string) => { const p = D.posts.find((x: any) => x.s === slug); return p ? `<p><b>${p.t}</b></p><p>${p.x}</p><p class="faint">${p.l} · ${p.st}</p>` : ''; };
+  const postCard = (slug: string) => { const p = D.posts.find((x: any) => x.s === slug); return p ? `<p><b>${p.t}</b></p><p>${p.x}</p><p class="faint">${p.l}</p>` : ''; };
   const note = (el: HTMLElement) => {
     if (el.dataset.ff) return el.dataset.ff;
     if (el.id === 'moon') return L.themeTo(document.documentElement.dataset.theme === 'light');

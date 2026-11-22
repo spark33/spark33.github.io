@@ -6,6 +6,8 @@ import { glob } from 'astro/loaders';
 // published: set it (YYYY-MM-DD) when the piece is out. Until then it's a draft: listed on the
 // home page, but noindex and left out of the sitemap, feed and llms.txt. updated: last real edit.
 // keywords: a few search phrases the piece answers (JSON-LD + meta).
+// stage: essay (a full piece) or note (a short one, 150-300 words) are listed; idea (no body yet) builds
+// its page for the preview but is left off every list until it's written.
 const writing = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/writing' }),
   schema: z.object({
@@ -13,6 +15,7 @@ const writing = defineCollection({
     dek: z.string(),
     lens: z.string(),
     status: z.string().default('Drafting'),
+    stage: z.enum(['essay', 'note', 'idea']).default('idea'),
     order: z.number(),
     tldr: z.string().optional(),
     project: z.string().optional(),

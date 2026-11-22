@@ -2,7 +2,7 @@
 title: Paper, grain and a moon
 dek: How this site was made, and why it looks like 한지.
 lens: Building
-order: 8
+order: 9
 keywords: ["personal site design", "hanji paper texture web design", "designing a portfolio site"]
 specimen: system
 ---

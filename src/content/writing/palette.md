@@ -3,6 +3,8 @@ title: No customer used our theming system. Our rebrand did.
 dek: Two years of FactChat's design system, from a mint console to Baze's ink and coral. The colors changed in one place. The hierarchy is still being fixed, one screen at a time.
 lens: Design
 order: 2
+stage: essay
+updated: 2026-10-27
 project: baze
 keywords: ["design system rebrand", "per-tenant theming", "semantic color tokens", "color as hierarchy"]
 tldr: "Hardening FactChat for dark mode and per-customer colors looked like overkill once we decided customers wouldn't get the colors. That work is what let us swap the whole brand for Baze in one place. What didn't swap was hierarchy, because color had been doing its job."

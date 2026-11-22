@@ -7,7 +7,7 @@ import { ClientRouter } from 'astro:transitions';
 import Analytics from '../components/Analytics.astro';
 import { UNDER_CONSTRUCTION, PREVIEW_HASH, EMAIL, LINKS, PERSON, SITE_DESCRIPTION, forLang } from '../data/site';
 import { OG_IMAGE } from '../lib/seo';
-import { getPosts } from '../lib/posts';
+import { getPosts, pieceMeta } from '../lib/posts';
 import { UI, loc, strip, other, type Lang } from '../i18n';
 
 interface Props {
@@ -29,7 +29,7 @@ const path = strip(Astro.url.pathname), alt = loc(path, other(lang));
 const altOf = (l: Lang) => new URL(loc(path, l), Astro.site).href;
 // Gated pages and drafts stay out of search; everything else invites crawlers to show rich snippets.
 const robots = UNDER_CONSTRUCTION || noindex ? 'noindex, follow' : 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1';
-const posts = (await getPosts(lang)).map((p) => ({ s: p.id, t: p.data.title, x: p.data.dek, l: p.data.lens, st: p.data.status }));
+const posts = (await getPosts(lang)).map((p) => ({ s: p.id, t: p.data.title, x: p.data.dek, l: pieceMeta(p.data, lang), st: '' }));
 const { EXPERIENCE: JOBS } = forLang(lang);
 const built = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).format(new Date());
 ---

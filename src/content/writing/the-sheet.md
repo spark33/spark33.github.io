@@ -3,6 +3,8 @@ title: The spreadsheet was the spec
 dek: I replaced our Jira with a tool shaped like the Google Sheet the team really planned in. Nobody needed onboarding, and four weeks in, most of the edits aren't typed by a person.
 lens: Building
 order: 1
+stage: essay
+updated: 2026-10-27
 project: baze
 keywords: ["replacing Jira with an internal tool", "internal tool adoption without onboarding", "AI agent project management", "pave the cowpaths"]
 tldr: "Copy the shape the team already trusts and name things the way they already talk. Then integrations stop needing rules. Of 4,307 changes in four weeks, 78% weren't typed by a person."

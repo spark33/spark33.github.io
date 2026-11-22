@@ -12,7 +12,7 @@ import { render } from 'astro:content';
 import { postLd, postOg, isPublished } from '../lib/seo';
 import { liveTitle } from '../lib/living';
 import { EMAIL, isPh } from '../data/site';
-import type { Piece } from '../lib/posts';
+import { pieceMeta, type Piece } from '../lib/posts';
 import { UI, loc, type Lang } from '../i18n';
 
 interface Props { lang: Lang; post: Piece; n: number; of: number }
@@ -38,7 +38,7 @@ const textLang = post.fallback ? 'en' : undefined; // a piece not translated yet
       <a class="back" href={loc('/#writing', lang)} data-back data-ff={t.backWFF}>{t.backW}</a>
       <h1 class="ptitle lhost" data-s={post.id} lang={textLang}><span class="sr-only">{d.title}</span><span class="lt" aria-hidden="true" set:html={liveTitle(post.id, d.title, post.fallback ? 'en' : lang)} /></h1>
       <p class="dek" lang={textLang}>{d.dek}</p>
-      <p class="meta num">{d.lens} · {d.published ? <time datetime={iso(d.published)}>{date(d.published)}</time> : d.status} · {t.mins(mins)}{d.updated && d.published && +d.updated !== +d.published && <> · <time datetime={iso(d.updated)}>{t.updated(date(d.updated))}</time></>}</p>
+      <p class="meta num">{d.published ? <>{d.lens}{d.stage === 'note' && <> · {t.note}</>} · <time datetime={iso(d.published)}>{date(d.published)}</time></> : pieceMeta(d, lang)} · {t.mins(mins)}{d.updated && d.published && +d.updated !== +d.published && <> · <time datetime={iso(d.updated)}>{t.updated(date(d.updated))}</time></>}</p>
       <p class="sr-only">{t.by} <a href={loc('/', lang)} rel="author">{t.name}</a></p>
       {d.project === 'baze' && <aside class="sn tried">{t.tried} <a href={loc('/work/baze/', lang)} data-card="case">Baze</a>.</aside>}
     </header>
