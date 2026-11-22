@@ -253,7 +253,7 @@ for (const [w, h, mobile] of [[1440, 900, false], [1024, 768, false], [768, 1024
   ok('mock: page did not scroll by itself', Math.abs((await p.evaluate(() => scrollY)) - y) < 5);
   // sola day replay
   await p.goto(B + '/writing/sola/', { waitUntil: 'networkidle0' });
-  await p.evaluate(() => document.querySelector('.prose figure.split').scrollIntoView({ block: 'center', behavior: 'instant' })); await sleep(6000);
+  await p.evaluate(() => document.querySelector('.medium.agent').scrollIntoView({ block: 'center', behavior: 'instant' })); await sleep(6000);
   const n = await p.$$eval('.log li', (l) => l.length), on = await p.$$eval('.log li.on', (l) => l.length);
   ok('sola day plays to the end', on === n, `${on}/${n}`);
   await p.click('.medium.agent .replay'); await sleep(300);
