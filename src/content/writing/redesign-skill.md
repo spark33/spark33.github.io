@@ -4,24 +4,20 @@ dek: Twenty prototypes in twenty minutes were the easy part. Making it study wha
 lens: Building
 order: 3
 stage: essay
-updated: 2026-11-22
+updated: 2026-11-26
 keywords: ["AI agent UI redesign", "Jakob's Law", "don't reinvent the wheel UX", "Claude agent skills", "research by information architecture", "red-teaming design variants"]
 tldr: "An agent asked for a redesign will happily reshuffle the same parts. People find familiar patterns easier, so I made mine research what already works, and why, before drawing anything. Pair that with a design system that has hard rules and it goes from an issue to merged code in an afternoon. Real users still decide how much of it you need."
 ---
 
-At 10:52 on a Tuesday in October, I posted in our frontend channel that the admin screens wasted space. The calendar spent 287 pixels on a title, a month picker and a legend before it showed a single day.
+Ask an AI agent for a better layout and you'll have one in minutes, with the same parts moved around until something looks fresh. Fresh isn't what you want from a tool people work in. Jakob Nielsen wrote it down in 2000: users spend most of their time on other sites, so they expect yours to work the way those do. So once an agent can draw twenty layouts in twenty minutes, the work is getting it to find out what already works, and why, first.
 
-Our team runs an internal Slack agent. It's Claude-based, and it can read our repos, run a headless browser and publish internal pages. I could have asked it for a redesign and gotten one in minutes, and that was the problem. Ask an agent for a better layout and it moves the same parts around until something looks fresh.
+Our training admin was a fair test: nothing was broken, it just felt messy, and an agent answers that with taste. At 10:52 on a Tuesday in October, I posted in our frontend channel that its screens wasted space. The calendar spent 287 pixels on a title, a month picker and a legend before it showed a single day. Our team runs an internal Claude-based Slack agent that can read our repos, run a headless browser and publish pages. Getting it to look first took two days and three rules.
 
-Fresh isn't what you want from an admin tool. Jakob Nielsen wrote it down in 2000: users spend most of their time on other sites, so they expect yours to work the way those do. Familiar patterns are easier to use. So the job was to find out which calendars already work, and why, and build ours on that.
-
-Getting the agent to work that way took two days and three rules.
-
-## Every variant had to name what it copies
+## Every variant names what it copies
 
 My message asked for three things: variants instead of one answer, references from comparable products instead of taste, and priority. Is the main thing on the page actually the main thing?
 
-The agent captured the real app first and measured the problem: the calendar grid started 287px from the top, and the lesson builder's content at about 640px.
+The agent captured the real app first and measured it: the calendar grid at 287px, the lesson builder's content at about 640px.
 
 <figure class="pxs">
 <div class="pxrow">
@@ -39,20 +35,20 @@ The foundation is why twenty prototypes from parallel agents looked like one des
 
 ## Red-teaming against the user stories
 
-Looking good is the easy part. I asked for a second pass against the use cases and user stories.
+Looking good is the easy part, so I asked for a second pass against the user stories.
 
-It pulled the five personas from the product's own planning docs, walked each variant through the end-to-end flow, and reran everything at 1280×800, the laptop someone actually carries to an on-site training. It found ten gaps that no amount of visual polish would have fixed, among them:
+It pulled five personas from the product's planning docs, walked each variant through the end-to-end flow, and reran everything at 1280×800, the laptop someone carries to an on-site training. It found ten gaps that no amount of visual polish would have fixed, among them:
 
 - No calendar showed which trainings still needed a lesson plan.
 - The QR code for the day was behind a hover-only icon. That fails on a touch screen at the venue.
 - Billing happens per training and per month, but the tables were per organisation, so you had to open each one to find the work.
 - The shared sidebar had dropped logout, theme and font size. Nobody notices those until they're gone.
 
-It built a fourth variant for the pages that needed one, mostly by combining the best parts of the others, then gave one recommendation per page and a build order. The whole thing, both passes, took about 35 minutes and $22.
+It built a fourth variant where a page needed one, mostly from the best parts of the others, then gave one recommendation per page. Both passes took about 35 minutes and $22.
 
-That evening I asked it to keep the approach as a skill: a markdown file with a name, a trigger and a procedure, which loads into any session that matches.
+That evening I asked it to keep the approach as a skill, `ui-redesign-variants`: a markdown file with a name, a trigger and a procedure, which loads into any session that matches.
 
-## The day it skipped the research
+## Each rule is a step it skipped once
 
 The next day I used the skill on a list page with too many status colours. Three minutes later I had a pull request against the real frontend repo, with every status turned grey. Nobody had looked at alternatives yet.
 
@@ -68,29 +64,29 @@ Then it did the research properly, and this is the step I care about most. It wr
 
 That research turned up a real bug in our product. One state the owner needed to see wasn't shown to them at all, and every comparable product shows it. Reshuffling our own layout would never have found that. Reading how other products handle the same states did.
 
-## Three rules it can't skip
-
 I asked it to harden the skill. It now opens with three rules, each written because it was missed once:
 
 1. A redesign request means prototypes, not a PR. No repo edits until someone picks a variant.
 2. Every step runs, even for one component. Scale the counts down, never the steps. If a step is skipped, the first line of the reply says so.
 3. References come from research, not memory. Describe the IA in one line, find six to eight products with the same IA, including ones outside your domain, and include one counter-example. Every variant points back at that list.
 
-Each rule carries its date and the reason, so nobody "simplifies" it away later.
+Each rule carries its date and the reason, so nobody "simplifies" it away later. The third is Jakob's Law, made into a step an agent can't skip. It's also how we've built most of what we ship: a learning platform like Duolingo, a store like the App Store, a studio like ChatGPT, vibe coding like Lovable, and admin screens like other cloud platforms' dashboards.
 
-The third rule is Jakob's Law, made into a step an agent can't skip. It's also how we've built most of what we ship: a learning platform that works like Duolingo, a store that works like the App Store, a studio that works like ChatGPT, vibe coding that works like Lovable, and admin screens that work like other cloud platforms' dashboards.
+The skill is public, rewritten without anything specific to our tools. It works with Claude Code, Codex, Cursor and the other agents the `skills` CLI supports:
 
-## From an issue to merged code in one afternoon
+```sh
+npx skills add spark33/spark33.github.io --skill ui-redesign-variants
+```
+
+The source and the kit are [on GitHub](https://github.com/spark33/spark33.github.io/tree/main/skills/ui-redesign-variants).
+
+## Built in an afternoon, cut back in two days
 
 The research decides what a page should be. The design system decides what it's made of.
 
-Ours has components, plus rules an agent can check. The theme fixes the sizes: a 56px header, 32px controls, a 220px sidebar, a type scale of 12, 13, 14, 16 and 20, and corner radii of 6 and 8. The admin has its own short skill that says what was asked for and how to check it, and a decision log that links each product decision to the Slack message behind it.
+Ours has components, plus rules an agent can check. The theme fixes the sizes: a 56px header, 32px controls, a 220px sidebar, a type scale of 12, 13, 14, 16 and 20, and corner radii of 6 and 8. The admin also has a short skill that says what was asked for and how to check it.
 
-When the redesign was picked, there was little left to decide. A teammate built the chosen variants with the agent that same afternoon. Seven pull requests, the first opened at 13:43, all merged by 18:25. Plus 11.4k lines, minus 3.0k. The prototypes used the same tokens as the code, so most of the build was translation.
-
-One gap: the spacing steps and the 44px row height were deferred in the first pull request and never made it into the theme.
-
-## What survived two days of real users
+On that first Tuesday, once the redesign was picked, little was left to decide. A teammate built the chosen variants with the agent that afternoon. Seven pull requests, the first opened at 13:43, all merged by 18:25. Plus 11.4k lines, minus 3.0k. The prototypes used the same tokens as the code, so most of the build was translation. One gap: the spacing steps and the 44px row height were deferred in the first pull request and never made it into the theme.
 
 Then people started using it, and about half of it changed within 48 hours.
 
@@ -116,14 +112,6 @@ The red team had five personas, but personas don't push back. The research told 
 
 [Sean: what you'd do differently next time, now that you know half of it got cut back.]
 
-## Use it
-
-The skill is public, rewritten without anything specific to our tools. It works with Claude Code, Codex, Cursor and the other agents the `skills` CLI supports:
-
-```sh
-npx skills add spark33/spark33.github.io --skill ui-redesign-variants
-```
-
-The source, with the kit (tokens, shell, the capture and probe scripts, the index builder), is [on GitHub](https://github.com/spark33/spark33.github.io/tree/main/skills/ui-redesign-variants).
+Once drawing is cheap, taste stops being a good enough reason for a layout. What's left is the looking: the products your users already know (Jakob's Law), how those handle the same states, and what the people on the page need. An agent skips that unless it's a written step, so write it down and make it say when it didn't.
 
 *Drafted with my agent from my own draft and an interview; edited by me.*
