@@ -7,15 +7,22 @@ keywords: ["personal site design", "hanji paper texture web design", "designing 
 specimen: system
 ---
 
-## The setup
+## The question
 
-Placeholder: the situation that made you notice this.
+Placeholder: the wider question this answers, and why our case is a good test of it.
 
-## The argument
+## What we saw
 
-Placeholder: the claim, and why it holds.
+Placeholder: the evidence: something observed in the work, a number, or a quote credited by role.
 
-## What I'd do differently
+## What we tried first
 
-Placeholder: what you would change now.
+Placeholder: the dead ends, in order, and why each one failed.
 
+## The call
+
+Placeholder: what we decided, and why.
+
+## What I think now
+
+Placeholder: the point of view that holds beyond this product.
