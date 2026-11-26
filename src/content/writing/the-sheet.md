@@ -4,7 +4,7 @@ dek: I replaced our Jira with a tool shaped like the spreadsheet the team really
 lens: Building
 order: 1
 stage: essay
-updated: 2026-11-22
+updated: 2026-11-26
 project: baze
 keywords: ["what comes after agile", "AI agent project management", "double diamond for engineering teams", "replacing Jira with an internal tool", "pave the cowpaths"]
 tldr: "Under agile, keeping the board true was a ritual people performed. Build the tool in the team's own shape and words, wire it to where the work already happens, and the board keeps itself. Then meetings can skip the status and the why, and go straight to the decisions."
@@ -12,13 +12,11 @@ tldr: "Under agile, keeping the board true was a ritual people performed. Build 
 
 Nobody on our team updates the board anymore. It updates itself from the work, and that changed what our meetings are for.
 
-Waterfall kept the plan in a document someone wrote up front. Agile moved the plan onto a board and made keeping that board true a team ritual: the standup, the grooming session, the ticket you're supposed to drag to the next column. Most of that ritual exists because the board can't see the work, so somebody has to tell it.
+Waterfall kept the plan in a document someone wrote up front. Agile moved it onto a board and made keeping that board true a team ritual: the standup, the grooming session, the ticket you're supposed to drag to the next column. Most of that ritual exists because the board can't see the work, so somebody has to tell it. I don't have a name for what comes after, and I'm wary of anyone who does. But I've watched one small version of it on the team that builds Baze, about ten people who ship almost every week and who, until this September, planned in a spreadsheet.
 
-I don't have a name for what comes after, and I'm wary of anyone who does. But I've watched one small version of it happen on the team that builds Baze, and it started with a spreadsheet.
+## The board was a second job
 
-## The plan lived in a spreadsheet
-
-Until this September we planned in one Google Sheet. We're about ten people and we ship almost every week. Each person had a row and each week a column, and a task was a merged cell stretched across the weeks it took. Two rows at the top held the week's key dates and the release stage. You could see who was doing what, and when, at a glance.
+Our plan lived in one Google Sheet. Each person had a row and each week a column, and a task was a merged cell stretched across the weeks it took. Two rows at the top held the week's key dates and the release stage. You could see who was doing what, and when, at a glance.
 
 What the sheet couldn't hold was state. Whether a task was in progress or on staging lived in Jira, and the only link between the two was a ticket key somebody pasted into a cell. The frontend and backend halves of one feature sat in two people's rows, and Jira's timeline had no subtasks, so when one half slipped the other didn't know. Moving a feature to the next release meant fixing it in both places. In the end neither one knew what had shipped.
 
@@ -53,6 +51,8 @@ Underneath, every block on the grid became a task with an owner, a status and a 
 
 Nobody needed onboarding. The rows and columns were the sheet everyone had looked at every day, and the status and release names were the words we already said in meetings. There was no training session, and there's still no "how we use the tool" page.
 
+The first version was rough, though. It needed a lot more to feel truly intuitive, starting with hotkeys and notifications.
+
 ## The record falls out of the work
 
 None of the integrations needed a rulebook about what to write where, because the tool uses the words the work already produces.
@@ -63,9 +63,11 @@ None of the integrations needed a rulebook about what to write where, because th
 
 The agent reads the same screen, in the same words, as everyone else, so there was very little to explain to it. I think this carries over to any team: an agent is one more user, and it needs the same short distance between the tool's words and the team's words that people do. If your data model needs a long prompt to explain it to the agent, it'll need a training doc for the humans too.
 
-The same wiring is how the tool kept growing. Once I agreed a feature was needed, anyone on the team could add it or change it, with the agent's help. One backend engineer wanted a status filter on "My tasks," so they opened a pull request and added it.
+The same wiring is how the rough first version kept growing. Once I agreed a feature was needed, anyone on the team could add it or change it, with the agent's help. One backend engineer wanted a status filter on "My tasks," so they opened a pull request and added it.
 
-## What the meetings are for now
+The plan also used to be readable only by the people who kept it. Someone in sales who wanted to know when a feature was going out had to check a spreadsheet and a Jira they'd never learned. Now anyone in the company can open the releases page or ask the agent, and the answer is current, because nobody had to type it in.
+
+## Meet only where the diamonds close
 
 Once the board kept itself, the way we build features changed with it. We run each feature as a [double diamond](https://www.designcouncil.org.uk/our-resources/the-double-diamond/), the Design Council's model of opening up to explore and closing down to decide, done twice: once on the problem, once on the solution. Between people, the work moves the way Dan Mall and Brad Frost describe in [the hot potato process](https://danmall.com/posts/hot-potato-process): small, frequent passes back and forth instead of one big handoff.
 
@@ -94,16 +96,8 @@ Our feature meetings used to open with the business context and why we needed th
 <figcaption>AI works with each engineer where the diamonds open. People meet where they close.</figcaption>
 </figure>
 
-## Everyone can see what ships
+This is a team of about ten that planned in a spreadsheet. A big org with compliance requirements has a different problem.
 
-The plan used to be readable only by the people who kept it. Someone in sales who wanted to know when a feature was going out had to check a spreadsheet and a Jira they'd never learned. Now anyone in the company can open the releases page or ask the agent, and the answer is current, because nobody had to type it in.
-
-## What's still open
-
-The first version was rough. It needed a lot more to feel truly intuitive, starting with hotkeys and notifications.
-
-And this is a team of about ten that planned in a spreadsheet. A big org with compliance requirements has a different problem.
-
-The project itself was never that important. What I'd bring anywhere is the habit behind it: find where the team's process chokes and build the fix together with the team, agent included. I still haven't written the "how we use the tool" page.
+The project itself was never that important. What I'd bring anywhere is the habit behind it: find where the team's process chokes (for us, a board that couldn't see the work) and build the fix together with the team, agent included. I still haven't written the "how we use the tool" page.
 
 *Drafted with my agent from my own draft and an interview; edited by me.*

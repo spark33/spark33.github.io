@@ -4,17 +4,17 @@ dek: Two years of FactChat's design system, from a mint console to Baze's ink an
 lens: Design
 order: 2
 stage: essay
-updated: 2026-10-27
+updated: 2026-11-26
 project: baze
 keywords: ["design system rebrand", "per-tenant theming", "semantic color tokens", "color as hierarchy"]
 tldr: "Hardening FactChat for dark mode and per-customer colors looked like overkill once we decided customers wouldn't get the colors. That work let us swap the whole brand for Baze in one place. The hierarchy didn't swap, because color had been doing its job."
 ---
 
-In June we built a way for each university on FactChat to recolor the product in its own school color. When I shipped it in September, we decided customers wouldn't get custom colors after all. The product would have two looks, the brand and dark mode. No customer has ever used it.
+How much should a design system build for a feature that might never ship? FactChat is a good test, because no customer ever used ours and it still paid for itself. In June we built a way for each university on FactChat to recolor the product in its own school color. When I shipped it in September, we decided customers wouldn't get custom colors after all.
 
-By then it had already done its real job. The week before, we'd used it to swap the entire product's brand.
+By then it had already done its real job. The week before, we'd used it to swap the entire product's brand. What it couldn't swap was the hierarchy.
 
-## From mint to blue to a library
+## By 2026, blue did almost all the work
 
 The codebase that became Baze started as a console for building chatbots, and it inherited the colors of the console Mindlogic had run since 2023: a mint, `#45EC88`, on a dark slate. Mindlogic's own site used the same mint.
 
@@ -23,7 +23,7 @@ The codebase that became Baze started as a console for building chatbots, and it
 <figcaption>mindlogic.ai, November 2023, from the Wayback Machine.</figcaption>
 </figure>
 
-The mint didn't last. In mid-2024 I reorganized the console's components the way MongoDB's LeafyGreen is organized, since I'd worked on that system before. I built that first version almost single-handedly: a 15-step gray, a blue ramp anchored on `#1751D0`, four corner radii and Pretendard. Other teammates helped out after that. That blue became FactChat's color when the chat product arrived in January 2025.
+The mint didn't last. In mid-2024 I reorganized the console's components the way MongoDB's LeafyGreen is organized, a system I'd worked on. I built that first version almost single-handedly: a 15-step gray, a blue ramp anchored on `#1751D0`, four corner radii and Pretendard. Other teammates helped out after that. That blue became FactChat's color when the chat product arrived in January 2025.
 
 In August 2025 we pulled FactChat's components out into their own library, logician-ui, so other Mindlogic products could use them. Moving FactChat onto it took its component folders from 78 to 18 and deleted 12,892 lines. In December I made a new palette with Claude, the Golden Ratio palette: five hues, including a violet secondary, and a 16-step cool slate, with every pair passing WCAG AA. A teammate built it into the library along with a Chakra UI v3 migration and wrote a migration guide good enough that another engineer moved a second product onto it in four days. At our April retro, the team said FactChat finally felt consistent.
 
@@ -39,23 +39,23 @@ In August 2025 we pulled FactChat's components out into their own library, logic
 <figcaption>factchat.bot, April 2026, from the Wayback Machine. Blue does almost all the work.</figcaption>
 </figure>
 
-## Dark mode and customer colors
+## One layer for every color
 
 Dark mode came in June 2026. It went in as a semantic layer: every color in the library became a role, like a background, a foreground or a border, with a light value and a dark value. We checked it by pixel-diffing all 353 Storybook stories in both modes before FactChat shipped it.
 
 Per-customer colors came straight after. The pitch, at our June retro, was that a university should be able to look like itself. The first version overrode three CSS variables. The version that shipped retints the whole blue scale on the server before the page renders, so every component that uses the primary color changes together and nothing flashes blue first. A resolver at runtime catches hardcoded hex values in d3 maps and canvas drawings. A lint rule bans the raw brand blue, and an allowlist keeps customers to tokens that exist.
 
-That's a lot of machinery for a feature nobody ended up using. The usual objection is YAGNI, "you aren't gonna need it." Martin Fowler, who wrote the standard explanation of it, draws the line where I'd draw it: "Yagni only applies to capabilities built into the software to support a presumptive feature, it does not apply to effort to make the software easier to modify." Customer colors were the capability. Being able to recolor everything from one place without breaking anything was the second kind of effort. Michael Feathers calls that a seam: "a place where you can alter behavior in your program without editing in that place." We needed the seam within two months.
+That's a lot of machinery for a feature nobody ended up using. The usual objection is YAGNI, "you aren't gonna need it." Martin Fowler, who wrote the standard explanation of it, draws the line where I would: "Yagni only applies to capabilities built into the software to support a presumptive feature, it does not apply to effort to make the software easier to modify." Customer colors were the capability. Being able to recolor everything from one place without breaking anything was the second kind of effort. Michael Feathers calls that a seam: "a place where you can alter behavior in your program without editing in that place." We needed the seam within two months.
 
-## Rebranding to Baze
+## Without blue, the screens lost their hierarchy
 
-In July Mindlogic decided on a new consumer brand for FactChat, Baze. In August our designer delivered its logo, four rounded diamonds. On August 29 I tried Baze as a tenant skin, using the machinery no customer would get. Two days later I made it the default for the whole app. The palette changed in one place: primary to an azure teal, secondary to mint, a coral accent, neutrals to tan.
+In July Mindlogic decided on a new consumer brand for FactChat, Baze. In August our designer delivered its logo, four rounded diamonds. On August 29 I tried Baze as a tenant skin, using the machinery no customer would get. Two days later I made it the default for the whole app. The palette changed in one place: primary to an azure teal, secondary back to mint, a coral accent, neutrals to tan.
 
 Then the screens fell apart. Pages built on the old blue-to-violet ramp lost their structure, because color had been doing the work of hierarchy. Blue had been how a screen said "look here first," and some of that was mine: the violet secondary came from my Golden Ratio palette. Because the seam made the swap instant, we saw the real cost within days.
 
-We tried coral as the primary color on September 1 and dropped it the same day. It was too close to our error red. My note in the team channel that day was "돌고 돌아 다시 파란색을 primary로," roughly, "after all that, back to blue for primary." A mock with no primary color at all looked like grayscale.
+What says "look here first" without blue? We tried coral as the primary color on September 1 and dropped it the same day. It was too close to our error red. My note in the team channel that day was "돌고 돌아 다시 파란색을 primary로," roughly, "after all that, back to blue for primary." A mock with no primary color at all looked like grayscale.
 
-The October brand guide settled it and went further than we had in September: warm cream and black only, with no teal, mint or gradients on app screens. Coral comes in two steps: `#FF8680` means "do it," and `#DA483E` is for large text and the logo. Links are a muted blue, `#48607A`. Coral still has a contrast problem. A white send arrow on coral is 2.34:1, below the 3:1 that WCAG asks of icons. An ink one, `#252525`, is 6.55:1. The guide says white, and that's still an open question.
+The October brand guide settled it and went further than we had in September: warm cream and black only, with no teal, mint or gradients on app screens. Coral comes in two steps: `#FF8680` means "do it," and `#DA483E` is for large text and the logo. Links are a muted blue, `#48607A`. A white send arrow on coral is 2.34:1, below the 3:1 that WCAG asks of icons. An ink one, `#252525`, is 6.55:1. The guide says white, and that's still an open question.
 
 <div class="sws">
 <span class="sw" style="--c:#F5EDE0">#F5EDE0 · cream</span>
@@ -83,16 +83,12 @@ Since late September we've been moving the app over screen by screen. We flatten
 <figcaption>app.baze.co, October 2026. The collage carries the mood, so the form can stay plain. The teal link and checkbox are September's tokens, still in production.</figcaption>
 </figure>
 
+The next major version of logician-ui, in alpha now, builds the whole system on Baze's palette: warm black, a sandy brown, coral for actions and twelve system hues. A CI test checks contrast on 72 color pairs in four modes. The first preview was too stark, almost black and white, with no way to make one button read as the main action. So the library got a coral accent button, and blue got a single job: links and data. The theming system has still had exactly one customer. It was us.
+
 ## What I'd do earlier
 
-Take the color out and look. Set the primary to gray and open your ten most-used screens. If one loses its hierarchy, color is doing a job that size, weight and spacing should do. I found that out in September, after the rebrand had started. A grayscale pass in 2025 would have shown it to us for free, before I gave the system a violet that screens came to depend on.
+Take the color out and look. Set the primary to gray and open your ten most-used screens. If one loses its hierarchy, color is doing a job that size, weight and spacing should do. A grayscale pass in 2025 would have shown it to us for free, before I gave the system a violet that screens came to depend on.
 
-And build the seam even when the feature is doubtful. Dark mode and customer colors both forced every color through one layer. The rebrand ran through that layer the week before customer colors were cancelled, and that's why the color swap cost a few pull requests instead of a rewrite.
-
-## Where it's going
-
-The next major version of logician-ui, in alpha now, makes Baze's palette the foundation of the whole system: warm black, a sandy brown, coral for actions and twelve system hues. A CI test checks contrast on 72 color pairs in four modes. The first preview was too stark, almost black and white, with no way to make one button read as the main action. So the library got a coral accent button, and blue got a single job: links and data.
-
-Mint came back too, a darker one, as September's secondary. The October guide takes it out again, and production hasn't caught up yet. The theming system has still had exactly one customer. It was us.
+And build the seam even when the feature is doubtful. Our single color layer is why the color swap cost a few pull requests instead of a rewrite. A feature built on a guess can go unused. Work that makes the product easier to change gets used by a change you didn't plan, and that change shows you what your old values were holding up.
 
 [Sean: thank-yous. Credit the teammates who helped after your first version (Jaewon and Namkyung, if they're happy to be named; say who did the logician-ui adoption, the Chakra v3 migration and the migration guide), the engineers on the build and release pipeline, and the brand team. Optional fact: since the Claude Sonnet 4 models, Claude Code has probably written all of your design-system commits.]
